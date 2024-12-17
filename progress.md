@@ -8,3 +8,4 @@
   * Topological
   * Atompair
 * Evaluated on Polaris solubility dataset:
+![Fingerprint comparison](figures/fingerprint_comparison.png)
