@@ -16,6 +16,9 @@
 
 * Currently using ZeroMeanGP $\rightarrow$ Instead, calculate mean of training set and add to mean of GP
 * Visualize test log likelihood
+  * Every data point has a corresponding uncertainty
+  * Evaluate the log likelihood using [this function](https://jax.readthedocs.io/en/latest/_autosummary/jax.scipy.stats.multivariate_normal.logpdf.html) from JAX
+  * Input to M.V. normal is supposed to be y, i.e., give it the mean and var from the GP, then give it y and see the likelihood of that data point
 * Make script more general for upcoming Polaris competitions
   * Pass `.csv` files with train/test data as input
   * Script outputs predictions, or submits to Polaris, etc.
