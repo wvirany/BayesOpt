@@ -16,6 +16,9 @@
 
 * Currently using ZeroMeanGP $\rightarrow$ Instead, calculate mean of training set and add to mean of GP
 * Visualize test log likelihood
+* Make script more general for upcoming Polaris competitions
+  * Pass `.csv` files with train/test data as input
+  * Script outputs predictions, or submits to Polaris, etc.
 
 * Try BO experiments:
   * Use offline dataset (e.g., Polaris logP training dataset)
