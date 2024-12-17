@@ -19,9 +19,11 @@
   * Every data point has a corresponding uncertainty
   * Evaluate the log likelihood using [this function](https://jax.readthedocs.io/en/latest/_autosummary/jax.scipy.stats.multivariate_normal.logpdf.html) from JAX
   * Input to M.V. normal is supposed to be y, i.e., give it the mean and var from the GP, then give it y and see the likelihood of that data point
+  * I'll want to get the full covariance matrix for this from the `tanimoto_gp.py` script
 * Make script more general for upcoming Polaris competitions
   * Pass `.csv` files with train/test data as input
   * Script outputs predictions, or submits to Polaris, etc.
+  
 
 * Try BO experiments:
   * Use offline dataset (e.g., Polaris logP training dataset)
