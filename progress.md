@@ -1,3 +1,13 @@
+# Jan.
+
+* Tested GP with adjusted mean
+  * Computed mean of training data
+  * Subtracted mean from training data, yielding "centered" data
+  * Trained on centered data
+  * Predicted mean, var of test data, then mean of training data back to predicted mean
+
+$\rightarrow$ Slightly improved results
+
 # Dec. 17
 
 ### Updates:
