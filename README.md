@@ -21,6 +21,7 @@ $\rightarrow$ Slightly improved results
 * Questions:
   * How to assess BO experiment? For example, I can look at highest value in set, diversity, etc.
   * What is the proper way to update gp?
+  * How to structure directory to make code more modular?
 
 
 # Dec 17
