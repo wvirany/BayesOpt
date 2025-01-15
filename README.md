@@ -18,6 +18,10 @@ $\rightarrow$ Slightly improved results
   * Modifications to `tanimoto_gp.py`: included class option for nonzero-mean GP
   * Created `utils.py`
 
+* Questions:
+  * How to assess BO experiment? For example, I can look at highest value in set, diversity, etc.
+  * What is the proper way to update gp?
+
 
 # Dec 17
 
