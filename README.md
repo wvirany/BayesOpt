@@ -1,10 +1,16 @@
 # Jan 15
 
+* Preliminary BO experiment:
+  * Used UCB acquisition function, compared to uniform sampling
+  * Plotted value of best sample in observations set at each iteration:
+<p align="center">
+<img src="figures/bayes_opt_1.png" alt="bayes_opt_1.png" width="40%"/>
+</p>
 
 * Evaluated test log-likelihood for different fingerprints:
 <p align="center">
- <img src="figures/tll_comparison.png" alt="tll_comparison.png" width="50%"/>
- </p>
+<img src="figures/tll_comparison.png" alt="tll_comparison.png" width="55%"/>
+</p>
 
 * Tested GP with adjusted mean
   * Computed mean of training data
@@ -18,10 +24,11 @@ $\rightarrow$ Slightly improved results
   * Modifications to `tanimoto_gp.py`: included class option for nonzero-mean GP
   * Created `utils.py`
 
-* Questions:
+* Questions / Ideas:
   * How to assess BO experiment? For example, I can look at highest value in set, diversity, etc.
   * What is the proper way to update gp?
   * How to structure directory to make code more modular?
+  * Can plot Tanimoto similarity between x's at consecutive interations for BO experiment
 
 
 # Dec 17
