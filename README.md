@@ -1,5 +1,7 @@
 # Jan 15
 
+### Updates
+
 * Preliminary BO experiment:
   * Used UCB acquisition function, compared to uniform sampling
   * Plotted value of best sample in observations set at each iteration:
@@ -31,6 +33,25 @@ $\rightarrow$ Slightly improved results
   * Can plot Tanimoto similarity between x's at consecutive interations for BO experiment
 
 
+### Next Steps:
+
+- [ ] Log parameters for experiments
+
+- [ ] Modify BO experiment:
+  * Start w/ less points, different split, $n$ worst molecules, etc.
+  * Fit parameters on larger subset of data, then run BO on complement, e.g.
+    * Take 1000/2000 molecules, maximize MLL
+    * Using parameters, initialize GP and run BO experiment on remaining data,
+      starting with a small subset of molecules (e.g., 100-200 of remaining 1000)
+
+- [ ] Run BO on harder tasks (Dockstring, PMO, etc.)
+  * Hopefully will observe increasing difference in performance between model
+    exact fingerprint vs. limited fingerprint w.r.t. iterations
+
+- [ ] Make script more general for upcoming Polaris competitions
+
+
+
 # Dec 17
 
 ### Updates:
@@ -49,17 +70,9 @@ $\rightarrow$ Slightly improved results
 
 - [x] Currently using ZeroMeanGP $\rightarrow$ Instead, calculate mean of training set and add to mean of GP
 
-- [x] Visualize test log likelihood
-  <!-- * Every data point has a corresponding uncertainty
-  * Evaluate the log likelihood using [this function](https://jax.readthedocs.io/en/latest/_autosummary/jax.scipy.stats.multivariate_normal.logpdf.html) from JAX
-  * Input to M.V. normal is supposed to be y, i.e., give it the mean and var from the GP, then give it y and see the likelihood of that data point
-  * I'll want to get the full covariance matrix for this from the `tanimoto_gp.py` script -->
-
-- [ ] Make script more general for upcoming Polaris competitions
-  * Pass `.csv` files with train/test data as input
-  * Script outputs predictions, or submits to Polaris, etc.
+- [x] Visualize test log-likelihood
   
-- [ ] Try BO experiments:
+- [x] Preliminary BO experiment:
   * Use offline dataset (e.g., Polaris logP training dataset)
   * Procedure:
      1. Pick some fraction of dataset (~20%)
@@ -68,6 +81,4 @@ $\rightarrow$ Slightly improved results
      4. At each iteration, make predictions for _all_ unlabeled points
      5. Choose molecule with highest acquisition value $\rightarrow$ Evaluate logP, add to training data
      6. Repeat
-  * compare to random baseline (i.e., compare to selecting molecule based on uniform distribution)
-
-- [ ] Try some experiments w/ less trivial dataset (e.g., DockString, PMO, etc.)
+  * Compare to random baseline (i.e., compare to selecting molecule based on uniform distribution)
