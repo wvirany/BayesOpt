@@ -29,11 +29,13 @@ $\rightarrow$ Slightly improved results
 
 ### Next Steps:
 
+- [ ] Clone repos instead of copy
+
 - [ ] Log parameters for experiments
 
 - [ ] Modify BO experiment:
   * Start w/ less points, different split, $n$ worst molecules, etc.
-  * Fit parameters on larger subset of data, then run BO on complement, e.g.
+  * Fit parameters on larger subset of data, then run BO on complement, e.g.,
     * Take 1000/2000 molecules, maximize MLL
     * Using parameters, initialize GP and run BO experiment on remaining data,
       starting with a small subset of molecules (e.g., 100-200 of remaining 1000)
