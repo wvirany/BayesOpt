@@ -62,7 +62,7 @@ def smiles_to_fp(smiles: str, fp_type: str = 'ecfp', sparse=True, fpSize=2048):
 
     if fp_type == 'ecfp':
         fpgen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=fpSize)
-    if fp_type == 'fcfp':
+    elif fp_type == 'fcfp':
         feature_inv_gen = rdFingerprintGenerator.GetMorganFeatureAtomInvGen()
         fpgen = rdFingerprintGenerator.GetMorganGenerator(
             radius=2,
