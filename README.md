@@ -1,3 +1,31 @@
+### Questions:
+* Should we include 4096 fingerprint size in the experiment? I am ommitting 256
+* Is there much of a difference between computing `grad_norm` vs. the difference in loss at two iterations? I have a feeling the latter would be much faster
+* Should we be using consistent GP params?
+
+### Updates
+
+* Implemented gradient norm tolerance criteria for optimization loop, got improved results with `tol=1e-3`:
+<p align="center">
+<img src="figures/1e-3/fingerprint_comparison.png" alt="fingerprint_comparison_complete.png" width="100%"/>
+</p>
+
+---
+
+* Complete fingerprint comparison, showing MSE, Pearson, and TLL:
+<p align="center">
+<img src="figures/fingerprint_comparison_complete.png" alt="fingerprint_comparison_complete.png" width="100%"/>
+</p>
+
+$\rightarrow$ Each point on a given subplot represents a different GP evaluation, i.e., different GP parameters. Is it wrong to optimize the parameters separately for each evaluation?
+
+* Same fingerprint comparison; radius $=4$:
+<p align="center">
+<img src="figures/fingerprint_comparison_radius4.png" alt="fingerprint_comparison_radius4.png" width="100%"/>
+</p>
+
+We can see that the increased number of hash collisions decreases performance for limited-size fingerprints.
+
 # Jan 15
 
 ### Updates
@@ -29,9 +57,11 @@ $\rightarrow$ Slightly improved results
 
 ### Next Steps:
 
-- [ ] Clone repos instead of copy
+- [x] Clone repos instead of copy
 
-- [ ] Log parameters for experiments
+- [ ] Implement tolerance for GP param optimization $\rightarrow$ re-run fingerprint comparison
+
+- [ ] Keep track of GP params for experiments
 
 - [ ] Modify BO experiment:
   * Start w/ less points, different split, $n$ worst molecules, etc.
