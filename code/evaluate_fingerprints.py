@@ -119,7 +119,7 @@ def plot(fps, sizes, data, savefig=False, filename=None):
 
     fig, axes = plt.subplots(nrows=1, ncols=3, sharex=True, figsize=(20, 4))
 
-    fig.suptitle('Results for LogP Regression with Varying Fingerprints', y=1, fontsize=14)
+    fig.suptitle('Results for LogP Regression with Varying Fingerprints', y=.99, fontsize=14)
 
     for i, label in enumerate(fps):
         
