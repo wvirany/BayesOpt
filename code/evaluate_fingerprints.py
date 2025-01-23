@@ -13,7 +13,7 @@ from utils import evaluate_gp
 
 """
 TO DO:
-    - Add command line arguments for fingeprrint parameters (fp_types, radius, sizes, etc.)
+    - Add command line arguments for fingerprint parameters (fp_types, radius, sizes, etc.)
     - Add command line argument for dataset / benchmark
 """
 
@@ -62,7 +62,7 @@ def generate_data(fps, sizes):
             results[key] = benchmark.evaluate(mean)
 
         key = fp + '-sparse'
-        mean, var, tll = evaluate_gp(smiles_train, y_train, smiles_test, fp_type=fp, radius=4, tol=1e-3)
+        mean, var, tll = evaluate_gp(smiles_train, y_train, smiles_test, fp_type=fp, radius=2, tol=1e-3)
 
         means[key], vars[key], tlls[key] = mean, var, tll
         results[key] = benchmark.evaluate(mean)
@@ -169,7 +169,7 @@ def plot(fps, sizes, data, savefig=False, filename=None):
 def main(new_data=False, make_plots=False, savefig=False, filename=None):
 
     # Fingerprint parameters
-    fps = ['ecfp', 'fcfp']
+    fps = ['ecfp', 'fcfp', 'topological', 'atompair']
     sizes = [512, 1024, 2048]
     
     if new_data:
