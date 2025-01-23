@@ -1,9 +1,19 @@
-### Questions:
-* Should we include 4096 fingerprint size in the experiment? I am ommitting 256
-* Should we be using consistent GP params?
-
+For details on experiments, see [experiments.md](./experiments.md)
 
 ---
+
+# Jan 
+
+### Updates:
+
+
+### Next Steps:
+
+
+### Questions
+
+* Should we include 4096 fingerprint size in the experiment? I am ommitting 256
+* Should we be using consistent GP params?
 
 # Jan 15
 
