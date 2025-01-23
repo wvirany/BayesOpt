@@ -46,7 +46,7 @@ y_train = train.y
 smiles_test = test.X
 
 
-def generate_data(fps, sizes):
+def write_data(fps, sizes):
 
     # Instantiate data dicts
     means, vars, results, mses, pearsons, tlls = {}, {}, {}, {}, {}, {}
@@ -117,7 +117,7 @@ def plot(fps, sizes, data, savefig=False, filename=None):
 
     results, mses, pearsons, tlls = [data[key] for key in list(data.keys())[2:]]
 
-    fig, axes = plt.subplots(nrows=1, ncols=3, sharex=True, figsize=(24, 4))
+    fig, axes = plt.subplots(nrows=1, ncols=3, sharex=True, figsize=(20, 4))
 
     fig.suptitle('Results for LogP Regression with Varying Fingerprints', y=1, fontsize=14)
 
@@ -162,18 +162,18 @@ def plot(fps, sizes, data, savefig=False, filename=None):
         axes[2].legend(loc='lower right', ncols=4, bbox_to_anchor=(-0.275, -0.25))
 
         if savefig:
-            PATH = '../figures/' + filename
+            PATH = '../figures/fp_comparison/' + filename
             plt.savefig(PATH)
 
 
-def main(new_data=False, make_plots=False, savefig=False, filename=None):
+def main(generate_data=False, make_plots=False, savefig=False, filename=None):
 
     # Fingerprint parameters
     fps = ['ecfp', 'fcfp', 'topological', 'atompair']
     sizes = [512, 1024, 2048]
     
-    if new_data:
-        generate_data(fps, sizes)
+    if generate_data:
+        write_data(fps, sizes)
 
     if make_plots:
         data = read_data()
@@ -182,7 +182,7 @@ def main(new_data=False, make_plots=False, savefig=False, filename=None):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--new_data", action="store_true")
+    parser.add_argument("--generate_data", action="store_true")
     parser.add_argument("--make_plots", action="store_true")
     parser.add_argument("--savefig", action="store_true")
     parser.add_argument('--filename', type=str)
@@ -194,4 +194,4 @@ if __name__ == "__main__":
     if args.savefig and args.filename is None:
         parser.error("--filename is required when --savefig is set")
 
-    main(new_data=args.new_data, make_plots=args.make_plots, savefig=args.savefig, filename=args.filename)
+    main(generate_data=args.generate_data, make_plots=args.make_plots, savefig=args.savefig, filename=args.filename)
