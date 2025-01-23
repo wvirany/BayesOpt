@@ -11,13 +11,32 @@ from functools import partial
 from utils import evaluate_gp
 
 
+"""
+TO DO:
+    - Add command line arguments for fingeprrint parameters (fp_types, radius, sizes, etc.)
+    - Add command line argument for dataset / benchmark
+"""
+
+
+# Set up Seaborn plotting style
+sns.set_style("darkgrid",
+              {"axes.facecolor": ".95",
+               "axes.edgecolor": "#000000",
+               "grid.color": "#EBEBE7",
+               "font.family": "serif",
+               "axes.labelcolor": "#000000",
+               "xtick.color": "#000000",
+               "ytick.color": "#000000",
+               "grid.alpha": 0.4 })
+sns.set_palette('muted')
+
+
 # Login to Polaris
 client = PolarisHubClient()
 client.login()
 
 
 # Get data from Polaris benchmark
-dataset = po.load_dataset("polaris/adme-fang-1")
 benchmark = po.load_benchmark("polaris/adme-fang-SOLU-1")
 
 train, test = benchmark.get_train_test_split()
@@ -43,7 +62,7 @@ def generate_data(fps, sizes):
             results[key] = benchmark.evaluate(mean)
 
         key = fp + '-sparse'
-        mean, var, tll = evaluate_gp(smiles_train, y_train, smiles_test, fp_type=fp, tol=1e-3)
+        mean, var, tll = evaluate_gp(smiles_train, y_train, smiles_test, fp_type=fp, radius=4, tol=1e-3)
 
         means[key], vars[key], tlls[key] = mean, var, tll
         results[key] = benchmark.evaluate(mean)
@@ -94,7 +113,7 @@ def read_data():
         'TLL'       : tll
     }
 
-def make_plots(fps, sizes, data, savefig=False, filename=None):
+def plot(fps, sizes, data, savefig=False, filename=None):
 
     results, mses, pearsons, tlls = [data[key] for key in list(data.keys())[2:]]
 
@@ -117,9 +136,9 @@ def make_plots(fps, sizes, data, savefig=False, filename=None):
         # Plot 1: MSE
         axes[0].set_title(r'MSE $\downarrow$')
 
-        axes[0].plot(sizes, mse, label=label, lw=.8, c=color)
+        axes[0].plot(sizes, mse, label=label, lw=.8, color=color)
         axes[0].scatter(2048, mses[label + '-sparse'], marker='x', s=10)
-        axes[0].scatter(sizes, mse, marker='o', s=10, c=color)
+        axes[0].scatter(sizes, mse, marker='o', s=10, color=color)
 
         axes[0].set_xticks(sizes)
         axes[0].set_xticklabels(sizes)
@@ -128,17 +147,17 @@ def make_plots(fps, sizes, data, savefig=False, filename=None):
         # Plot 2: Pearson Coefficient
         axes[1].set_title(r'Pearson $\uparrow$')
 
-        axes[1].plot(sizes, pearson, label=label, lw=.8, c=color)
+        axes[1].plot(sizes, pearson, label=label, lw=.8, color=color)
         axes[1].scatter(2048, pearsons[label + '-sparse'], marker='x', s=10)
-        axes[1].scatter(sizes, pearson, marker='o', s=10, c=color)
+        axes[1].scatter(sizes, pearson, marker='o', s=10, color=color)
             
 
         # Plot 3: Normalized Test Log-Likelihood
         axes[2].set_title('Normalized Test Log-likelihood')
 
-        axes[2].plot(sizes, n_tll, label=label, lw=.8, c=color)
+        axes[2].plot(sizes, n_tll, label=label, lw=.8, color=color)
         axes[2].scatter(2048, tlls[label + '-sparse'] / 400, marker='x', s=10)
-        axes[2].scatter(sizes, n_tll, marker='o', s=10, c=color)
+        axes[2].scatter(sizes, n_tll, marker='o', s=10, color=color)
 
         axes[2].legend(loc='lower right', ncols=4, bbox_to_anchor=(-0.275, -0.25))
 
@@ -147,23 +166,23 @@ def make_plots(fps, sizes, data, savefig=False, filename=None):
             plt.savefig(PATH)
 
 
-def main(generate_data=False, make_plots=False, savefig=False, filename=None):
+def main(new_data=False, make_plots=False, savefig=False, filename=None):
 
     # Fingerprint parameters
-    fps = ['ecfp', 'fcfp', 'topological', 'atompair']
+    fps = ['ecfp', 'fcfp']
     sizes = [512, 1024, 2048]
     
-    if generate_data:
+    if new_data:
         generate_data(fps, sizes)
 
     if make_plots:
         data = read_data()
-        make_plots(fps, sizes, data, savefig, filename)
+        plot(fps, sizes, data, savefig, filename)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--generate_data", action="store_true")
+    parser.add_argument("--new_data", action="store_true")
     parser.add_argument("--make_plots", action="store_true")
     parser.add_argument("--savefig", action="store_true")
     parser.add_argument('--filename', type=str)
@@ -172,7 +191,7 @@ if __name__ == "__main__":
 
     # Figure path must be included
     args = parser.parse_args()
-    if args.savefig and args.fig_path is None:
+    if args.savefig and args.filename is None:
         parser.error("--filename is required when --savefig is set")
 
-    main(generate_data=args.generate_data, make_plots=args.make_plots, savefig=args.savefig, fig_path=args.filename)
+    main(new_data=args.new_data, make_plots=args.make_plots, savefig=args.savefig, filename=args.filename)

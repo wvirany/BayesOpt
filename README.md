@@ -1,27 +1,53 @@
 ### Questions:
 * Should we include 4096 fingerprint size in the experiment? I am ommitting 256
-* Is there much of a difference between computing `grad_norm` vs. the difference in loss at two iterations? I have a feeling the latter would be much faster
 * Should we be using consistent GP params?
 
 ### Updates
 
 * Implemented gradient norm tolerance criteria for optimization loop, got improved results with `tol=1e-3`:
 <p align="center">
-<img src="figures/1e-3/fingerprint_comparison.png" alt="fingerprint_comparison_complete.png" width="100%"/>
+<img src="figures/fp_comparison/1e-3/fingerprint_comparison.png" alt="fingerprint_comparison_complete.png" width="100%"/>
 </p>
+
+To run this experiment:
+
+```py
+python3 evaluations.py --generate_data --make_plots --save_fig --filename 'fingerprint_comparison'
+```
+with parameters:
+* `tol = 1e-3`
+* `fps = ['ecfp', 'fcfp', 'topological', 'atompair']`
+* `sizes = [512, 1024, 2048]`
+* `radius = 2`
+
+* Re-ran the fingerprint comparison with radius $=4$ and `tol=1e-3` as well:
+<p align="center">
+<img src="figures/fp_comparison/1e-3/fp_comparison_r4_1e-3.png" alt="fp_comparison_r4_1e-3.png" width="100%"/>
+</p>
+
+To run this experiment:
+
+```py
+python3 evaluations.py --generate_data --make_plots --save_fig --filename 'fp_comparison_r4_1e-3'
+```
+with parameters:
+* `tol = 1e-3`
+* `fps = ['ecfp', 'fcfp', 'topological', 'atompair']`
+* `sizes = [512, 1024, 2048]`
+* `radius = 4`
 
 ---
 
 * Complete fingerprint comparison, showing MSE, Pearson, and TLL:
 <p align="center">
-<img src="figures/fingerprint_comparison_complete.png" alt="fingerprint_comparison_complete.png" width="100%"/>
+<img src="figures/fp_comparison/fingerprint_comparison_complete.png" alt="fingerprint_comparison_complete.png" width="100%"/>
 </p>
 
 $\rightarrow$ Each point on a given subplot represents a different GP evaluation, i.e., different GP parameters. Is it wrong to optimize the parameters separately for each evaluation?
 
 * Same fingerprint comparison; radius $=4$:
 <p align="center">
-<img src="figures/fingerprint_comparison_radius4.png" alt="fingerprint_comparison_radius4.png" width="100%"/>
+<img src="figures/fp_comparison/fingerprint_comparison_radius4.png" alt="fingerprint_comparison_radius4.png" width="100%"/>
 </p>
 
 We can see that the increased number of hash collisions decreases performance for limited-size fingerprints.
@@ -39,7 +65,7 @@ We can see that the increased number of hash collisions decreases performance fo
 
 * Evaluated test log-likelihood for different fingerprints:
 <p align="center">
-<img src="figures/tll_comparison.png" alt="tll_comparison.png" width="55%"/>
+<img src="figures/fp_comparison/tll_comparison.png" alt="tll_comparison.png" width="55%"/>
 </p>
 
 * Tested GP with adjusted mean
@@ -59,7 +85,9 @@ $\rightarrow$ Slightly improved results
 
 - [x] Clone repos instead of copy
 
-- [ ] Implement tolerance for GP param optimization $\rightarrow$ re-run fingerprint comparison
+- [x] Implement tolerance for GP param optimization $\rightarrow$ re-run fingerprint comparison
+
+- [ ] Make parameters configurable from command line (fptype, sizes, radius, tol, etc.)
 
 - [ ] Keep track of GP params for experiments
 
@@ -89,7 +117,7 @@ $\rightarrow$ Slightly improved results
   * Atompair
 * Evaluated on Polaris solubility dataset:
  <p align="center">
- <img src="figures/fingerprint_comparison.png" alt="fingerprint_comparison.png" width="70%"/>
+ <img src="figures/fp_comparison/fingerprint_comparison.png" alt="fingerprint_comparison.png" width="70%"/>
  </p>
 
 ### Next steps:
