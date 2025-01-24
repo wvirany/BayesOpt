@@ -62,7 +62,7 @@ def write_data(fps, sizes):
             results[key] = benchmark.evaluate(mean)
 
         key = fp + '-sparse'
-        mean, var, tll = evaluate_gp(smiles_train, y_train, smiles_test, fp_type=fp, radius=2, tol=1e-3)
+        mean, var, tll = evaluate_gp(smiles_train, y_train, smiles_test, fp_type=fp, radius=2, tol=1e-3, max_iters=10000)
 
         means[key], vars[key], tlls[key] = mean, var, tll
         results[key] = benchmark.evaluate(mean)
@@ -117,9 +117,9 @@ def plot(fps, sizes, data, savefig=False, filename=None):
 
     results, mses, pearsons, tlls = [data[key] for key in list(data.keys())[2:]]
 
-    fig, axes = plt.subplots(nrows=1, ncols=3, sharex=True, figsize=(20, 4))
+    fig, axes = plt.subplots(nrows=1, ncols=3, sharex=True, figsize=(24, 4))
 
-    fig.suptitle('Results for LogP Regression with Varying Fingerprints', y=.99, fontsize=14)
+    fig.suptitle('Results for LogP Regression with Varying Fingerprints', y=1, fontsize=14)
 
     for i, label in enumerate(fps):
         
@@ -159,11 +159,13 @@ def plot(fps, sizes, data, savefig=False, filename=None):
         axes[2].scatter(2048, tlls[label + '-sparse'] / 400, marker='x', s=10)
         axes[2].scatter(sizes, n_tll, marker='o', s=10, color=color)
 
-        axes[2].legend(loc='lower right', ncols=4, bbox_to_anchor=(-0.275, -0.25))
+        axes[2].legend(loc='lower right', ncols=4, bbox_to_anchor=(-.275, -.2))
 
-        if savefig:
-            PATH = '../figures/fp_comparison/' + filename
-            plt.savefig(PATH)
+    if savefig:
+        PATH = '../figures/fp_comparison/' + filename
+        plt.savefig(PATH, bbox_inches='tight')
+    else:
+        plt.show()
 
 
 def main(generate_data=False, make_plots=False, savefig=False, filename=None):

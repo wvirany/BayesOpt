@@ -15,6 +15,7 @@ Here we compared the performance of TanimotoGP with different fingerprints, spec
 
 Moreover, we varied the `radius` parameter (only applicable for `ecfp` and `fcfp` fingerprint types), with the hypothesis that a larger radius would lead to more hash collisions, and thus there would be an increased gap in performance as we increased the size of the fingerprints.
 
+
 ### Experiment #1, initial fingerprint comparison (parameters: `radius=2`):
 
 * Complete fingerprint comparison, showing MSE, Pearson, and TLL:
@@ -45,16 +46,13 @@ We can see that the increased number of hash collisions decreases performance fo
 To run this experiment:
 
 ```py
-python3 evaluations.py --generate_data --make_plots --save_fig --filename '1e-3/fingerprint_comparison'
+python3 evaluate_fingerprints.py --generate_data --make_plots --savefig --filename '1e-3/fingerprint_comparison'
 ```
 with parameters:
 * `tol = 1e-3`
 * `fps = ['ecfp', 'fcfp', 'topological', 'atompair']`
 * `sizes = [512, 1024, 2048]`
 * `radius = 2`
-
-
-* Re-ran the fingerprint comparison with radius $=4$ and `tol=1e-3` as well:
 
 
 ### Experiment #4 (parameters: `radius=4`, `tol=1e-3`):
@@ -68,7 +66,7 @@ Interestingly, we don't see the same trend as we saw in experiment #2. I wonder 
 To run this experiment:
 
 ```py
-python3 evaluations.py --generate_data --make_plots --save_fig --filename '1e-3/fp_comparison_r4_1e-3'
+python3 evaluate_fingerprints.py --generate_data --make_plots --savefig --filename '1e-3/fp_comparison_r4_1e-3'
 ```
 with parameters:
 * `tol = 1e-3`

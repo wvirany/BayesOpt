@@ -125,7 +125,8 @@ def evaluate_gp(smiles_train,
                 sparse=True,
                 fpSize=2048,
                 radius=2,
-                tol=1e-3):
+                tol=1e-3,
+                max_iters=1000):
     """
     Evaluate GP performance with given dataset and fingerprint configurations
     """
@@ -134,7 +135,7 @@ def evaluate_gp(smiles_train,
 
     gp = tanimoto_gp.TanimotoGP(fp_func, smiles_train, y_train)
     gp_params = tanimoto_gp.TanimotoGP_Params(raw_amplitude=jnp.asarray(-1.0), raw_noise=jnp.asarray(1e-2))
-    gp_params = optimize_params(gp, gp_params, tol=tol)
+    gp_params = optimize_params(gp, gp_params, tol=tol, max_iters=1000)
 
     mean, var = gp.predict_y(gp_params, smiles_test, full_covar=True)
 

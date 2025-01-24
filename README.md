@@ -10,10 +10,11 @@ For details on experiments, see [experiments.md](./experiments.md)
 ### Next Steps:
 
 
-### Questions
+### Thoughts:
 
 * Should we include 4096 fingerprint size in the experiment? I am ommitting 256
 * Should we be using consistent GP params?
+* I'm noticing the TLL doesn't improve when optimizing the hyperparameters with a tolerance of `tol=1e-3`. I'm curious to know if the optimization is reaching convergence in this setting.
 
 # Jan 15
 
