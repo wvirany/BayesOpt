@@ -16,6 +16,7 @@ For details on experiments, see [experiments.md](./experiments.md)
 * Should we be using consistent GP params?
 * I'm noticing the TLL doesn't improve when optimizing the hyperparameters with a tolerance of `tol=1e-3`. I'm curious to know if the optimization is reaching convergence in this setting.
 
+
 # Jan 15
 
 ### Updates:
@@ -35,15 +36,14 @@ $\rightarrow$ Slightly improved results
   * Created `utils.py`
 
 
-### Next Steps:
+### To Do:
 
 - [x] Clone repos instead of copy
 
 - [x] Implement tolerance for GP param optimization $\rightarrow$ re-run fingerprint comparison
 
-- [ ] Make parameters configurable from command line (fptype, sizes, radius, tol, etc.)
-
-- [ ] Keep track of GP params for experiments
+- [ ] Keep track of GP params for experiments (e.g., a table)
+  * Make sure to undo softmax
 
 - [ ] Modify BO experiment:
   * Start w/ less points, different split, $n$ worst molecules, etc.
@@ -56,8 +56,9 @@ $\rightarrow$ Slightly improved results
   * Hopefully will observe increasing difference in performance between model
     exact fingerprint vs. limited fingerprint w.r.t. iterations
 
-- [ ] Make script more general for upcoming Polaris competitions
+- [ ] Make script to submit to Polaris benchmarks / competitions (e.g., find best result)
 
+- [ ] Make parameters configurable from command line (fptype, sizes, radius, tol, etc.)
 
 
 # Dec 17
