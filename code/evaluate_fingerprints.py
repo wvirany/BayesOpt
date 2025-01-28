@@ -8,7 +8,7 @@ import pickle
 import argparse
 from functools import partial
 
-from utils import evaluate_gp
+from code.utils.misc import evaluate_gp
 
 
 """
@@ -86,6 +86,11 @@ def write_data(fps, sizes):
         pickle.dump(pearsons, file)
     with open('data/tlls.pkl', 'wb') as file:
         pickle.dump(tlls, file)
+
+
+# TO DO
+def store_params():
+    pass
 
 
 def read_data():

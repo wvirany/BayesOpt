@@ -1,6 +1,6 @@
 import numpy as np
 
-def upper_confidence_bound(X, gp, gp_params, beta=.15):
+def ucb(X, gp, gp_params, beta=.15):
     """
     Computes the upper confidence bound (UCB) at points X
     using a fitted Gaussian process surrogate model
@@ -21,4 +21,13 @@ def upper_confidence_bound(X, gp, gp_params, beta=.15):
     # Calculate upper confidence bound
     ucb = mean + beta * np.sqrt(var)
 
-    return ucb
+    idx = np.argmax(ucb)
+
+    return idx
+
+
+def uniform(X, gp, gp_params):
+
+    idx = np.random.randint(len(X))
+
+    return idx
