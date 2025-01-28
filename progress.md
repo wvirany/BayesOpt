@@ -5,6 +5,9 @@
 * Should we be using consistent GP params? --> Maybe. First, let's see what they are
 * I'm noticing the TLL doesn't improve when optimizing the hyperparameters with a tolerance of `tol=1e-3`. I'm curious to know if the optimization is reaching convergence in this setting.
 * UMAP projections of chemical space: have unobserved in gray, observed in another color
+* Try BO exp 1 for many iters? (e.g., 100+)
+* Try EI acquisition function
+* Compare preliminary BO experiments to compressed fingerprints
 
 
 ## Jan 15

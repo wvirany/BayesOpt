@@ -2,6 +2,9 @@
 
 (GLEAM, GEM, GRAMPS)
 
+### Other titles:
+* Gaussian Processes Inference with Exact Molecular Fingerprints
+
 ## Experiments
 
 For details on experiments, see [experiments.md](./experiments.md)

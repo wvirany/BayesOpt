@@ -2,7 +2,6 @@ import numpy as np
 import jax.numpy as jnp
 import pandas as pd
 
-from scipy import stats
 from sklearn.model_selection import train_test_split
 
 import polaris as po
@@ -17,7 +16,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 import argparse
-from functools import partial
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -43,10 +41,13 @@ dataset = po.load_dataset("biogen/adme-fang-v1")
 
 
 
-def init_gp(X_observed, y_observed, amp=1.0, noise=1e-2):
+def init_gp(X_observed, y_observed, optimize=True, amp=1.0, noise=1e-2):
+
     gp = tanimoto_gp.TanimotoGP(smiles_to_fp, X_observed, y_observed)
     gp_params = tanimoto_gp.TanimotoGP_Params(raw_amplitude=jnp.asarray(amp), raw_noise=jnp.asarray(noise))
-    gp_params = optimize_params(gp, gp_params)
+
+    if optimize:
+        gp_params = optimize_params(gp, gp_params)
 
     return gp, gp_params
 
@@ -79,14 +80,14 @@ def split_data(X, y, split_method, split):
 
     if split_method == 'random':
         X, X_observed, y, y_observed = train_test_split(X, y, test_size=split, random_state=42)
-    elif split_method == 'n_worst':
-        n = int(split * len(X))
 
+    elif split_method == 'n_worst':
+        
+        n = int(split * len(X))
         sorted_indices = np.argsort(y)
-        # Take the first n indices (lowest values)
-        lowest_indices = sorted_indices[:n]
-        # Take the rest of the indices
-        rest_indices = sorted_indices[n:]
+
+        lowest_indices = sorted_indices[:n] # Lowest n values
+        rest_indices = sorted_indices[n:]   # All other indices
 
         X, X_observed, y, y_observed = list(X[rest_indices]), list(X[lowest_indices]), list(y[rest_indices]), list(y[lowest_indices])
 
@@ -112,34 +113,58 @@ def make_plot(best, best_uniform):
 
 
 
-def main(split_method='random', split=0.1, acq=ucb, num_iters=10):
+def run_exp1(split_method, split, acq, num_iters):
 
     X, y = get_data()
-    
     X, X_observed, y, y_observed = split_data(X, y, split_method, split)
-
     gp, gp_params = init_gp(X_observed, y_observed)
-
     best, _, _, _ = optimization_loop(X, y, X_observed, y_observed, gp, gp_params, acq, num_iters=num_iters)
 
     X, y = get_data()
-
     X, X_observed, y, y_observed = split_data(X, y, split_method, split)
-
+    gp, gp_params = init_gp(X_observed, y_observed)
     best_uniform, _, _, _ = optimization_loop(X, y, X_observed, y_observed, gp, gp_params, uniform, num_iters=num_iters)
 
     make_plot(best, best_uniform)
 
 
 
+def run_exp2(split_method, split, acq, num_iters):
+    
+    X, y = get_data()
+    X_train, X_init, y_train, y_init = split_data(X, y, split_method='random', split=.5)
+    _, gp_params = init_gp(X_train, y_train)
+
+    print(len(X), len(X_observed))
+    X, X_observed, y, y_observed = split_data(X_init, y_init, split_method=split_method, split=split)
+
+    gp, _ = init_gp(X_observed, y_observed, optimize=False)
+    best, X_observed, y_observed, _ = optimization_loop(X, y, X_observed, y_observed, gp, gp_params, acq, num_iters=num_iters)
+
+    print(len(X), len(X_observed))
+    
+    X, X_observed, y, y_observed = split_data(X_init, y_init, split_method=split_method, split=split)
+    gp, _ = init_gp(X_observed, y_observed, optimize=False)
+    best_uniform, _, _, _ = optimization_loop(X, y, X_observed, y_observed, gp, gp_params, acq, num_iters=num_iters)
+
+
+
+def main(exp, split_method, split, acq, num_iters):
+
+    if exp == 1:
+        run_exp1(split_method, split, acq, num_iters)
+    elif exp == 2:
+        run_exp2(split_method, split, acq, num_iters)
+
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("--experiment", type=int, choices=[1, 2], default=1)
     parser.add_argument("--split_method", type=str, default='random')
     parser.add_argument("--split", type=float, default=0.1)
     parser.add_argument("--num_iters", type=int, default=10)
 
     args = parser.parse_args()
 
-    print(args)
-
-    main(split_method=args.split_method, split=args.split, num_iters=args.num_iters)
+    main(exp=args.experiment, split_method=args.split_method, split=args.split, acq=ucb, num_iters=args.num_iters)

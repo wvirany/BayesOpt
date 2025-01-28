@@ -2,12 +2,25 @@
 
 ## Bayes Opt comparison
 
-Preliminary BO experiment:
+
+### BO experiment #1:
  * Used UCB acquisition function, compared to uniform sampling
  * Plotted value of best sample in observations set at each iteration:
 <p align="center">
 <img src="figures/bayes_opt/bayes_opt_1.png" alt="bayes_opt_1.png" width="40%"/>
 </p>
+
+ * Made the task more difficult: started with bottom 10% of library, compared UCB to uniform:
+
+<p align="center">
+<img src="figures/bayes_opt/bo_exp1.png" alt="bayes_opt_1.png" width="40%"/>
+</p>
+
+To run:
+
+```py
+python3 bo_exp1.py --split_method 'n_worst' --split 0.1 --num_iters 30
+```
 
 ## Fingerprint comparison
 

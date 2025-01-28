@@ -49,7 +49,7 @@ def optimize_params(gp, gp_params, tol=1e-3, max_iters=1000):
     else:
         print("Reached maximum iterations")
 
-    print(f"End MLL (after optimization): {loss}")
+    print(f"End MLL (after optimization): {-loss}")
     print(f"End GP parameters (after optimization): {gp_params}")
 
     return gp_params
@@ -118,6 +118,15 @@ def test_log_likelihood(smiles_test, mean, covar):
 
 
 
+def natural_params(gp_params):
+    """Returns the natural parameters (after softplus transform, positive values)"""
+    return [
+        float(tanimoto_gp.TRANSFORM(gp_params.raw_amplitude)),
+        float(tanimoto_gp.TRANSFORM(gp_params.raw_noise))
+        ]
+
+
+
 def evaluate_gp(smiles_train,
                 y_train,
                 smiles_test,
@@ -135,10 +144,12 @@ def evaluate_gp(smiles_train,
 
     gp = tanimoto_gp.TanimotoGP(fp_func, smiles_train, y_train)
     gp_params = tanimoto_gp.TanimotoGP_Params(raw_amplitude=jnp.asarray(-1.0), raw_noise=jnp.asarray(1e-2))
-    gp_params = optimize_params(gp, gp_params, tol=tol, max_iters=1000)
+    gp_params = optimize_params(gp, gp_params, tol=tol, max_iters=max_iters)
 
     mean, var = gp.predict_y(gp_params, smiles_test, full_covar=True)
 
     tll = test_log_likelihood(smiles_test, mean, var)
 
-    return mean, var, tll
+    params = natural_params(gp_params)
+
+    return mean, var, tll, params

@@ -49,22 +49,22 @@ smiles_test = test.X
 def write_data(fps, sizes):
 
     # Instantiate data dicts
-    means, vars, results, mses, pearsons, tlls = {}, {}, {}, {}, {}, {}
+    means, vars, results, mses, pearsons, tlls, gp_params = {}, {}, {}, {}, {}, {}, {}
 
 
     # Evaluate GP performance for each fingerprint / size
     for fp in fps:
         for size in sizes:
             key = fp + '-' + str(size)
-            mean, var, tll = evaluate_gp(smiles_train, y_train, smiles_test, fp_type=fp, sparse=False, fpSize=size, tol=1e-3)
+            mean, var, tll, params = evaluate_gp(smiles_train, y_train, smiles_test, fp_type=fp, sparse=False, fpSize=size, tol=1e-3)
 
-            means[key], vars[key], tlls[key] = mean, var, tll
+            means[key], vars[key], tlls[key], gp_params[key] = mean, var, tll, params
             results[key] = benchmark.evaluate(mean)
 
         key = fp + '-sparse'
-        mean, var, tll = evaluate_gp(smiles_train, y_train, smiles_test, fp_type=fp, radius=2, tol=1e-3, max_iters=10000)
+        mean, var, tll, params = evaluate_gp(smiles_train, y_train, smiles_test, fp_type=fp, radius=2, tol=1e-3, max_iters=10000)
 
-        means[key], vars[key], tlls[key] = mean, var, tll
+        means[key], vars[key], tlls[key], gp_params[key] = mean, var, tll, params
         results[key] = benchmark.evaluate(mean)
 
 
@@ -86,11 +86,9 @@ def write_data(fps, sizes):
         pickle.dump(pearsons, file)
     with open('data/tlls.pkl', 'wb') as file:
         pickle.dump(tlls, file)
+    with open('data/gp_params.pkl', 'wb') as file:
+        pickle.dump(gp_params, file)
 
-
-# TO DO
-def store_params():
-    pass
 
 
 def read_data():
