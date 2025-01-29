@@ -47,7 +47,7 @@ def init_gp(X_observed, y_observed, optimize=True, amp=1.0, noise=1e-2):
     gp_params = tanimoto_gp.TanimotoGP_Params(raw_amplitude=jnp.asarray(amp), raw_noise=jnp.asarray(noise))
 
     if optimize:
-        gp_params = optimize_params(gp, gp_params)
+        gp_params = optimize_params(gp, gp_params, tol=1e-2)
 
     return gp, gp_params
 
