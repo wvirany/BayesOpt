@@ -8,7 +8,7 @@ import pickle
 import argparse
 from functools import partial
 
-from code.utils.misc import evaluate_gp
+from utils.misc import evaluate_gp
 
 
 """
@@ -46,7 +46,7 @@ y_train = train.y
 smiles_test = test.X
 
 
-def write_data(fps, sizes):
+def write_data(fps, sizes, radius, tol):
 
     # Instantiate data dicts
     means, vars, results, mses, pearsons, tlls, gp_params = {}, {}, {}, {}, {}, {}, {}
@@ -56,13 +56,20 @@ def write_data(fps, sizes):
     for fp in fps:
         for size in sizes:
             key = fp + '-' + str(size)
-            mean, var, tll, params = evaluate_gp(smiles_train, y_train, smiles_test, fp_type=fp, sparse=False, fpSize=size, tol=1e-3)
+            mean, var, tll, params = evaluate_gp(smiles_train,
+                                                 y_train,
+                                                 smiles_test,
+                                                 fp_type=fp,
+                                                 sparse=False,
+                                                 fpSize=size,
+                                                 radius=radius,
+                                                 tol=tol)
 
             means[key], vars[key], tlls[key], gp_params[key] = mean, var, tll, params
             results[key] = benchmark.evaluate(mean)
 
         key = fp + '-sparse'
-        mean, var, tll, params = evaluate_gp(smiles_train, y_train, smiles_test, fp_type=fp, radius=2, tol=1e-3, max_iters=10000)
+        mean, var, tll, params = evaluate_gp(smiles_train, y_train, smiles_test, fp_type=fp, radius=radius, tol=tol, max_iters=1000)
 
         means[key], vars[key], tlls[key], gp_params[key] = mean, var, tll, params
         results[key] = benchmark.evaluate(mean)
@@ -86,7 +93,7 @@ def write_data(fps, sizes):
         pickle.dump(pearsons, file)
     with open('data/tlls.pkl', 'wb') as file:
         pickle.dump(tlls, file)
-    with open('data/gp_params.pkl', 'wb') as file:
+    with open('data/gp_params_1e-2.pkl', 'wb') as file:
         pickle.dump(gp_params, file)
 
 
@@ -171,14 +178,14 @@ def plot(fps, sizes, data, savefig=False, filename=None):
         plt.show()
 
 
-def main(generate_data=False, make_plots=False, savefig=False, filename=None):
+def main(generate_data=False, make_plots=False, savefig=False, filename=None, radius=2, tol=1e-3):
 
     # Fingerprint parameters
     fps = ['ecfp', 'fcfp', 'topological', 'atompair']
     sizes = [512, 1024, 2048]
     
     if generate_data:
-        write_data(fps, sizes)
+        write_data(fps, sizes, radius, tol)
 
     if make_plots:
         data = read_data()
@@ -191,6 +198,8 @@ if __name__ == "__main__":
     parser.add_argument("--make_plots", action="store_true")
     parser.add_argument("--savefig", action="store_true")
     parser.add_argument('--filename', type=str)
+    parser.add_argument('--radius', type=int, choices=[2, 4], default=2)
+    parser.add_argument('--tol', type=float, default=1e-3)
 
     args = parser.parse_args()
 
@@ -199,4 +208,9 @@ if __name__ == "__main__":
     if args.savefig and args.filename is None:
         parser.error("--filename is required when --savefig is set")
 
-    main(generate_data=args.generate_data, make_plots=args.make_plots, savefig=args.savefig, filename=args.filename)
+    main(generate_data=args.generate_data,
+         make_plots=args.make_plots,
+         savefig=args.savefig,
+         filename=args.filename,
+         radius=args.radius,
+         tol=args.tol)

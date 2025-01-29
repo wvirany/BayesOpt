@@ -45,6 +45,7 @@ def optimize_params(gp, gp_params, tol=1e-3, max_iters=1000):
 
         if grad_norm < tol:
             print(f"Converged after {i+1} steps, gradient norm = {grad_norm}")
+            break
 
     else:
         print("Reached maximum iterations")

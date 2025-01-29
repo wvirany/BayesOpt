@@ -56,6 +56,88 @@ We can see that the increased number of hash collisions decreases performance fo
 <img src="figures/fp_comparison/1e-3/fingerprint_comparison.png" alt="fingerprint_comparison_complete.png" width="100%"/>
 </p>
 
+
+Printed corresponding GP parameters:
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ecfp-512</th>
+      <th>ecfp-1024</th>
+      <th>ecfp-2048</th>
+      <th>ecfp-sparse</th>
+      <th>fcfp-512</th>
+      <th>fcfp-1024</th>
+      <th>fcfp-2048</th>
+      <th>fcfp-sparse</th>
+      <th>topological-512</th>
+      <th>topological-1024</th>
+      <th>topological-2048</th>
+      <th>topological-sparse</th>
+      <th>atompair-512</th>
+      <th>atompair-1024</th>
+      <th>atompair-2048</th>
+      <th>atompair-sparse</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Amplitude</th>
+      <td>0.289229</td>
+      <td>0.309973</td>
+      <td>0.358875</td>
+      <td>0.397465</td>
+      <td>0.321568</td>
+      <td>0.349986</td>
+      <td>0.368100</td>
+      <td>0.418882</td>
+      <td>0.416156</td>
+      <td>0.439664</td>
+      <td>0.433452</td>
+      <td>0.433704</td>
+      <td>0.261918</td>
+      <td>0.262317</td>
+      <td>0.276256</td>
+      <td>0.282044</td>
+    </tr>
+    <tr>
+      <th>Noise</th>
+      <td>0.156426</td>
+      <td>0.137499</td>
+      <td>0.101067</td>
+      <td>0.074477</td>
+      <td>0.174739</td>
+      <td>0.156134</td>
+      <td>0.143275</td>
+      <td>0.116604</td>
+      <td>0.121755</td>
+      <td>0.094689</td>
+      <td>0.088448</td>
+      <td>0.081369</td>
+      <td>0.190482</td>
+      <td>0.187274</td>
+      <td>0.177331</td>
+      <td>0.170285</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
 To run this experiment:
 
 ```py
