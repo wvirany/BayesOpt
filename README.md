@@ -4,6 +4,7 @@
 
 ### Other titles:
 * Gaussian Processes Inference with Exact Molecular Fingerprints
+* Giving Molecular Fingerprints a Fair Chance...
 
 ## Experiments
 

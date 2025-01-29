@@ -10,6 +10,13 @@
 * Compare preliminary BO experiments to compressed fingerprints
 
 
+### Updates:
+
+* Plotting GP params
+
+* More BO experiments
+
+
 ## Jan 15
 
 ### Updates:
@@ -35,7 +42,7 @@ $\rightarrow$ Slightly improved results
 
 - [x] Implement tolerance for GP param optimization $\rightarrow$ re-run fingerprint comparison
 
-- [ ] Keep track of GP params for experiments (e.g., a table)
+- [x] Keep track of GP params for experiments (e.g., a table)
   * Make sure to undo softmax
 
 - [ ] Modify BO experiment:
@@ -63,10 +70,8 @@ $\rightarrow$ Slightly improved results
   * Functional Connectivity
   * Topological
   * Atompair
-* Evaluated on Polaris solubility dataset:
- <p align="center">
- <img src="figures/fp_comparison/fingerprint_comparison.png" alt="fingerprint_comparison.png" width="70%"/>
- </p>
+* Evaluated on Polaris solubility dataset
+
 
 ### Next steps:
 
