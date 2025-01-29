@@ -1,3 +1,6 @@
+import numpy as np
+import pandas as pd
+
 import polaris as po
 from polaris.hub.client import PolarisHubClient
 
@@ -7,6 +10,8 @@ import seaborn as sns
 import pickle
 import argparse
 from functools import partial
+import warnings
+warnings.filterwarnings("ignore")
 
 from utils.misc import evaluate_gp
 
@@ -46,7 +51,7 @@ y_train = train.y
 smiles_test = test.X
 
 
-def write_data(fps, sizes, radius, tol):
+def write_data(fps, sizes, radius, tol, exp):
 
     # Instantiate data dicts
     means, vars, results, mses, pearsons, tlls, gp_params = {}, {}, {}, {}, {}, {}, {}
@@ -81,38 +86,40 @@ def write_data(fps, sizes, radius, tol):
         pearsons[key] = results[key].results['Score'][4]
     
     # Write data to pickle file
-    with open('data/means.pkl', 'wb') as file:
+    with open(f'data/{exp}/means.pkl', 'wb') as file:
         pickle.dump(means, file)
-    with open('data/vars.pkl', 'wb') as file:
+    with open(f'data/{exp}/vars.pkl', 'wb') as file:
         pickle.dump(vars, file)
-    with open('data/results.pkl', 'wb') as file:
+    with open(f'data/{exp}/results.pkl', 'wb') as file:
         pickle.dump(results, file)
-    with open('data/mses.pkl', 'wb') as file:
+    with open(f'data/{exp}/mses.pkl', 'wb') as file:
         pickle.dump(mses, file)
-    with open('data/pearsons.pkl', 'wb') as file:
+    with open(f'data/{exp}/pearsons.pkl', 'wb') as file:
         pickle.dump(pearsons, file)
-    with open('data/tlls.pkl', 'wb') as file:
+    with open(f'data/{exp}/tlls.pkl', 'wb') as file:
         pickle.dump(tlls, file)
-    with open('data/gp_params_1e-2.pkl', 'wb') as file:
+    with open(f'data/{exp}/gp_params.pkl', 'wb') as file:
         pickle.dump(gp_params, file)
 
 
 
-def read_data():
+def read_data(exp):
 
     # Read data from pickle files
-    with open('data/means.pkl', 'rb') as file:
+    with open(f'data/{exp}/means.pkl', 'rb') as file:
         means = pickle.load(file)
-    with open('data/vars.pkl', 'rb') as file:
+    with open(f'data/{exp}/vars.pkl', 'rb') as file:
         vars = pickle.load(file)
-    with open('data/results.pkl', 'rb') as file:
+    with open(f'data/{exp}/results.pkl', 'rb') as file:
         results = pickle.load(file)
-    with open('data/mses.pkl', 'rb') as file:
+    with open(f'data/{exp}/mses.pkl', 'rb') as file:
         mse = pickle.load(file)
-    with open('data/pearsons.pkl', 'rb') as file:
+    with open(f'data/{exp}/pearsons.pkl', 'rb') as file:
         pearson = pickle.load(file)
-    with open('data/tlls.pkl', 'rb') as file:
+    with open(f'data/{exp}/tlls.pkl', 'rb') as file:
         tll = pickle.load(file)
+    with open(f'data/{exp}/gp_params.pkl', 'rb') as file:
+        gp_params = pickle.load(file)
 
     return {
         'Means'     : means,
@@ -120,16 +127,17 @@ def read_data():
         'Results'   : results,
         'MSE'       : mse,
         'Pearson'   : pearson,
-        'TLL'       : tll
+        'TLL'       : tll,
+        'GP Params' : gp_params
     }
 
-def plot(fps, sizes, data, savefig=False, filename=None):
+def plot(exp, fps, sizes, data, savefig=False):
 
-    results, mses, pearsons, tlls = [data[key] for key in list(data.keys())[2:]]
+    results, mses, pearsons, tlls, gp_params = [data[key] for key in list(data.keys())[2:]]
 
-    fig, axes = plt.subplots(nrows=1, ncols=3, sharex=True, figsize=(24, 4))
+    fig1, axes = plt.subplots(nrows=1, ncols=3, sharex=True, figsize=(24, 4))
 
-    fig.suptitle('Results for LogP Regression with Varying Fingerprints', y=1, fontsize=14)
+    fig1.suptitle('Results for LogP Regression with Varying Fingerprints', y=1, fontsize=14)
 
     for i, label in enumerate(fps):
         
@@ -172,32 +180,79 @@ def plot(fps, sizes, data, savefig=False, filename=None):
         axes[2].legend(loc='lower right', ncols=4, bbox_to_anchor=(-.275, -.2))
 
     if savefig:
-        PATH = '../figures/fp_comparison/' + filename
+        PATH = f'../figures/fp_comparison/{exp}/{exp}'
         plt.savefig(PATH, bbox_inches='tight')
-    else:
-        plt.show()
 
 
-def main(generate_data=False, make_plots=False, savefig=False, filename=None, radius=2, tol=1e-3):
+    # Create scatter plot
+    plt.figure(2, figsize=(10, 6))
+
+    params = pd.DataFrame(data=gp_params).rename(index={0: "Amplitude", 1: "Noise"}).round(3)
+
+    params = params.rename(columns=lambda x: x.replace('topological-', 'top-'))
+    params = params.rename(columns=lambda x: x.replace('atompair-', 'ap-'))
+
+    X, y = params.iloc[0], params.iloc[1]
+
+    # Get the base fingerprint type for each column
+    def get_fp_type(col_name):
+        return col_name.split('-')[0]  # This will give us 'ecfp', 'fcfp', etc.
+
+    # Create a color map for the different fingerprint types
+    fp_types = set(get_fp_type(col) for col in params.columns)
+
+    # Plot each fingerprint type with its own color
+    for i, fp_type in enumerate(fp_types):
+        # Get columns for this fingerprint type
+        cols = [col for col in params.columns if get_fp_type(col) == fp_type]
+        
+        # Get X and y values for these columns
+        X_fp = [X[params.columns.get_loc(col)] for col in cols]
+        y_fp = [y[params.columns.get_loc(col)] for col in cols]
+        
+        # Plot with label
+        plt.scatter(X_fp, y_fp, color=sns.color_palette()[i], label=fp_type, alpha=0.7)
+
+    plt.xlabel('Amplitude')
+    plt.ylabel('Noise')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.title('Amplitude vs Noise for Different Fingerprint Types')
+
+    # Add text labels for each point
+    for i, (x_val, y_val, col) in enumerate(zip(X, y, params.columns)):
+        plt.annotate(col, (x_val, y_val), 
+                    xytext=(5, 5), textcoords='offset points', 
+                    fontsize=8)
+        
+    if savefig:
+        PATH = f'../figures/fp_comparison/{exp}/{exp}_params'
+        plt.savefig(PATH, bbox_inches='tight')
+
+    plt.tight_layout()
+    plt.show()
+
+
+def main(exp, generate_data=False, make_plots=False, savefig=False, radius=2, tol=1e-3):
 
     # Fingerprint parameters
     fps = ['ecfp', 'fcfp', 'topological', 'atompair']
     sizes = [512, 1024, 2048]
     
     if generate_data:
-        write_data(fps, sizes, radius, tol)
+        write_data(fps, sizes, radius, tol, exp)
 
     if make_plots:
-        data = read_data()
-        plot(fps, sizes, data, savefig, filename)
+        data = read_data(exp)
+        plot(exp, fps, sizes, data, savefig)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument('--exp', type=str)
     parser.add_argument("--generate_data", action="store_true")
     parser.add_argument("--make_plots", action="store_true")
     parser.add_argument("--savefig", action="store_true")
-    parser.add_argument('--filename', type=str)
     parser.add_argument('--radius', type=int, choices=[2, 4], default=2)
     parser.add_argument('--tol', type=float, default=1e-3)
 
@@ -205,12 +260,12 @@ if __name__ == "__main__":
 
     # Figure path must be included
     args = parser.parse_args()
-    if args.savefig and args.filename is None:
-        parser.error("--filename is required when --savefig is set")
+    if args.exp is None:
+        parser.error("--exp must be specified")
 
-    main(generate_data=args.generate_data,
+    main(exp=args.exp,
+         generate_data=args.generate_data,
          make_plots=args.make_plots,
          savefig=args.savefig,
-         filename=args.filename,
          radius=args.radius,
          tol=args.tol)
