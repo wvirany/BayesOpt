@@ -38,4 +38,10 @@ Here I plot the hyperparameter trajectories in both the "natural" space (i.e., a
 <img src="figures/param-diagnosis/loss_landscape.png" alt="loss_landscape.png" width="50%"/>
 </p>
 
-Furthermore, I plotted the loss landscape with finer evaluations (i.e., I "zoomed in") close to the minimum, but the shape of the loss function looked the same.
+Furthermore, I plotted the loss landscape with finer evaluations (i.e., I "zoomed in") close to the minimum, but the shape of the loss function looked the same (i.e., I wasn't able to observe any fluctuations at a smaller scale that I couldn't see on the larger scale, although I might not have done it correctly).
+
+Here, I adjusted the colors to better observe the loss close to the minimum:
+
+<p align="center">
+<img src="figures/param-diagnosis/loss_landscape-adjusted.png" alt="loss_landscape.png" width="50%"/>
+</p>
