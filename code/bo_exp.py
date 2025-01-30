@@ -79,7 +79,7 @@ def get_data():
 def split_data(X, y, split_method, split):
 
     if split_method == 'random':
-        X, X_observed, y, y_observed = train_test_split(X, y, test_size=split, random_state=42)
+        X, X_observed, y, y_observed = train_test_split(X, y, test_size=split, random_state=1984)
 
     elif split_method == 'n_worst':
         
@@ -89,18 +89,18 @@ def split_data(X, y, split_method, split):
         lowest_indices = sorted_indices[:n] # Lowest n values
         rest_indices = sorted_indices[n:]   # All other indices
 
-        X, X_observed, y, y_observed = list(X[rest_indices]), list(X[lowest_indices]), list(y[rest_indices]), list(y[lowest_indices])
+        X, X_observed, y, y_observed = X[rest_indices], X[lowest_indices], y[rest_indices], y[lowest_indices]
 
-    return X, X_observed, y, y_observed
+    return list(X), list(X_observed), list(y), list(y_observed)
 
 
 
-def make_plot(best, best_uniform):
+def make_plot(best, best_uniform, num_top10_ucb, num_top10_uniform):
 
-    plt.plot(np.arange(len(best)), best, lw=1, label='UCB')
+    plt.plot(np.arange(len(best)), best, lw=1, label=f'UCB (Num > 90th percentile: {num_top10_ucb})')
     plt.scatter(np.arange(len(best)), best, s=5)
 
-    plt.plot(np.arange(len(best)), best_uniform, lw=1, label='Uniform')
+    plt.plot(np.arange(len(best)), best_uniform, lw=1, label=f'Uniform (Num > 90th percentile: {num_top10_uniform})')
     plt.scatter(np.arange(len(best)), best_uniform, s=5)
 
     plt.xlabel('Iteration')
@@ -118,14 +118,14 @@ def run_exp1(split_method, split, acq, num_iters):
     X, y = get_data()
     X, X_observed, y, y_observed = split_data(X, y, split_method, split)
     gp, gp_params = init_gp(X_observed, y_observed)
-    best, _, _, _ = optimization_loop(X, y, X_observed, y_observed, gp, gp_params, acq, num_iters=num_iters)
+    best, _, _, _, num_top10_ucb = optimization_loop(X, y, X_observed, y_observed, gp, gp_params, acq, num_iters=num_iters)
 
     X, y = get_data()
     X, X_observed, y, y_observed = split_data(X, y, split_method, split)
     gp, gp_params = init_gp(X_observed, y_observed)
-    best_uniform, _, _, _ = optimization_loop(X, y, X_observed, y_observed, gp, gp_params, uniform, num_iters=num_iters)
+    best_uniform, _, _, _, num_top10_uniform = optimization_loop(X, y, X_observed, y_observed, gp, gp_params, uniform, num_iters=num_iters)
 
-    make_plot(best, best_uniform)
+    make_plot(best, best_uniform, num_top10_ucb, num_top10_uniform)
 
 
 

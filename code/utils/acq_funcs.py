@@ -1,6 +1,6 @@
 import numpy as np
 
-def ucb(X, gp, gp_params, beta=.15):
+def ucb(X, gp, gp_params, beta=.05):
     """
     Computes the upper confidence bound (UCB) at points X
     using a fitted Gaussian process surrogate model

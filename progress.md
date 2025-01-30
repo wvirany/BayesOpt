@@ -6,7 +6,9 @@
 * Try BO exp 1 for many iters? (e.g., 100+)
 * Try EI acquisition function
 * Compare preliminary BO experiments to compressed fingerprints
-* Try BO experiments with larger tolerance
+* ~~Try BO experiments with larger tolerance~~
+* Should we try predicting different endpoints besides logP?
+* Is `gp.set_training_data()` the right method to update GP posterior?
 
 
 ### Updates:
@@ -44,7 +46,7 @@ $\rightarrow$ Slightly improved results
 - [x] Keep track of GP params for experiments (e.g., a table)
   * Make sure to undo softmax
 
-- [ ] Modify BO experiment:
+- [x] Modify BO experiment:
   * Start w/ less points, different split, $n$ worst molecules, etc.
   * Fit parameters on larger subset of data, then run BO on complement, e.g.,
     * Take 1000/2000 molecules, maximize MLL

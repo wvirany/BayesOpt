@@ -215,9 +215,9 @@ def plot(exp, fps, sizes, data, savefig=False):
 
     plt.xlabel('Amplitude')
     plt.ylabel('Noise')
-    plt.legend()
     plt.grid(True, alpha=0.3)
-    plt.title('Amplitude vs Noise for Different Fingerprint Types')
+    plt.title('Noise vs Amplitude for Different Fingerprint Types')
+    plt.legend()
 
     # Add text labels for each point
     for i, (x_val, y_val, col) in enumerate(zip(X, y, params.columns)):
