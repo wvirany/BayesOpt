@@ -26,7 +26,7 @@ Similar to the previous experiment, I also evaluated the TLL at every 100th iter
 
 ## Hyperparameter Trajectory and Loss Landscape
 
-Here I plot the hyperparameter trajectories in both the "natural" space (i.e., after softplus transformation) and "raw" space (before softplus transformation). I also plotted the natural trajectory over the loss landscape.
+Here I plot the hyperparameter trajectories in both the "natural" space (i.e., after softplus transformation) and "raw" space (before softplus transformation). I also plotted the natural trajectory over the loss landscape. The behavior here seems more or less what I'd expect when picturing gradient descent on a contour plot.
 
 *Thought*: One thing I noticed here is that the hyperparameters are all identical in natural space after the ~60th evaluation (all stored with 5 digits of precision). I am wondering if this is due to numerical issues when applying softplus / inverse softplus, and I can look into this if it's of importance.
 
