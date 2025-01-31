@@ -18,7 +18,7 @@ The **third plot** shows the value of the gradient norm and corresponds to the s
 
 ## TLL over time
 
-Similar to the previous experiment, I also evaluated the TLL at every 100th iteration. To my surprise, the TLL is monotonically decreasing w.r.t. iterations. I've also plotted the baseline performance, using `y.var()` as the amplitude parameter and `0.1*amplitude` as the noise parameter. This seems to be strictly worse than all other parameters found during gradient descent.
+Similar to the previous experiment, I also evaluated the TLL at every 100th iteration. I've also plotted the baseline performance, using `y.var()` as the amplitude parameter and `0.1*amplitude` as the noise parameter. This seems to be strictly *better* than all other parameters found during gradient descent.
 
 <p align="center">
 <img src="figures/param-diagnosis/tll.png" alt="tll.png" width="70%"/>
