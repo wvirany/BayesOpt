@@ -105,14 +105,15 @@ def smiles_to_fp(smiles: str, fp_type: str = 'ecfp', sparse=True, fpSize=2048, r
 
 
 
-def test_log_likelihood(smiles_test, mean, covar):
+def test_log_likelihood(smiles_test, mean, covar, y_test=None):
     """
     Evaluates test log-likelihood given target SMILES strings, mean, and full covariance matrix
     """
+
+    if y_test is None:
+        y_test = jnp.array([Crippen.MolLogP(Chem.MolFromSmiles(s)) for s in smiles_test])
     
-    y_test_logp = jnp.array([Crippen.MolLogP(Chem.MolFromSmiles(s)) for s in smiles_test])
-    
-    return multivariate_normal.logpdf(y_test_logp, mean=mean, cov=covar)
+    return multivariate_normal.logpdf(y_test, mean=mean, cov=covar)
 
 
 
