@@ -7,6 +7,7 @@ from polaris.hub.client import PolarisHubClient
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+import os
 import pickle
 import argparse
 from functools import partial
@@ -84,6 +85,11 @@ def write_data(fps, sizes, radius, tol, exp):
     for key in results.keys():
         mses[key] = results[key].results['Score'][1]
         pearsons[key] = results[key].results['Score'][4]
+
+    PATH = f'data/{exp}/'
+
+    # If directory doesn't exist, make it
+    os.makedirs(os.path.dirname(PATH), exist_ok=True)
     
     # Write data to pickle file
     with open(f'data/{exp}/means.pkl', 'wb') as file:

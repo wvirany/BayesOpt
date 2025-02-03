@@ -11,16 +11,33 @@
 * Is `gp.set_training_data()` the right method to update GP posterior?
 
 
-### Updates:
 
-* Plotting GP params
-
-* More BO experiments
-
-
-## Jan 15
+## February
 
 ### Updates:
+
+* Reran fingerprint comparison experiments with 
+
+
+### To Do:
+
+- [ ] Run GP param diagnosis with `fcfp` fingerprint to compare
+
+- [ ] BO Experiments:
+
+  - [ ] Run BO experiments $\geq$ 3 times with different random initializations, plot mean and +- std error bars
+  - [ ] Make histogram of y values, plot vertical lines on histogram and horizontal lines on logS vs. 
+
+
+
+
+## January
+
+### Updates:
+
+* Plotted GP params, performed GP diagnostics, fixed small issues
+
+* Ran more BO experiments $\rightarrow$ need to rerun these after having fixed GP issues
 
 * Ran preliminary BO experiment
 
@@ -62,7 +79,7 @@ $\rightarrow$ Slightly improved results
 - [ ] Make parameters configurable from command line (fptype, sizes, radius, tol, etc.)
 
 
-## Dec 17
+## December
 
 ### Updates:
 
