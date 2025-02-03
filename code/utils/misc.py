@@ -1,3 +1,4 @@
+import numpy as np
 import jax
 import jax.numpy as jnp
 from jax.scipy.stats import multivariate_normal
@@ -105,15 +106,29 @@ def smiles_to_fp(smiles: str, fp_type: str = 'ecfp', sparse=True, fpSize=2048, r
 
 
 
-def test_log_likelihood(smiles_test, mean, covar, y_test=None):
+def compute_mse(y_true, y_pred):
+    """Calculate Mean Squared Error between true and predicted values."""
+    y_true, y_pred = np.array(y_true), np.array(y_pred)
+    return np.mean((y_true - y_pred) ** 2)
+
+
+
+def compute_pearson(x, y):
+    """Calculate Pearson correlation coefficient between two arrays."""
+    x, y = np.array(x), np.array(y)
+    x_mean, y_mean = np.mean(x), np.mean(y)
+    numerator = np.sum((x - x_mean) * (y - y_mean))
+    denominator = np.sqrt(np.sum((x - x_mean)**2) * np.sum((y - y_mean)**2))
+    return numerator / denominator if denominator != 0 else 0
+
+
+
+def test_log_likelihood(mean, covar, y_test=None):
     """
     Evaluates test log-likelihood given target SMILES strings, mean, and full covariance matrix
     """
-
-    if y_test is None:
-        y_test = jnp.array([Crippen.MolLogP(Chem.MolFromSmiles(s)) for s in smiles_test])
-    
-    return multivariate_normal.logpdf(y_test, mean=mean, cov=covar)
+    n = len(y_test)
+    return multivariate_normal.logpdf(y_test, mean=mean, cov=covar) / n
 
 
 
@@ -127,8 +142,9 @@ def natural_params(gp_params):
 
 
 def evaluate_gp(smiles_train,
-                y_train,
                 smiles_test,
+                y_train,
+                y_test=None,
                 fp_type='ecfp',
                 sparse=True,
                 fpSize=2048,
@@ -147,8 +163,10 @@ def evaluate_gp(smiles_train,
 
     mean, var = gp.predict_y(gp_params, smiles_test, full_covar=True)
 
-    tll = test_log_likelihood(smiles_test, mean, var)
+    mse = compute_mse(y_test, mean)
+    pearson = compute_pearson(y_test, mean)
+    tll = test_log_likelihood(mean, var, y_test)
 
     params = natural_params(gp_params)
 
-    return mean, var, tll, params
+    return mean, var, mse, pearson, tll, params

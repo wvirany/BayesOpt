@@ -28,7 +28,7 @@ Here we compared the performance of TanimotoGP with different fingerprints, spec
 
 Moreover, we varied the `radius` parameter (only applicable for `ecfp` and `fcfp` fingerprint types), with the hypothesis that a larger radius would lead to more hash collisions, and thus there would be an increased gap in performance as we increased the size of the fingerprints.
 
-
+<!-- 
 ### Parameters: `radius=2`:
 
 <p align="center">
@@ -43,7 +43,7 @@ As expected, the performance improves with as the size of the fingerprint increa
 <img src="figures/fp_comparison/r4/r4.png" alt="r4.png" width="100%"/>
 </p>
 
-We can see that the increased number of hash collisions decreases performance for limited-size fingerprints.
+We can see that the increased number of hash collisions decreases performance for limited-size fingerprints. -->
 
 
 ### Parameters: `radius=2`, `tol=1e-3`
@@ -70,12 +70,16 @@ with parameters:
 * `radius = 2`
 
 
-### Experiment #4 (parameters: `radius=4`, `tol=1e-3`):
-
-Interestingly, we don't see the same trend as we saw in experiment #2. I wonder if this is due to overfitting, since the experiment is the same, we only adjusted `tol`.
+### Parameters: `radius=4`, `tol=1e-3`:
 
 <p align="center">
 <img src="figures/fp_comparison/r4_1e-3/r4_1e-3.png" alt="r4_1e-3.png" width="100%"/>
+</p>
+
+GP parameters:
+
+<p align="center">
+<img src="figures/fp_comparison/r4_1e-3/r4_1e-3_params.png" alt="r4_1e-3_params.png" width="60%"/>
 </p>
 
 To run this experiment:

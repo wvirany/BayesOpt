@@ -15,6 +15,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 from utils.misc import evaluate_gp
+from utils.get_data import get_data
 
 
 """
@@ -36,55 +37,47 @@ sns.set_style("darkgrid",
                "grid.alpha": 0.4 })
 sns.set_palette('muted')
 
+DATASET = "biogen/adme-fang-v1"
 
-# Login to Polaris
-client = PolarisHubClient()
-client.login()
-
-
-# Get data from Polaris benchmark
-benchmark = po.load_benchmark("polaris/adme-fang-SOLU-1")
-
-train, test = benchmark.get_train_test_split()
-
-smiles_train = train.X
-y_train = train.y
-smiles_test = test.X
+smiles_train, smiles_test, y_train, y_test = get_data(DATASET)
 
 
 def write_data(fps, sizes, radius, tol, exp):
 
     # Instantiate data dicts
-    means, vars, results, mses, pearsons, tlls, gp_params = {}, {}, {}, {}, {}, {}, {}
+    means, vars, mses, pearsons, tlls, gp_params = {}, {}, {}, {}, {}, {}
 
 
     # Evaluate GP performance for each fingerprint / size
     for fp in fps:
         for size in sizes:
             key = fp + '-' + str(size)
-            mean, var, tll, params = evaluate_gp(smiles_train,
-                                                 y_train,
-                                                 smiles_test,
-                                                 fp_type=fp,
-                                                 sparse=False,
-                                                 fpSize=size,
-                                                 radius=radius,
-                                                 tol=tol)
+            mean, var, mse, pearson, tll, params = evaluate_gp(smiles_train,
+                                                               smiles_test,
+                                                               y_train,
+                                                               y_test,
+                                                               fp_type=fp,
+                                                               sparse=False,
+                                                               fpSize=size,
+                                                               radius=radius,
+                                                               tol=tol,
+                                                               max_iters=10000)
 
-            means[key], vars[key], tlls[key], gp_params[key] = mean, var, tll, params
-            results[key] = benchmark.evaluate(mean)
+            means[key], vars[key], mses[key], pearsons[key], tlls[key], gp_params[key] = mean, var, mse, pearson, tll, params
 
+        # Evaluate GP with SPARSE fingerprint
         key = fp + '-sparse'
-        mean, var, tll, params = evaluate_gp(smiles_train, y_train, smiles_test, fp_type=fp, radius=radius, tol=tol, max_iters=1000)
+        mean, var, mse, pearson, tll, params = evaluate_gp(smiles_train,
+                                                           smiles_test,
+                                                           y_train,
+                                                           y_test,
+                                                           fp_type=fp,
+                                                           radius=radius,
+                                                           tol=tol,
+                                                           max_iters=10000)
 
-        means[key], vars[key], tlls[key], gp_params[key] = mean, var, tll, params
-        results[key] = benchmark.evaluate(mean)
+        means[key], vars[key], mses[key], pearsons[key], tlls[key], gp_params[key] = mean, var, mse, pearson, tll, params
 
-
-    # Evaluate MSE and Pearson coefficient metrics
-    for key in results.keys():
-        mses[key] = results[key].results['Score'][1]
-        pearsons[key] = results[key].results['Score'][4]
 
     PATH = f'data/{exp}/'
 
@@ -96,8 +89,6 @@ def write_data(fps, sizes, radius, tol, exp):
         pickle.dump(means, file)
     with open(f'data/{exp}/vars.pkl', 'wb') as file:
         pickle.dump(vars, file)
-    with open(f'data/{exp}/results.pkl', 'wb') as file:
-        pickle.dump(results, file)
     with open(f'data/{exp}/mses.pkl', 'wb') as file:
         pickle.dump(mses, file)
     with open(f'data/{exp}/pearsons.pkl', 'wb') as file:
@@ -116,8 +107,6 @@ def read_data(exp):
         means = pickle.load(file)
     with open(f'data/{exp}/vars.pkl', 'rb') as file:
         vars = pickle.load(file)
-    with open(f'data/{exp}/results.pkl', 'rb') as file:
-        results = pickle.load(file)
     with open(f'data/{exp}/mses.pkl', 'rb') as file:
         mse = pickle.load(file)
     with open(f'data/{exp}/pearsons.pkl', 'rb') as file:
@@ -130,7 +119,6 @@ def read_data(exp):
     return {
         'Means'     : means,
         'Vars'      : vars,
-        'Results'   : results,
         'MSE'       : mse,
         'Pearson'   : pearson,
         'TLL'       : tll,
@@ -139,7 +127,7 @@ def read_data(exp):
 
 def plot(exp, fps, sizes, data, savefig=False):
 
-    results, mses, pearsons, tlls, gp_params = [data[key] for key in list(data.keys())[2:]]
+    mses, pearsons, tlls, gp_params = [data[key] for key in list(data.keys())[2:]]
 
     fig1, axes = plt.subplots(nrows=1, ncols=3, sharex=True, figsize=(24, 4))
 
@@ -149,12 +137,12 @@ def plot(exp, fps, sizes, data, savefig=False):
         
         color = sns.color_palette()[i]
 
-        mse, pearson, n_tll = [], [], []
+        mse, pearson, tll = [], [], []
         for s in sizes:
             key = label + '-' + str(s)
-            mse.append(results[key].results['Score'][1])
-            pearson.append(results[key].results['Score'][4])
-            n_tll.append(tlls[key] / 400)
+            mse.append(mses[key])
+            pearson.append(pearsons[key])
+            tll.append(tlls[key])
 
 
         # Plot 1: MSE
@@ -179,9 +167,9 @@ def plot(exp, fps, sizes, data, savefig=False):
         # Plot 3: Normalized Test Log-Likelihood
         axes[2].set_title('Normalized Test Log-likelihood')
 
-        axes[2].plot(sizes, n_tll, label=label, lw=.8, color=color)
-        axes[2].scatter(2048, tlls[label + '-sparse'] / 400, marker='x', s=10)
-        axes[2].scatter(sizes, n_tll, marker='o', s=10, color=color)
+        axes[2].plot(sizes, tll, label=label, lw=.8, color=color)
+        axes[2].scatter(2048, tlls[label + '-sparse'], marker='x', s=10)
+        axes[2].scatter(sizes, tll, marker='o', s=10, color=color)
 
         axes[2].legend(loc='lower right', ncols=4, bbox_to_anchor=(-.275, -.2))
 
@@ -205,7 +193,8 @@ def plot(exp, fps, sizes, data, savefig=False):
         return col_name.split('-')[0]  # This will give us 'ecfp', 'fcfp', etc.
 
     # Create a color map for the different fingerprint types
-    fp_types = set(get_fp_type(col) for col in params.columns)
+    # fp_types = set(get_fp_type(col) for col in params.columns)
+    fp_types = ['ecfp', 'fcfp', 'top', 'ap']
 
     # Plot each fingerprint type with its own color
     for i, fp_type in enumerate(fp_types):
@@ -244,6 +233,9 @@ def main(exp, generate_data=False, make_plots=False, savefig=False, radius=2, to
     # Fingerprint parameters
     fps = ['ecfp', 'fcfp', 'topological', 'atompair']
     sizes = [512, 1024, 2048]
+
+    if radius == 4:
+        fps = ['ecfp', 'fcfp']
     
     if generate_data:
         write_data(fps, sizes, radius, tol, exp)
