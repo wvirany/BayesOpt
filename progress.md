@@ -1,13 +1,13 @@
 
-### Notes:
+### Thoughts:
 
 * Should we be using consistent GP params? --> Maybe. First, let's see what they are
-* UMAP projections of chemical space: have unobserved in gray, observed in another color
+* UMAP / t-SNE projections of chemical space: have unobserved in gray, observed in another color
 * Try BO exp 1 for many iters? (e.g., 100+)
 * Try EI acquisition function
 * Compare preliminary BO experiments to compressed fingerprints
 * ~~Try BO experiments with larger tolerance~~
-* Should we try predicting different endpoints besides logP?
+* Should we try predicting different endpoints besides logS?
 * Is `gp.set_training_data()` the right method to update GP posterior?
 
 
@@ -16,19 +16,27 @@
 
 ### Updates:
 
-* Reran fingerprint comparison experiments with 
+* Reran fingerprint comparison on new dataset with exact target values
 
 
 ### To Do:
+
+- [ ] Evaluate on polaris competition intermediate benchmark
 
 - [ ] Run GP param diagnosis with `fcfp` fingerprint to compare
 
 - [ ] BO Experiments:
 
   - [ ] Run BO experiments $\geq$ 3 times with different random initializations, plot mean and +- std error bars
-  - [ ] Make histogram of y values, plot vertical lines on histogram and horizontal lines on logS vs. 
+  - [ ] Make histogram of y values, plot vertical lines on histogram and horizontal lines on logS vs. iteration number
+  - [ ] Vary UCB `beta` $\in$ `{0.1, 1.0, 10.0}`
+  - [ ] Implement EI
+  - [ ] Run BO on harder tasks (Dockstring, PMO, etc.)
 
 
+- [ ] Make script to submit to Polaris benchmarks / competitions (e.g., specify benchmark / endpoint from command line, find best result)
+
+- [ ] Make parameters configurable from command line (fptype, sizes, ~~radius~~, ~~tol~~, etc.)
 
 
 ## January
@@ -70,13 +78,9 @@ $\rightarrow$ Slightly improved results
     * Using parameters, initialize GP and run BO experiment on remaining data,
       starting with a small subset of molecules (e.g., 100-200 of remaining 1000)
 
-- [ ] Run BO on harder tasks (Dockstring, PMO, etc.)
+- ~~[ ] Run BO on harder tasks (Dockstring, PMO, etc.)~~
   * Hopefully will observe increasing difference in performance between model
     exact fingerprint vs. limited fingerprint w.r.t. iterations
-
-- [ ] Make script to submit to Polaris benchmarks / competitions (e.g., find best result)
-
-- [ ] Make parameters configurable from command line (fptype, sizes, radius, tol, etc.)
 
 
 ## December

@@ -9,12 +9,14 @@ from polaris.hub.client import PolarisHubClient
 
 import tanimoto_gp
 from utils.misc import optimize_params, smiles_to_fp
+from utils.get_data import get_data, split_data
 from utils.acq_funcs import ucb, uniform
 from utils.bo import optimization_loop
 
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+import os
 import argparse
 import warnings
 warnings.filterwarnings("ignore")
@@ -33,13 +35,6 @@ sns.set_style("darkgrid",
 sns.set_palette('muted')
 
 
-# Login to Polaris
-client = PolarisHubClient()
-client.login()
-
-dataset = po.load_dataset("biogen/adme-fang-v1")
-
-
 
 def init_gp(X_observed, y_observed, optimize=True, amp=1.0, noise=1e-2):
 
@@ -47,55 +42,13 @@ def init_gp(X_observed, y_observed, optimize=True, amp=1.0, noise=1e-2):
     gp_params = tanimoto_gp.TanimotoGP_Params(raw_amplitude=jnp.asarray(amp), raw_noise=jnp.asarray(noise))
 
     if optimize:
-        gp_params = optimize_params(gp, gp_params, tol=1e-2)
+        gp_params = optimize_params(gp, gp_params, tol=1e-3, max_iters=10000)
 
     return gp, gp_params
 
 
 
-def get_data():
-
-    # Get all SMILES strings and logP values from dataset
-    X = [dataset.get_data(
-        row=dataset.rows[i],
-        col='MOL_smiles'
-        ) for i in range(dataset.size()[0])]
-
-    y = [dataset.get_data(
-        row=dataset.rows[i],
-        col='LOG_SOLUBILITY'
-        ) for i in range(dataset.size()[0])]
-    
-    # Filter molecules with NaN logP values
-    filter = ~np.isnan(y)
-
-    X = np.array([i for idx, i in enumerate(X) if filter[idx]])
-    y = np.array([i for idx, i in enumerate(y) if filter[idx]])
-
-    return X, y
-
-
-
-def split_data(X, y, split_method, split):
-
-    if split_method == 'random':
-        X, X_observed, y, y_observed = train_test_split(X, y, test_size=split, random_state=1984)
-
-    elif split_method == 'n_worst':
-        
-        n = int(split * len(X))
-        sorted_indices = np.argsort(y)
-
-        lowest_indices = sorted_indices[:n] # Lowest n values
-        rest_indices = sorted_indices[n:]   # All other indices
-
-        X, X_observed, y, y_observed = X[rest_indices], X[lowest_indices], y[rest_indices], y[lowest_indices]
-
-    return list(X), list(X_observed), list(y), list(y_observed)
-
-
-
-def make_plot(best, best_uniform, num_top10_ucb, num_top10_uniform):
+def make_plot(best, best_uniform, num_top10_ucb, num_top10_uniform, exp_num, split_method, num_iters):
 
     plt.plot(np.arange(len(best)), best, lw=1, label=f'UCB (Num > 90th percentile: {num_top10_ucb})')
     plt.scatter(np.arange(len(best)), best, s=5)
@@ -109,23 +62,28 @@ def make_plot(best, best_uniform, num_top10_ucb, num_top10_uniform):
     plt.title('Max logP value in set at each iteration')
     plt.legend()
 
+    PATH = f"../figures/bayes_opt/exp{exp_num}/{split_method}_{num_iters}iters"
+
+    # If directory doesn't exist, make it
+    os.makedirs(os.path.dirname(PATH), exist_ok=True)
+
+    plt.savefig(PATH, bbox_inches='tight')
+
     plt.show()
 
 
 
 def run_exp1(split_method, split, acq, num_iters):
 
-    X, y = get_data()
-    X, X_observed, y, y_observed = split_data(X, y, split_method, split)
+    X, X_observed, y, y_observed = get_data(split=True, split_method=split_method, frac=split)
     gp, gp_params = init_gp(X_observed, y_observed)
-    best, _, _, _, num_top10_ucb = optimization_loop(X, y, X_observed, y_observed, gp, gp_params, acq, num_iters=num_iters)
+    best, _, _, _, num_top10_acq = optimization_loop(X, y, X_observed, y_observed, gp, gp_params, acq, num_iters=num_iters)
 
-    X, y = get_data()
-    X, X_observed, y, y_observed = split_data(X, y, split_method, split)
+    X, X_observed, y, y_observed = get_data(split=True, split_method=split_method, frac=split)
     gp, gp_params = init_gp(X_observed, y_observed)
     best_uniform, _, _, _, num_top10_uniform = optimization_loop(X, y, X_observed, y_observed, gp, gp_params, uniform, num_iters=num_iters)
 
-    make_plot(best, best_uniform, num_top10_ucb, num_top10_uniform)
+    make_plot(best, best_uniform, num_top10_acq, num_top10_uniform, exp_num=1, split_method=split_method, num_iters=num_iters)
 
 
 
@@ -135,17 +93,16 @@ def run_exp2(split_method, split, acq, num_iters):
     X_train, X_init, y_train, y_init = split_data(X, y, split_method='random', split=.5)
     _, gp_params = init_gp(X_train, y_train)
 
-    print(len(X), len(X_observed))
     X, X_observed, y, y_observed = split_data(X_init, y_init, split_method=split_method, split=split)
 
     gp, _ = init_gp(X_observed, y_observed, optimize=False)
-    best, X_observed, y_observed, _ = optimization_loop(X, y, X_observed, y_observed, gp, gp_params, acq, num_iters=num_iters)
-
-    print(len(X), len(X_observed))
+    best, _, _, _, num_top10_acq = optimization_loop(X, y, X_observed, y_observed, gp, gp_params, acq, num_iters=num_iters)
     
     X, X_observed, y, y_observed = split_data(X_init, y_init, split_method=split_method, split=split)
     gp, _ = init_gp(X_observed, y_observed, optimize=False)
-    best_uniform, _, _, _ = optimization_loop(X, y, X_observed, y_observed, gp, gp_params, acq, num_iters=num_iters)
+    best_uniform, _, _, _, num_top10_uniform = optimization_loop(X, y, X_observed, y_observed, gp, gp_params, uniform, num_iters=num_iters)
+
+    make_plot(best, best_uniform, num_top10_acq, num_top10_uniform, exp_num=2, split_method=split_method, num_iters=num_iters)
 
 
 

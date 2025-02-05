@@ -123,9 +123,9 @@ def compute_pearson(x, y):
 
 
 
-def test_log_likelihood(mean, covar, y_test=None):
+def test_log_likelihood(mean, covar, y_test):
     """
-    Evaluates test log-likelihood given target SMILES strings, mean, and full covariance matrix
+    Evaluates test log-likelihood given target values, mean, and full covariance matrix
     """
     n = len(y_test)
     return multivariate_normal.logpdf(y_test, mean=mean, cov=covar) / n
@@ -144,7 +144,7 @@ def natural_params(gp_params):
 def evaluate_gp(smiles_train,
                 smiles_test,
                 y_train,
-                y_test=None,
+                y_test,
                 fp_type='ecfp',
                 sparse=True,
                 fpSize=2048,
