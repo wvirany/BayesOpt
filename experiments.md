@@ -15,45 +15,37 @@ Histogram of dataset:
 4. Perform BO, starting with initial 10%, measuring best molecule at each iteration
 5. Repeat steps 3-4 five times, then plot the mean best value at each iteration, with error bars representing 1 std
 
-The figures on the left show the results when taking a random split of the BO dataset to train the initial GP. The figures on the right show the results when starting with the bottom 10% of the BO dataset (Note that running ucb in the case where we start with the $n$ worst molecules is the same each time, as there is no random split of the data). The 3 rows of figures correspond to running the experiments with the UCB $\beta$ parameter set to $0.1, 1, \text{ and } 10$, respectively.
+The figures on the left show the highest scoring molecule in the acquired dataset at each iteration. The figures on the right show the number of molecules in the acquired dataset which are in the top 10% of the BO dataset at each iteration. The 3 rows of figures correspond to running the experiments with the UCB $\beta$ parameter set to $0.1, 1, \text{ and } 10$, respectively.
 
 
 <p align="center">
-<img src="figures/bayes_opt/bo2-random-30iters-b.1.png" alt="bo2-random-30iters.png" width="40%"/>
-<img src="figures/bayes_opt/bo2-n_worst-30iters-b.1.png" alt="bo2-n_worst-30iters.png" width="40%"/>
+<img src="figures/bayes_opt/bo-beta0.1.png" alt="bo-beta0.1.png" width="40%"/>
+<img src="figures/bayes_opt/bo-beta0.1-top10.png" alt="bo-beta0.1-top10.png" width="40%"/>
 </p>
 
 <p align="center">
-<img src="figures/bayes_opt/bo2-random-30iters-b1.png" alt="bo2-random-30iters.png" width="40%"/>
-<img src="figures/bayes_opt/bo2-n_worst-30iters-b1.png" alt="bo2-n_worst-30iters.png" width="40%"/>
+<img src="figures/bayes_opt/bo-beta1.0.png" alt="bo-beta1.0.png" width="40%"/>
+<img src="figures/bayes_opt/bo-beta1.0-top10.png" alt="bo-beta1.0-top10.png" width="40%"/>
 </p>
 
 <p align="center">
-<img src="figures/bayes_opt/bo2-random-30iters-b10.png" alt="bo2-random-30iters.png" width="40%"/>
-<img src="figures/bayes_opt/bo2-n_worst-30iters-b10.png" alt="bo2-n_worst-30iters.png" width="40%"/>
+<img src="figures/bayes_opt/bo-beta10.0.png" alt="bo-beta10.0.png" width="40%"/>
+<img src="figures/bayes_opt/bo-beta10.0-top10.png" alt="bo-beta10.0-top10.png" width="40%"/>
 </p>
 
-The following figures show the results for the same experiments as above, but measuring the number of molecules acquired which are in the top 10% of the BO dataset:
-
-<p align="center">
-<img src="figures/bayes_opt/bo2-random-30iters-b.1-top10.png" alt="bo2-random-30iters.png" width="40%"/>
-<img src="figures/bayes_opt/bo2-n_worst-30iters-b.1-top10.png" alt="bo2-n_worst-30iters.png" width="40%"/>
-</p>
-
-<p align="center">
-<img src="figures/bayes_opt/bo2-random-30iters-b1-top10.png" alt="bo2-random-30iters.png" width="40%"/>
-<img src="figures/bayes_opt/bo2-n_worst-30iters-b1-top10.png" alt="bo2-n_worst-30iters.png" width="40%"/>
-</p>
-
-<p align="center">
-<img src="figures/bayes_opt/bo2-random-30iters-b10-top10.png" alt="bo2-random-30iters.png" width="40%"/>
-<img src="figures/bayes_opt/bo2-n_worst-30iters-b10-top10.png" alt="bo2-n_worst-30iters.png" width="40%"/>
-
-<!-- To run:
+To run:
 
 ```py
-python3 bo_exp1.py --split_method 'n_worst' --split 0.1 --num_iters 30
-``` -->
+python3 bo_exp.py 
+```
+
+Parameters:
+
+* `--split`, default: 0.1 (Size of initial set of observed molecules at the start of BO)
+* `--beta`, default: 0.1
+* `--num_iters`, default: 30
+* `--savefig`, default: False (Set true to save figure to `figures/` directory)
+* `--split_method`, default: `random` (Option to choose initial set of observed molecules as bottom fraction of BO dataset, set to `n_worst`)
 
 ## Fingerprint comparison
 
