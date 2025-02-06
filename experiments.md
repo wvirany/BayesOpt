@@ -1,5 +1,11 @@
 # Experiments
 
+1. [Dockstring Comparison](#dockstring-comparison)
+2. [Bayesian Optimization Experiment](#bayesian-optimization-comparison)
+3. [Fingerprint comparison](#fingerprint-comparison)
+
+## Dockstring Comparison
+
 ## Bayesian Optimization Comparison
 
 Histogram of dataset:
