@@ -15,7 +15,7 @@ from functools import lru_cache, partial
 
 
 
-def optimize_params(gp, gp_params, tol=1e-3, max_iters=1000):
+def optimize_params(gp, gp_params, tol=1e-3, max_iters=10000):
     """
     Optimize GP parameters until convergence or max steps reached
     

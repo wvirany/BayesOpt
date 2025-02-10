@@ -1,10 +1,10 @@
 
 ### Thoughts:
 
-* Should we be using consistent GP params? --> Maybe. First, let's see what they are
+* Should we be using consistent GP params for fingerprint comparison? --> Maybe. First, let's see what they are
 * UMAP / t-SNE projections of chemical space: have unobserved in gray, observed in another color
-* Try BO exp 1 for many iters? (e.g., 100+)
-* Try EI acquisition function
+* Try BO exp for many iters? (e.g., 100+)
+* ~~Try EI acquisition function~~
 * Compare preliminary BO experiments to compressed fingerprints
 * ~~Try BO experiments with larger tolerance~~
 * Should we try predicting different endpoints besides logS?
@@ -16,25 +16,32 @@
 
 ### Updates:
 
+* GP param tests helped iron out some issues
+
 * Reran fingerprint comparison on new dataset with exact target values
+
+  $\rightarrow$ more expected results
+
+* BO experiments
+  * Ran EI, varied tradeoff parameter in $\{0.01, 0.1, 1.0\}$
 
 
 ### To Do:
 
-- [ ] Evaluate on polaris competition intermediate benchmark
+- [x] Evaluate on polaris competition intermediate benchmark
 
-- [ ] Run GP param diagnosis with `fcfp` fingerprint to compare
+* ~~[ ] Run GP param diagnosis with `fcfp` fingerprint to compare~~
 
 - [ ] BO Experiments:
 
-  - [ ] Run BO experiments $\geq$ 3 times with different random initializations, plot mean and +- std error bars
-  - [ ] Make histogram of y values, plot vertical lines on histogram and horizontal lines on logS vs. iteration number
-  - [ ] Vary UCB `beta` $\in$ `{0.1, 1.0, 10.0}`
-  - [ ] Implement EI
+  - [x] Run BO experiments $\geq$ 3 times with different random initializations, plot mean and +- std error bars
+  - [x] Make histogram of y values, plot vertical lines on histogram and horizontal lines on logS vs. iteration number
+  - [x] Vary UCB `beta` $\in$ `{0.01, 0.1, 1.0}`
+  - [x] Implement EI
   - [ ] Run BO on harder tasks (Dockstring, PMO, etc.)
 
 
-- [ ] Make script to submit to Polaris benchmarks / competitions (e.g., specify benchmark / endpoint from command line, find best result)
+* ~~[ ] Make script to submit to Polaris benchmarks / competitions (e.g., specify benchmark / endpoint from command line, find best result)~~
 
 - [ ] Make parameters configurable from command line (fptype, sizes, ~~radius~~, ~~tol~~, etc.)
 

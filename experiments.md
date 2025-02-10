@@ -1,7 +1,7 @@
 # Experiments
 
 1. [Dockstring Comparison](#dockstring-comparison)
-2. [Bayesian Optimization Experiment](#bayesian-optimization-comparison)
+2. [Bayesian Optimization Comparison](#bayesian-optimization-comparison)
 3. [Fingerprint comparison](#fingerprint-comparison)
 
 ## Dockstring Comparison
@@ -21,22 +21,23 @@ Histogram of dataset:
 4. Perform BO, starting with initial 10%, measuring best molecule at each iteration
 5. Repeat steps 3-4 five times, then plot the mean best value at each iteration, with error bars representing 1 std
 
-The figures on the left show the highest scoring molecule in the acquired dataset at each iteration. The figures on the right show the number of molecules in the acquired dataset which are in the top 10% of the BO dataset at each iteration. The 3 rows of figures correspond to running the experiments with the UCB $\beta$ parameter set to $0.1, 1, \text{ and } 10$, respectively.
+The figures on the left show the highest scoring molecule in the acquired dataset at each iteration when using the EI acquisition function. The figures on the right show the number of molecules in the acquired dataset which are in the top 10% of the BO dataset at each iteration. The 3 rows of figures correspond to running the experiments with the EI tradeoff parameter set to $0.1, 1, \text{ and } 10$, respectively.
 
+See the same results when using the UCB [here](experiments/ucb.md)
 
 <p align="center">
-<img src="figures/bayes_opt/bo-beta0.1.png" alt="bo-beta0.1.png" width="40%"/>
-<img src="figures/bayes_opt/bo-beta0.1-top10.png" alt="bo-beta0.1-top10.png" width="40%"/>
+<img src="figures/bayes_opt/ei/bo-beta0.01.png" alt="ei/bo-beta0.01.png" width="40%"/>
+<img src="figures/bayes_opt/ei/bo-beta0.01-top10.png" alt="ei/bo-beta0.01-top10.png" width="40%"/>
 </p>
 
 <p align="center">
-<img src="figures/bayes_opt/bo-beta1.0.png" alt="bo-beta1.0.png" width="40%"/>
-<img src="figures/bayes_opt/bo-beta1.0-top10.png" alt="bo-beta1.0-top10.png" width="40%"/>
+<img src="figures/bayes_opt/ei/bo-beta0.1.png" alt="ei/bo-beta0.1.png" width="40%"/>
+<img src="figures/bayes_opt/ei/bo-beta0.1-top10.png" alt="ei/bo-beta0.1-top10.png" width="40%"/>
 </p>
 
 <p align="center">
-<img src="figures/bayes_opt/bo-beta10.0.png" alt="bo-beta10.0.png" width="40%"/>
-<img src="figures/bayes_opt/bo-beta10.0-top10.png" alt="bo-beta10.0-top10.png" width="40%"/>
+<img src="figures/bayes_opt/ei/bo-beta1.0.png" alt="ei/bo-beta1.0.png" width="40%"/>
+<img src="figures/bayes_opt/ei/bo-beta1.0-top10.png" alt="ei/bo-beta1.0-top10.png" width="40%"/>
 </p>
 
 To run:
@@ -48,33 +49,17 @@ python3 bo_exp.py
 Parameters:
 
 * `--split`, default: 0.1 (Size of initial set of observed molecules at the start of BO)
+* `--acq`, default: 'ei' (Acquisiton function; options are EI or UCB)
 * `--beta`, default: 0.1
 * `--num_iters`, default: 30
 * `--savefig`, default: False (Set true to save figure to `figures/` directory)
 * `--split_method`, default: `random` (Option to choose initial set of observed molecules as bottom fraction of BO dataset, set to `n_worst`)
 
-## Fingerprint comparison
+## Fingerprint Comparison
 
 Here we compared the performance of TanimotoGP with different fingerprints, specifically looking at the the performance difference using exact fingerprints vs. fingerprints of a limited size.
 
-Moreover, we varied the `radius` parameter (only applicable for `ecfp` and `fcfp` fingerprint types), with the hypothesis that a larger radius would lead to more hash collisions, and thus there would be an increased gap in performance as we increased the size of the fingerprints.
-
-<!-- 
-### Parameters: `radius=2`:
-
-<p align="center">
-<img src="figures/fp_comparison/r2/r2.png" alt="r2.png" width="100%"/>
-</p>
-
-As expected, the performance improves with as the size of the fingerprint increases.
-
-### Parameters: `radius=4`:
-
-<p align="center">
-<img src="figures/fp_comparison/r4/r4.png" alt="r4.png" width="100%"/>
-</p>
-
-We can see that the increased number of hash collisions decreases performance for limited-size fingerprints. -->
+Moreover, we varied the `radius` parameter (only applicable for `ecfp` and `fcfp` fingerprint types), with the hypothesis that a larger radius would lead to more hash collisions, and thus there would be an increased gap in performance when using uncompressed vs. compressed fingerprints.
 
 
 ### Parameters: `radius=2`, `tol=1e-3`

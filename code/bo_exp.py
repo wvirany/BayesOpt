@@ -7,7 +7,7 @@ from polaris.hub.client import PolarisHubClient
 import tanimoto_gp
 from utils.misc import optimize_params, smiles_to_fp
 from utils.get_data import get_data, split_data
-from utils.acq_funcs import ucb, uniform
+from utils import acq_funcs
 from utils.bo import optimization_loop
 
 import matplotlib.pyplot as plt
@@ -54,13 +54,13 @@ def init_gp(X_observed, y_observed, optimize=True, amp=1.0, noise=1e-2):
 
 
 
-def make_plots(data, beta, savefig=False):
+def make_plots(data, acq, beta, savefig=False):
 
     xs = np.arange(len(data['means']))
 
     plt.figure(1, figsize=(10, 6))
 
-    plt.plot(xs, data['means'], color='midnightblue', label='UCB')
+    plt.plot(xs, data['means'], color='midnightblue', label=acq.upper())
     plt.scatter(xs, data['means'], color='midnightblue', s=7)
     _, caps, bars = plt.errorbar(xs, data['means'], yerr=data['stds'], lw=.75, capsize=2, color='midnightblue')
     for bar in bars:
@@ -83,14 +83,14 @@ def make_plots(data, beta, savefig=False):
     plt.legend()
 
     if savefig:
-        PATH = f'../figures/bayes_opt/bo-beta{beta}.png'
+        PATH = f'../figures/bayes_opt//{acq}/bo-beta{beta}.png'
         # If directory doesn't exist, make it
         os.makedirs(os.path.dirname(PATH), exist_ok=True)
         plt.savefig(PATH, bbox_inches='tight')
 
     plt.figure(2, figsize=(10, 6))
 
-    plt.plot(xs, data['means_top10'], color='midnightblue', label='UCB')
+    plt.plot(xs, data['means_top10'], color='midnightblue', label=acq.upper())
     plt.scatter(xs, data['means_top10'], color='midnightblue', s=7)
     _, caps, bars = plt.errorbar(xs, data['means_top10'], yerr=data['stds_top10'], lw=.75, capsize=2, color='midnightblue')
     for bar in bars:
@@ -109,7 +109,7 @@ def make_plots(data, beta, savefig=False):
     plt.legend()
 
     if savefig:
-        PATH = f'../figures/bayes_opt/bo-beta{beta}-top10.png'
+        PATH = f'../figures/bayes_opt/{acq}/bo-beta{beta}-top10.png'
         # If directory doesn't exist, make it
         os.makedirs(os.path.dirname(PATH), exist_ok=True)
         plt.savefig(PATH, bbox_inches='tight')
@@ -120,6 +120,11 @@ def make_plots(data, beta, savefig=False):
 
 
 def run_exp(split_method, split, acq, beta, num_iters):
+
+    if acq == 'ucb':
+        acq = acq_funcs.ucb
+    elif acq == 'ei':
+        acq = acq_funcs.ei
 
     data = {}
 
@@ -141,7 +146,7 @@ def run_exp(split_method, split, acq, beta, num_iters):
 
         X, X_observed, y, y_observed = split_data(X_init, y_init, split_method=split_method, frac=split, as_list=True, random_seed=i)
         gp, _ = init_gp(X_observed, y_observed, optimize=False)
-        best_uniform, _, _, _, num_top10_uniform = optimization_loop(X, y, X_observed, y_observed, gp, gp_params, uniform, beta, num_iters=num_iters)
+        best_uniform, _, _, _, num_top10_uniform = optimization_loop(X, y, X_observed, y_observed, gp, gp_params, acq_funcs.uniform, beta, num_iters=num_iters)
 
         if i == 0:
             best_5_runs = np.append(best_5_runs, best)
@@ -175,7 +180,7 @@ def main(split_method, split, acq, beta, num_iters, savefig):
 
     data = run_exp(split_method, split, acq, beta, num_iters)
 
-    make_plots(data, beta, savefig)
+    make_plots(data, acq, beta, savefig)
 
 
 
@@ -183,10 +188,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--split_method", type=str, default='random')
     parser.add_argument("--split", type=float, default=0.1)
+    parser.add_argument("--acq", type=str, default='ucb')
     parser.add_argument("--beta", type=float, default=0.1)
     parser.add_argument("--num_iters", type=int, default=30)
     parser.add_argument("--savefig", action='store_true')
 
     args = parser.parse_args()
 
-    main(split_method=args.split_method, split=args.split, acq=ucb, beta=args.beta, num_iters=args.num_iters, savefig=args.savefig)
+    main(split_method=args.split_method, split=args.split, acq=args.acq, beta=args.beta, num_iters=args.num_iters, savefig=args.savefig)
