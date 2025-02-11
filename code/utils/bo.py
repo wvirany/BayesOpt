@@ -1,7 +1,7 @@
 import numpy as np
 from scipy import stats
 
-def optimization_loop(X, y, X_observed, y_observed, gp, gp_params, acq_func, beta, num_iters=30):
+def optimization_loop(X, y, X_observed, y_observed, gp, gp_params, acq_func, epsilon, num_iters=30):
     
     best = []
     num_top10 = 0
@@ -20,7 +20,7 @@ def optimization_loop(X, y, X_observed, y_observed, gp, gp_params, acq_func, bet
 
         print(f"Iter: {i} | Current best: {np.max(best):0.3f} | Percentile: {stats.percentileofscore(y_init, np.max(best)):0.3f} | # Top 10%: {num_top10}")
 
-        idx = acq_func(X, gp, gp_params, beta)
+        idx = acq_func(X, gp, gp_params, epsilon)
 
         X_new = X.pop(idx)
         y_new = y.pop(idx)

@@ -21,23 +21,13 @@ Histogram of dataset:
 4. Perform BO, starting with initial 10%, measuring best molecule at each iteration
 5. Repeat steps 3-4 five times, then plot the mean best value at each iteration, with error bars representing 1 std
 
-The figures on the left show the highest scoring molecule in the acquired dataset at each iteration when using the EI acquisition function. The figures on the right show the number of molecules in the acquired dataset which are in the top 10% of the BO dataset at each iteration. The 3 rows of figures correspond to running the experiments with the EI tradeoff parameter set to $0.1, 1, \text{ and } 10$, respectively.
+The figure on the left show the highest scoring molecule in the acquired dataset at each iteration when using the EI acquisition function. The figure on the right show the number of molecules in the acquired dataset which are in the top 10% of the BO dataset at each iteration.
 
 See the same results when using the UCB [here](experiments/ucb.md)
 
 <p align="center">
-<img src="figures/bayes_opt/ei/bo-beta0.01.png" alt="ei/bo-beta0.01.png" width="40%"/>
-<img src="figures/bayes_opt/ei/bo-beta0.01-top10.png" alt="ei/bo-beta0.01-top10.png" width="40%"/>
-</p>
-
-<p align="center">
-<img src="figures/bayes_opt/ei/bo-beta0.1.png" alt="ei/bo-beta0.1.png" width="40%"/>
-<img src="figures/bayes_opt/ei/bo-beta0.1-top10.png" alt="ei/bo-beta0.1-top10.png" width="40%"/>
-</p>
-
-<p align="center">
-<img src="figures/bayes_opt/ei/bo-beta1.0.png" alt="ei/bo-beta1.0.png" width="40%"/>
-<img src="figures/bayes_opt/ei/bo-beta1.0-top10.png" alt="ei/bo-beta1.0-top10.png" width="40%"/>
+<img src="figures/bayes_opt/ei/bo-epsilon0.01.png" alt="ei/bo-epsilon0.01.png" width="40%"/>
+<img src="figures/bayes_opt/ei/bo-epsilon0.01-top10.png" alt="ei/bo-epsilon0.01-top10.png" width="40%"/>
 </p>
 
 To run:

@@ -2,7 +2,7 @@ import numpy as np
 from scipy.stats import norm
 
 
-def ei(X, gp, gp_params, beta=0.01):
+def ei(X, gp, gp_params, epsilon=0.01):
     """
     Computes the expected improvement (EI) at points X
     using a fitted Gaussian process surrogate model
@@ -11,7 +11,7 @@ def ei(X, gp, gp_params, beta=0.01):
         X: Points at which UCB will be computed (m x d)
         gp: A GP model fitted to samples
         gp_params: Hyperparameters of GP
-        beta: Exploitation-exploration tradeoff parameter
+        epsilon: Exploitation-exploration tradeoff parameter
 
     Returns:
         Index of unobserved data which maximizes EI
@@ -21,11 +21,14 @@ def ei(X, gp, gp_params, beta=0.01):
     mean, var = gp.predict_y(gp_params, X, full_covar=False)
     std = np.sqrt(var)
 
+    # Train mean used to predict incumbent for noisy observations
+    train_mean, _ = gp.predict_y(gp_params, gp._smiles_train, full_covar=False)
+
     # Find incumbent value (current best observation)
-    incumbent = np.max(gp._y_train)
+    incumbent = np.max(train_mean)
 
     # Compute improvement
-    improvement = mean - incumbent - beta
+    improvement = mean - incumbent - epsilon
 
     # Compute Z-score
     z = improvement / std
@@ -36,9 +39,8 @@ def ei(X, gp, gp_params, beta=0.01):
     # Handle numerical issues
     ei = ei.at[std < 1e-10].set(0)
 
-    idx = np.argmax(ei)
-
-    return idx
+    # Maximizer for acquisition function
+    return np.argmax(ei)
 
 
 
@@ -65,15 +67,11 @@ def ucb(X, gp, gp_params, beta=0.1):
     # Calculate upper confidence bound
     ucb = mean + beta * np.sqrt(var)
 
-    idx = np.argmax(ucb)
-
-    return idx
+    return np.argmax(ucb)
 
 
 def uniform(X, gp, gp_params, beta=None):
 
-    # beta is a placeholder
+    # Function arguments (gp, gp_params, beta) are placeholders
 
-    idx = np.random.randint(len(X))
-
-    return idx
+    return np.random.randint(len(X))
