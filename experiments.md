@@ -23,8 +23,6 @@ Histogram of dataset:
 
 The figure on the left show the highest scoring molecule in the acquired dataset at each iteration when using the EI acquisition function. The figure on the right show the number of molecules in the acquired dataset which are in the top 10% of the BO dataset at each iteration.
 
-See the same results when using the UCB [here](experiments/ucb.md)
-
 <p align="center">
 <img src="figures/bayes_opt/ei/bo-epsilon0.01.png" alt="ei/bo-epsilon0.01.png" width="40%"/>
 <img src="figures/bayes_opt/ei/bo-epsilon0.01-top10.png" alt="ei/bo-epsilon0.01-top10.png" width="40%"/>
@@ -40,10 +38,12 @@ Parameters:
 
 * `--split`, default: 0.1 (Size of initial set of observed molecules at the start of BO)
 * `--acq`, default: 'ei' (Acquisiton function; options are EI or UCB)
-* `--beta`, default: 0.1
+* `--epsilon`, default: 0.01
 * `--num_iters`, default: 30
 * `--savefig`, default: False (Set true to save figure to `figures/` directory)
 * `--split_method`, default: `random` (Option to choose initial set of observed molecules as bottom fraction of BO dataset, set to `n_worst`)
+
+See the same results when using UCB [here](experiments/ucb.md)
 
 ## Fingerprint Comparison
 

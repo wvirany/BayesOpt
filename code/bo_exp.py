@@ -207,7 +207,7 @@ if __name__ == "__main__":
     parser.add_argument("--split_method", type=str, default='random')
     parser.add_argument("--split", type=float, default=0.1)
     parser.add_argument("--acq", type=str, default='ucb')
-    parser.add_argument("--epsilon", type=float, default=0.1)
+    parser.add_argument("--epsilon", type=float, default=0.01)
     parser.add_argument("--num_iters", type=int, default=30)
     parser.add_argument("--savefig", action='store_true')
 
