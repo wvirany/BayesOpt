@@ -8,15 +8,17 @@
 
 ### Regression experiments
 
-**Experiment setup**
+**Experiment setup:**
 1. Download dockstring dataset
-2. Train GP model on subset of 10k molecules, evalua*te on entire test set (~38k molecules)
-3. Evaluate R2 on `PARP1` and `F2` targets
+2. Train GP model on subset of 10k molecules, evaluate on entire test set (~38k molecules)
+3. Evaluate R2 score on `PARP1` and `F2` targets
+
+**Results:**
 
 * `PARP1`: 0.866
 * `F2`: 0.833
 
-#### Benchmark:
+**Benchmark:**
 
 <p align="center">
 <img src="figures/dockstring/benchmark.png" alt="benchmark.png" width="60%"/>
