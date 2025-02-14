@@ -1,3 +1,5 @@
+# A Gaussian Process Library for Exact Molecular Fingerprints
+
 ## Experiments
 
 For details on experiments, see [experiments.md](./experiments.md)

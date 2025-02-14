@@ -11,13 +11,16 @@
 * Is `gp.set_training_data()` the right method to update GP posterior?
 
 
+## Feb. 9
+
+
 ## TO DO:
 
-* EI in noisy case (posterior mean implementation)
-* for BO plots, show median, min, max (or 25th / 75th percentile) instead of mean, std
-* Dockstring:
-  * regression benchmark to see initial performance (difference between compresed / uncompressed)
-  * BO benchmark / Virutal screening (expensive)
+- [x] EI in noisy case (posterior mean implementation)
+- [x] BO plots: show median, min, max (or 25th / 75th percentile) instead of mean, std
+- [ ] Dockstring:
+  - [x] regression benchmark to see initial performance (difference between compresed / uncompressed)
+  - [ ] BO benchmark / Virutal screening (expensive)
 
 For now:
   * Take dataset used for regression, design our own BO experiment (regresion benchmark first, should perform better than other GPs in paper)
@@ -42,7 +45,7 @@ For now:
 
 - [x] Evaluate on polaris competition intermediate benchmark
 
-* ~~[ ] Run GP param diagnosis with `fcfp` fingerprint to compare~~
+- ~~[ ] Run GP param diagnosis with `fcfp` fingerprint to compare~~
 
 - [ ] BO Experiments:
 

@@ -26,7 +26,7 @@ def init_gp(smiles_train, y_train):
 
 
 
-def get_dataset(n_train=10000):
+def get_dataset(n_train=10000, target='PARP1'):
     dataset_path = Path('data/dockstring-dataset.tsv')
     assert dataset_path.exists()
 
@@ -49,8 +49,8 @@ def get_dataset(n_train=10000):
     smiles_train = df_train_10k["smiles"].values
     smiles_test = df_test["smiles"].values
 
-    y_train = np.minimum(df_train_10k['PARP1'].values, 5.0)
-    y_test = np.minimum(df_test['PARP1'].values, 5.0)
+    y_train = np.minimum(df_train_10k[target].values, 5.0)
+    y_test = np.minimum(df_test[target].values, 5.0)
 
     smiles_train = smiles_train[~np.isnan(y_train)]
     y_train_nonan = y_train[~np.isnan(y_train)]
@@ -62,9 +62,9 @@ def get_dataset(n_train=10000):
 
 
 
-def main(from_checkpoint=False, path=None, n_train=10000):
+def main(from_checkpoint=False, path=None, n_train=10000, target='PARP1'):
 
-    smiles_train, smiles_test, y_train, y_test = get_dataset(n_train=n_train)
+    smiles_train, smiles_test, y_train, y_test = get_dataset(n_train=n_train, target=target)
 
     print(f"Train size: {len(smiles_train)}\nTest size: {len(smiles_test)}")
 
@@ -77,8 +77,8 @@ def main(from_checkpoint=False, path=None, n_train=10000):
     
     print(gp_params)
 
-    smiles_test = smiles_test[:2000]
-    y_test = y_test[:2000]
+    smiles_test = smiles_test
+    y_test = y_test
     
     mean, _ = gp.predict_y(gp_params, smiles_test, full_covar=False)
 
@@ -94,6 +94,7 @@ if __name__ == "__main__":
     parser.add_argument("--from_checkpoint", action="store_true")
     parser.add_argument("--path", type=str, default=None)
     parser.add_argument("--n_train", type=int, default=10000)
+    parser.add_argument("--target", type=str, default='PARP1')
 
     args = parser.parse_args()
 
@@ -101,4 +102,4 @@ if __name__ == "__main__":
     if args.path is None:
         parser.error("--path must be specified")
 
-    main(from_checkpoint=args.from_checkpoint, path=args.path, n_train=args.n_train)
+    main(from_checkpoint=args.from_checkpoint, path=args.path, n_train=args.n_train, target=args.target)

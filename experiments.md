@@ -6,6 +6,16 @@
 
 ## Dockstring Comparison
 
+### Regression experiments
+
+**Experiment setup**
+1. Download dockstring dataset
+2. Train GP model on subset of 10k molecules, evalua*te on entire test set (~38k molecules)
+3. Evaluate R2 on `PARP1` and `F2` targets
+
+* `PARP1`: 0.866
+
+
 ## Bayesian Optimization Comparison
 
 Histogram of dataset:
