@@ -4,6 +4,8 @@
 2. [Bayesian Optimization Comparison](#bayesian-optimization-comparison)
 3. [Fingerprint comparison](#fingerprint-comparison)
 
+**Note:** All experiments must be ran from the `code/` directory.
+
 ## Dockstring Comparison
 
 ### Regression experiments
@@ -23,6 +25,20 @@
 <p align="center">
 <img src="figures/dockstring/benchmark.png" alt="benchmark.png" width="60%"/>
 </p>
+
+To run:
+
+```py
+python3 dockstring-regression.py 
+```
+
+Parameters:
+
+* `--from_checkpoint`, default: False (Set to true to load trained model from `models/` directory)
+* `--path` (Specify model path)
+* `--n_train`, default: 10000 (Number of training samples)
+* `--target`, default: "PARP1" (Regression target)
+
 
 
 ## Bayesian Optimization Comparison
@@ -63,6 +79,8 @@ Parameters:
 * `--split_method`, default: `random` (Option to choose initial set of observed molecules as bottom fraction of BO dataset, set to `n_worst`)
 
 See the same results when using UCB [here](experiments/ucb.md)
+
+
 
 ## Fingerprint Comparison
 
