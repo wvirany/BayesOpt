@@ -19,13 +19,9 @@
 - [x] EI in noisy case (posterior mean implementation)
 - [x] BO plots: show median, min, max (or 25th / 75th percentile) instead of mean, std
 - [ ] Dockstring:
-  - [x] regression benchmark to see initial performance (difference between compresed / uncompressed)
+  - [x] Regression benchmark to see initial performance (PARP1, F2)
+  - [ ] Design our own BO experiment first
   - [ ] BO benchmark / Virutal screening (expensive)
-
-For now:
-  * Take dataset used for regression, design our own BO experiment (regresion benchmark first, should perform better than other GPs in paper)
-  * regression: train on subset of size 10k
-
 
 ## February
 

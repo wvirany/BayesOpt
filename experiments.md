@@ -14,6 +14,13 @@
 3. Evaluate R2 on `PARP1` and `F2` targets
 
 * `PARP1`: 0.866
+* `F2`: 0.833
+
+#### Benchmark:
+
+<p align="center">
+<img src="figures/dockstring/benchmark.png" alt="benchmark.png" width="60%"/>
+</p>
 
 
 ## Bayesian Optimization Comparison
