@@ -23,7 +23,7 @@ Model uses sparse count ECFP with radius 2, baseline uses bit ECFP with size 102
 | Target | Baseline | Sparse FP |
 | ----- | ----- | ----- |
 | PARP1 | .717 | **.866** |
-| F2 | - | **.833** | 
+| F2 | .699 | **.833** | 
 
 
 **Benchmark:**

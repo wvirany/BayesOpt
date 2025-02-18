@@ -89,8 +89,6 @@ def main(from_checkpoint=False, path=None, n_train=10000, target='PARP1', config
         gp, gp_params = init_gp(smiles_train, y_train, config_fp=config_fp)
         GPCheckpoint.save_gp_checkpoint(gp, gp_params, path)
     
-    print(gp_params)
-
     smiles_test = smiles_test
     y_test = y_test
     
