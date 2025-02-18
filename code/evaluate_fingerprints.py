@@ -10,7 +10,6 @@ import seaborn as sns
 import os
 import pickle
 import argparse
-from functools import partial
 import warnings
 warnings.filterwarnings("ignore")
 

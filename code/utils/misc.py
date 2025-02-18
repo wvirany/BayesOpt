@@ -56,7 +56,7 @@ def optimize_params(gp, gp_params, tol=1e-3, max_iters=10000):
 
 
 @lru_cache(maxsize=100_000)
-def smiles_to_fp(smiles: str, fp_type: str = 'ecfp', sparse=True, fpSize=2048, radius=2):
+def smiles_to_fp(smiles: str, fp_type: str = 'ecfp', sparse=True, count=True, fpSize=2048, radius=2):
     """
     Convert smiles to sparse count fingerprint of given type
 
@@ -100,9 +100,13 @@ def smiles_to_fp(smiles: str, fp_type: str = 'ecfp', sparse=True, fpSize=2048, r
             use2D=True,  # use 2D (topological) distances rather than 3D
             fpSize=fpSize
         )
-    
-    # Returns sparse fingerprint if sparse=True, otherwise returns fingerprint of specified size
-    return fpgen.GetSparseCountFingerprint(mol) if sparse else fpgen.GetCountFingerprint(mol)
+
+    if count:
+        # Returns sparse fingerprint if sparse=True, otherwise returns fingerprint of specified size
+        return fpgen.GetSparseCountFingerprint(mol) if sparse else fpgen.GetCountFingerprint(mol)
+    elif ~count:
+        # Returns sparse fingerprint if sparse=True, otherwise returns fingerprint of specified size
+        return fpgen.GetSparseFingerprint(mol) if sparse else fpgen.GetFingerprint(mol)
 
 
 

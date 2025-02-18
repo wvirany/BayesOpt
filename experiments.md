@@ -17,8 +17,13 @@
 
 **Results:**
 
-* `PARP1`: 0.866
-* `F2`: 0.833
+| Target | Baseline | Sparse FP |
+| ----- | ----- | ----- |
+| PARP1 | .717 | **.866** |
+| F2 | - | **.833** | 
+
+Baseline follows same procedure as above, using 1024 ecfp bit fingerprint
+
 
 **Benchmark:**
 
