@@ -11,6 +11,9 @@
 ### Regression experiments
 
 **Experiment setup:**
+
+Model uses sparse count ECFP with radius 2, baseline uses bit ECFP with size 1024 and radius 1.
+
 1. Download dockstring dataset
 2. Train GP model on subset of 10k molecules, evaluate on entire test set (~38k molecules)
 3. Evaluate R2 score on `PARP1` and `F2` targets
@@ -21,8 +24,6 @@
 | ----- | ----- | ----- |
 | PARP1 | .717 | **.866** |
 | F2 | - | **.833** | 
-
-Baseline follows same procedure as above, using 1024 ecfp bit fingerprint
 
 
 **Benchmark:**
