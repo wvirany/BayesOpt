@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from sklearn.model_selection import train_test_split
 
 import polaris as po
@@ -7,16 +8,10 @@ from polaris.hub.client import PolarisHubClient
 from rdkit import Chem
 from rdkit.Chem import Crippen
 
+from pathlib import Path
 import warnings
 warnings.filterwarnings("ignore")
 
-
-# Login to Polaris
-client = PolarisHubClient()
-client.login()
-
-
-DATASET = "biogen/adme-fang-v1"
 
 
 def split_data(X, y, split_method, frac, as_list=False, random_seed=1):
@@ -40,7 +35,11 @@ def split_data(X, y, split_method, frac, as_list=False, random_seed=1):
         return X, X_observed, y, y_observed
 
 
-def get_data(dataset=DATASET, endpoint='LOG_SOLUBILITY', split=False, split_method='random', frac=0.1, as_list=False):
+def get_data(dataset='biogen/adme-fang-v1', endpoint='LOG_SOLUBILITY', split=False, split_method='random', frac=0.1, as_list=False):
+
+    # Login to Polaris
+    client = PolarisHubClient()
+    client.login()
 
     dataset = po.load_dataset(dataset)
 
@@ -68,3 +67,39 @@ def get_data(dataset=DATASET, endpoint='LOG_SOLUBILITY', split=False, split_meth
             return list(X), list(y)
         else:
             return X, y
+        
+
+
+def get_dockstring_dataset(n_train=10000, target='PARP1'):
+    dataset_path = Path('data/dockstring-dataset.tsv')
+    assert dataset_path.exists()
+
+    dataset_split_path = Path('data/cluster_split.tsv')
+    assert dataset_split_path.exists()
+
+    df = pd.read_csv(dataset_path, sep="\t")
+
+    splits = (
+        pd.read_csv(dataset_split_path, sep="\t")
+        .loc[df.index]
+    )
+
+    # Create train and test datasets
+    df_train = df[splits["split"] == "train"]
+    df_test = df[splits["split"] == "test"]
+
+    df_train_10k = df_train.sample(n=n_train, random_state=42)
+
+    smiles_train = df_train_10k["smiles"].values
+    smiles_test = df_test["smiles"].values
+
+    y_train = np.minimum(df_train_10k[target].values, 5.0)
+    y_test = np.minimum(df_test[target].values, 5.0)
+
+    smiles_train = smiles_train[~np.isnan(y_train)]
+    y_train_nonan = y_train[~np.isnan(y_train)]
+
+    smiles_test = smiles_test[~np.isnan(y_test)]
+    y_test_nonan = y_test[~np.isnan(y_test)]
+
+    return smiles_train, smiles_test, y_train_nonan, y_test_nonan

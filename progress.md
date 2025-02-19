@@ -20,8 +20,7 @@
 - [x] BO plots: show median, min, max (or 25th / 75th percentile) instead of mean, std
 - [ ] Dockstring:
   - [x] Regression benchmark to see initial performance (PARP1, F2)
-  - [ ] Design our own BO experiment first
-  - [ ] BO benchmark / Virutal screening (expensive)
+  - [ ] Dockstring BO experiment (initialize on 1000 molecules, run BO w/ budget of 1000)
 
 ## February
 

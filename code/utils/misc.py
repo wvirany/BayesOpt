@@ -55,6 +55,32 @@ def optimize_params(gp, gp_params, tol=1e-3, max_iters=10000):
 
 
 
+def init_gp(smiles_train, y_train, amp=1.0, noise=1e-2, fp_params=None):
+
+    if fp_params:
+        fp_func = config_fp_func(fp_params)
+        gp = tanimoto_gp.TanimotoGP(fp_func, smiles_train, y_train)
+    else:
+        gp = tanimoto_gp.TanimotoGP(smiles_to_fp, smiles_train, y_train)
+
+    gp_params = tanimoto_gp.TanimotoGP_Params(raw_amplitude=jnp.asarray(amp), raw_noise=jnp.asarray(noise))
+    gp_params = optimize_params(gp, gp_params, tol=1e-3, max_iters=10000)
+
+    return gp, gp_params
+
+
+"""
+TO DO: 
+Make this configurable with **fp_params
+"""
+def config_fp_func(fp_type='ecfp', sparse=False, count=False, fpSize=1024, radius=1):
+
+    fp_func = partial(smiles_to_fp, fp_type=fp_type, sparse=sparse, count=count, fpSize=fpSize, radius=radius)
+
+    return fp_func
+
+
+
 @lru_cache(maxsize=100_000)
 def smiles_to_fp(smiles: str, fp_type: str = 'ecfp', sparse=True, count=True, fpSize=2048, radius=2):
     """
