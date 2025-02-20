@@ -1,14 +1,15 @@
 
 ### Thoughts:
 
-* Should we be using consistent GP params for fingerprint comparison? --> Maybe. First, let's see what they are
+* ~~Should we be using consistent GP params for fingerprint comparison? --> Maybe. First, let's see what they are~~
 * UMAP / t-SNE projections of chemical space: have unobserved in gray, observed in another color
-* Try BO exp for many iters? (e.g., 100+)
+* ~~Try BO exp for many iters? (e.g., 100+)~~
 * ~~Try EI acquisition function~~
 * Compare preliminary BO experiments to compressed fingerprints
 * ~~Try BO experiments with larger tolerance~~
-* Should we try predicting different endpoints besides logS?
+* ~~Should we try predicting different endpoints besides logS?~~
 * Is `gp.set_training_data()` the right method to update GP posterior?
+* Can check internal diversity of a dataset for regression / BO tasks to understand how likely hash collisions are
 
 
 ## Feb. 9
@@ -16,11 +17,20 @@
 
 ## TO DO:
 
+#### Experiments:
+
 - [x] EI in noisy case (posterior mean implementation)
 - [x] BO plots: show median, min, max (or 25th / 75th percentile) instead of mean, std
 - [ ] Dockstring:
   - [x] Regression benchmark to see initial performance (PARP1, F2)
-  - [ ] Dockstring BO experiment (initialize on 1000 molecules, run BO w/ budget of 1000)
+  - [x] Dockstring BO experiment (initialize on ~~1000~~ 100 molecules, run BO w/ budget of ~~1000~~ 100)
+    - [x] Evaluate radiuses 2 and 4 on targets PARP1 and F2
+    - [ ] Compare each to corresponding compressed fingerprints
+
+#### Other: 
+
+- [ ] Configurable fingerprint and BO parameters from command line
+- [ ] Script for making Dockstring BO plots
 
 ## February
 
@@ -42,18 +52,18 @@
 
 - ~~[ ] Run GP param diagnosis with `fcfp` fingerprint to compare~~
 
-- [ ] BO Experiments:
+- [x] BO Experiments:
 
   - [x] Run BO experiments $\geq$ 3 times with different random initializations, plot mean and +- std error bars
   - [x] Make histogram of y values, plot vertical lines on histogram and horizontal lines on logS vs. iteration number
   - [x] Vary UCB `beta` $\in$ `{0.01, 0.1, 1.0}`
   - [x] Implement EI
-  - [ ] Run BO on harder tasks (Dockstring, PMO, etc.)
+  - ~~[ ] Run BO on harder tasks (Dockstring, PMO, etc.)~~
 
 
 * ~~[ ] Make script to submit to Polaris benchmarks / competitions (e.g., specify benchmark / endpoint from command line, find best result)~~
 
-- [ ] Make parameters configurable from command line (fptype, sizes, ~~radius~~, ~~tol~~, etc.)
+- ~~[ ] Make parameters configurable from command line (fptype, sizes, ~~radius~~, ~~tol~~, etc.)~~
 
 
 ## January

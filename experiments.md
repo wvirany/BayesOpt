@@ -8,7 +8,57 @@
 
 ## Dockstring Comparison
 
-### Regression experiments
+### BO Experiments
+
+Here we are comparing BO procedures when using four different fingerprint types:
+
+* Uncompressed count ECFP, radius 2
+* Compressed count ECFP, size 1024, radius 2
+* Uncompressed count ECFP, radius 4
+* Compressed count ECFP, size 1024, radius 4
+
+**Dataset:**
+
+Dataset is training dataset from Dockstring (10k molecules). Initial observations are randomly sampled from bottom 80% of dataset. Distributions are shown:
+
+<p align="center">
+<img src="figures/dockstring/parp1-dataset.png" alt="parp1-dataset.png" width="40%"/>
+<img src="figures/dockstring/f2-dataset.png" alt="f2-dataset.png" width="40%"/>
+</p>
+
+**Experiment setup:**
+
+1. Initialize GP on 100 molecules taken from bottom 80% of dataset
+2. Perform BO with budget of 100
+3. Measure best molecule, and average of top 10 molecules at each iteration
+4. Perform for `PARP1` and `F2` targets
+
+
+**Results:**
+
+<p align="center">
+<img src="figures/dockstring/bo-parp1-r2-top1.png" alt="bo-parp1-r2-top1" width="40%"/>
+<img src="figures/dockstring/bo-parp1-r2-top10.png" alt="bo-parp1-r2-top10" width="40%"/>
+</p>
+
+<p align="center">
+<img src="figures/dockstring/bo-parp1-r4-top1.png" alt="bo-parp1-r4-top1" width="40%"/>
+<img src="figures/dockstring/bo-parp1-r4-top10.png" alt="bo-parp1-r4-top10" width="40%"/>
+</p>
+
+<p align="center">
+<img src="figures/dockstring/bo-f2-r2-top1.png" alt="bo-f2-r2-top1" width="40%"/>
+<img src="figures/dockstring/bo-f2-r2-top10.png" alt="bo-f2-r2-top10" width="40%"/>
+</p>
+
+<p align="center">
+<img src="figures/dockstring/bo-f2-r4-top1.png" alt="bo-f2-r4-top1" width="40%"/>
+<img src="figures/dockstring/bo-f2-r4-top10.png" alt="bo-f2-r4-top10" width="40%"/>
+</p>
+
+
+
+### Regression Experiments
 
 **Experiment setup:**
 

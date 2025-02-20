@@ -46,7 +46,7 @@ def get_data(target="PARP1", n_init=1000):
 
 
 
-def main(from_checkpoint, PATH, n_init, target, fp_params, bo_params):
+def main(from_checkpoint, PATH, n_init, target, sparse, radius, budget):
 
     data = {}
 
@@ -54,22 +54,22 @@ def main(from_checkpoint, PATH, n_init, target, fp_params, bo_params):
     
         X, X_init, y, y_init = get_data(target, n_init)
 
-        if from_checkpoint:
-            gp, gp_params = GPCheckpoint.load_gp_checkpoint(PATH)
-        else:
-            gp, gp_params = init_gp(X_init, y_init, fp_params=True)
+        gp, gp_params = init_gp(X_init, y_init, radius=radius)
 
-        best, top10, _, _, _ = bo.optimization_loop(X, y, X_init, y_init, gp, gp_params, acq_funcs.ei, epsilon=.01, num_iters=1000)
+        best, top10, _, _, _ = bo.optimization_loop(X, y, X_init, y_init, gp, gp_params, acq_funcs.ei, epsilon=.01, num_iters=budget)
 
         data[i] = (best, top10)
 
-    DATAPATH = f'data/dockstring-bo/results-{target}-compressed-r4.pkl'
+    if sparse:
+        DATAPATH = f'data/dockstring-bo/results-{target}-sparse-r{radius}.pkl'
+    else:
+        DATAPATH = f'data/dockstring-bo/results-{target}-compressed-r{radius}.pkl'
+
     # If directory doesn't exist, make it
     os.makedirs(os.path.dirname(DATAPATH), exist_ok=True)
 
     with open(DATAPATH, 'wb') as f:
         pickle.dump(data, f)
-
 
 
 
@@ -80,8 +80,9 @@ if __name__ == "__main__":
     parser.add_argument("--path", type=str, default=None)
     parser.add_argument("--n_init", type=int, default=1000)
     parser.add_argument("--target", type=str, default='PARP1')
-    parser.add_argument("--fp_params", type=dict, default=None)
-    parser.add_argument("--bo_params", type=dict, default=None)
+    parser.add_argument("--sparse", action="store_true")
+    parser.add_argument("--radius", type=int, default=2)
+    parser.add_argument("--budget", type=int, default=1000)
 
     args = parser.parse_args()
 
@@ -89,4 +90,4 @@ if __name__ == "__main__":
     if args.path is None and args.from_checkpoint:
         parser.error("--path must be specified when loading a model")
 
-    main(from_checkpoint=args.from_checkpoint, PATH=args.path, n_init=args.n_init, target=args.target, fp_params=args.fp_params, bo_params=args.bo_params)
+    main(from_checkpoint=args.from_checkpoint, PATH=args.path, n_init=args.n_init, target=args.target, sparse=args.sparse, radius=args.radius, budget=args.budget)
