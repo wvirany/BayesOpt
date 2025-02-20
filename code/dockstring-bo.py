@@ -29,18 +29,17 @@ sns.set_palette('muted')
 
 def get_data(target="PARP1", n_init=1000):
 
-    smiles, _, docking_scores, _ = get_dockstring_dataset(target=target)
+    smiles_train, smiles_test, y_train, y_test = get_dockstring_dataset(target=target)
 
-    neg_docking_scores = -docking_scores
+    n = len(smiles_train)
 
-    cutoff = np.percentile(neg_docking_scores, 80)
-    bottom_80_indices = np.where(neg_docking_scores <= cutoff)[0]
-    sampled_indices = np.random.choice(bottom_80_indices, size=n_init, replace=False)
-    bottom_80_complement = np.setdiff1d(bottom_80_indices, sampled_indices)
-    top_20_indices = np.where(neg_docking_scores > cutoff)[0]
-    complement_indices = np.concatenate([bottom_80_complement, top_20_indices])
+    y_train, y_test = -y_train, -y_test
 
-    X, X_init, y, y_init = smiles[complement_indices], smiles[sampled_indices], neg_docking_scores[complement_indices], neg_docking_scores[sampled_indices]
+    sampled_indices = np.random.choice(np.arange(n), size=n_init)
+    complement_indices = np.setdiff1d(np.arange(n), sampled_indices)
+
+    X_init, y_init = smiles_train[sampled_indices], y_train[sampled_indices]
+    X, y = np.concatenate([smiles_train[complement_indices], smiles_test]), np.concatenate([y_train[complement_indices], y_test])
 
     return X, X_init, y, y_init
 
@@ -50,20 +49,21 @@ def get_data(target="PARP1", n_init=1000):
 def main(from_checkpoint, PATH, n_init, target, fp_params, bo_params):
 
     data = {}
+
+    for i in range(3):
     
-    X, X_init, y, y_init = get_data(target, n_init)
+        X, X_init, y, y_init = get_data(target, n_init)
 
-    if from_checkpoint:
-        gp, gp_params = GPCheckpoint.load_gp_checkpoint(PATH)
-    else:
-        gp, gp_params = init_gp(X_init, y_init)
-        GPCheckpoint.save_gp_checkpoint(gp, gp_params, PATH)
+        if from_checkpoint:
+            gp, gp_params = GPCheckpoint.load_gp_checkpoint(PATH)
+        else:
+            gp, gp_params = init_gp(X_init, y_init, fp_params=True)
 
-    best, top10, _, _, _ = bo.optimization_loop(X, y, X_init, y_init, gp, gp_params, acq_funcs.ei, epsilon=.01, num_iters=1000)
+        best, top10, _, _, _ = bo.optimization_loop(X, y, X_init, y_init, gp, gp_params, acq_funcs.ei, epsilon=.01, num_iters=1000)
 
-    data[1] = (best, top10)
+        data[i] = (best, top10)
 
-    DATAPATH = 'data/dockstring-bo/results.pkl'
+    DATAPATH = f'data/dockstring-bo/results-{target}-compressed-r4.pkl'
     # If directory doesn't exist, make it
     os.makedirs(os.path.dirname(DATAPATH), exist_ok=True)
 
@@ -86,7 +86,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # If loading checkpoint, model path must be included
-    if args.path is None:
-        parser.error("--path must be specified")
+    if args.path is None and args.from_checkpoint:
+        parser.error("--path must be specified when loading a model")
 
     main(from_checkpoint=args.from_checkpoint, PATH=args.path, n_init=args.n_init, target=args.target, fp_params=args.fp_params, bo_params=args.bo_params)

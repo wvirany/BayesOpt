@@ -12,7 +12,7 @@ def optimization_loop(X, y, X_observed, y_observed, gp, gp_params, acq_func, eps
     
     for i in range(1, num_iters+1):
 
-        print(f"Iter: {i} | Current best: {np.max(best):0.3f} | Top 10: {top10[-1]}")
+        print(f"Iter: {i} | Current best: {np.max(best):0.3f} | Top 10: {top10[-1]:0.3f}")
 
         idx = acq_func(X, gp, gp_params, epsilon)
 

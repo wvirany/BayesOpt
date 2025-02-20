@@ -54,11 +54,14 @@ def optimize_params(gp, gp_params, tol=1e-3, max_iters=10000):
     return gp_params
 
 
-
+"""
+TO DO: 
+Make this configurable with fp_params dict
+"""
 def init_gp(smiles_train, y_train, amp=1.0, noise=1e-2, fp_params=None):
 
     if fp_params:
-        fp_func = config_fp_func(fp_params)
+        fp_func = config_fp_func()
         gp = tanimoto_gp.TanimotoGP(fp_func, smiles_train, y_train)
     else:
         gp = tanimoto_gp.TanimotoGP(smiles_to_fp, smiles_train, y_train)
@@ -73,7 +76,7 @@ def init_gp(smiles_train, y_train, amp=1.0, noise=1e-2, fp_params=None):
 TO DO: 
 Make this configurable with **fp_params
 """
-def config_fp_func(fp_type='ecfp', sparse=False, count=False, fpSize=1024, radius=1):
+def config_fp_func(fp_type='ecfp', sparse=False, count=True, fpSize=1024, radius=4):
 
     fp_func = partial(smiles_to_fp, fp_type=fp_type, sparse=sparse, count=count, fpSize=fpSize, radius=radius)
 
