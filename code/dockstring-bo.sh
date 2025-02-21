@@ -4,8 +4,8 @@
 PYTHON_SCRIPT="dockstring-bo.py"  # Replace with your actual script name
 
 # Default parameters that stay constant
-N_INIT=10
-BUDGET=1
+N_INIT=100
+BUDGET=100
 
 # Loop through all combinations
 for radius in 2 4; do
