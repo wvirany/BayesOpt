@@ -32,7 +32,7 @@ Dataset is training dataset from Dockstring (10k molecules). Initial observation
 2. Perform BO with budget of 100
 3. Measure best molecule, and average of top 10 molecules at each iteration
 4. Perform for `PARP1` and `F2` targets
-
+5. Repeat for 3 different splits of dataset, plot median, min, and max for best molecule and top 10 at each iteration
 
 **Results:**
 
