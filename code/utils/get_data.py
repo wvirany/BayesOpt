@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-import polaris as po
-from polaris.hub.client import PolarisHubClient
+# import polaris as po
+# from polaris.hub.client import PolarisHubClient
 
 from rdkit import Chem
 from rdkit.Chem import Crippen
@@ -71,10 +71,10 @@ def get_data(dataset='biogen/adme-fang-v1', endpoint='LOG_SOLUBILITY', split=Fal
 
 
 def get_dockstring_dataset(n_train=10000, target='PARP1'):
-    dataset_path = Path('data/dockstring-dataset.tsv')
+    dataset_path = Path('/projects/wavi0116/code/BayesOpt/data/dockstring-dataset.tsv')
     assert dataset_path.exists()
 
-    dataset_split_path = Path('data/cluster_split.tsv')
+    dataset_split_path = Path('/projects/wavi0116/code/BayesOpt/data/cluster_split.tsv')
     assert dataset_split_path.exists()
 
     df = pd.read_csv(dataset_path, sep="\t")

@@ -41,10 +41,10 @@ def init_gp(smiles_train, y_train, config_fp=False):
 
 
 def get_dataset(n_train=10000, target='PARP1'):
-    dataset_path = Path('data/dockstring-dataset.tsv')
+    dataset_path = Path('/projects/wavi0116/code/BayesOpt/data/dockstring-dataset.tsv')
     assert dataset_path.exists()
 
-    dataset_split_path = Path('data/cluster_split.tsv')
+    dataset_split_path = Path('/projects/wavi0116/code/BayesOpt/data/cluster_split.tsv')
     assert dataset_split_path.exists()
 
     df = pd.read_csv(dataset_path, sep="\t")
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # If loading checkpoint, model path must be included
-    if args.path is None:
-        parser.error("--path must be specified")
+    # if args.path is None:
+    #     parser.error("--path must be specified")
 
     main(from_checkpoint=args.from_checkpoint, path=args.path, n_train=args.n_train, target=args.target, config_fp=args.config_fp)

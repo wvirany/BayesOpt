@@ -1,7 +1,9 @@
 **/__pycache__
 *.pkl
 *-dev.ipynb
+**/.ipynb_checkpoints
 
-code/data
-code/raw_data_package
+code/logs
 code/models
+code/results
+data

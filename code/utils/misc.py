@@ -14,7 +14,6 @@ from rdkit.Chem import Crippen
 from functools import lru_cache, partial
 
 
-
 def optimize_params(gp, gp_params, tol=1e-3, max_iters=10000):
     """
     Optimize GP parameters until convergence or max steps reached
@@ -26,27 +25,55 @@ def optimize_params(gp, gp_params, tol=1e-3, max_iters=10000):
         max_steps: Maximum optimization steps (default 1000)
     """
 
+    # Compute minimum noise value
+    var_y = jnp.var(gp._y_train)
+    min_noise = 1e-4 * var_y
+    min_raw_noise = jnp.log(jnp.exp(min_noise) - 1)
+
     print(f"Start MLL: {gp.marginal_log_likelihood(params=gp_params)}")
 
     optimizer = optax.adam(1e-2)
     opt_state = optimizer.init(gp_params)
 
-    @jax.jit
+    # Perform one step of gradient descent
     def step(params, opt_state):
         loss, grads = jax.value_and_grad(lambda x: -gp.marginal_log_likelihood(x))(params)
         grad_norm = jnp.linalg.norm(jnp.array(grads))
         updates, opt_state = optimizer.update(grads, opt_state)
         params = optax.apply_updates(params, updates)
-        return params, opt_state, grad_norm, loss
+
+        min_noise_reached = False
+
+        # Gradient clipping for stability
+        noise = tanimoto_gp.TRANSFORM(params.raw_noise)
+        if noise < min_noise:
+            params = tanimoto_gp.TanimotoGP_Params(
+                raw_amplitude=params.raw_amplitude,
+                raw_noise=min_raw_noise
+            )
+            min_noise_reached = True
+
+        return params, opt_state, grad_norm, loss, min_noise_reached
 
     # Run optimization loop
     for i in range(max_iters):
 
-        gp_params, opt_state, grad_norm, loss = step(gp_params, opt_state)
+        gp_params, opt_state, grad_norm, loss, min_noise_reached = step(gp_params, opt_state)
+
+        if min_noise_reached:
+            print("Minimum noise value reached, stopping early")
+            break
 
         if grad_norm < tol:
             print(f"Converged after {i+1} steps, gradient norm = {grad_norm}")
             break
+
+        if i % 1000 == 0:
+            print(f"Iteration {i}:")
+            print(f"  Loss: {loss}")
+            print(f"  Gradient norm: {grad_norm}")
+            print(f"  Params: {gp_params}")
+            print(f"  Natural params: {natural_params(gp_params)}")
 
     print(f"End MLL (after optimization): {-loss}")
     print(f"End GP parameters (after optimization): {gp_params}")
@@ -58,9 +85,10 @@ def optimize_params(gp, gp_params, tol=1e-3, max_iters=10000):
 TO DO: 
 Make this configurable with fp_params dict
 """
-def init_gp(smiles_train, y_train, amp=1.0, noise=1e-2, radius=2):
+def init_gp(smiles_train, y_train, amp=1.0, noise=1e-2, sparse=True, radius=2):
 
-    fp_func = config_fp_func(radius=radius)
+    fp_func = config_fp_func(sparse=sparse, radius=radius)
+
     gp = tanimoto_gp.TanimotoGP(fp_func, smiles_train, y_train)
 
     gp_params = tanimoto_gp.TanimotoGP_Params(raw_amplitude=jnp.asarray(amp), raw_noise=jnp.asarray(noise))
@@ -71,7 +99,7 @@ def init_gp(smiles_train, y_train, amp=1.0, noise=1e-2, radius=2):
 
 """
 TO DO: 
-Make this configurable with **fp_params
+Make this configurable with fp_params dict
 """
 def config_fp_func(fp_type='ecfp', sparse=True, count=True, fpSize=1024, radius=2):
 

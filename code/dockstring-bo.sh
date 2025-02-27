@@ -1,33 +1,19 @@
 #!/bin/bash
 
-# Define the script name
-PYTHON_SCRIPT="dockstring-bo.py"  # Replace with your actual script name
+#SBATCH --partition=amilan
+#SBATCH --job-name=dockstring-bo-100-F2-r4-compressed
+#SBATCH --output=logs/100-F2-r4-compressed.out
+#SBATCH --time=4:00:00
+#SBATCH --qos=normal
+#SBATCH --nodes=1
+#SBATCH --ntasks=16
+#SBATCH --mem=64G
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=waltervirany@gmail.com
 
-# Default parameters that stay constant
-N_INIT=100
-BUDGET=100
+module purge
+module load python
+module load anaconda
+conda activate tanimoto-gp
 
-# Loop through all combinations
-for radius in 2 4; do
-    for sparse in "true" "false"; do
-        for target in "PARP1" "F2"; do
-            echo "Running with: radius=$radius, sparse=$sparse, target=$target"
-            
-            # Convert 'true'/'false' string to --sparse flag
-            sparse_flag=""
-            if [ "$sparse" = "true" ]; then
-                sparse_flag="--sparse"
-            fi
-            
-            python $PYTHON_SCRIPT \
-                --radius $radius \
-                $sparse_flag \
-                --target $target \
-                --n_init $N_INIT \
-                --budget $BUDGET
-            
-            echo "Completed run"
-            echo "------------------------"
-        done
-    done
-done
+python3 dockstring-bo.py --n_init 100 --budget 100 --target "F2" --radius 4
