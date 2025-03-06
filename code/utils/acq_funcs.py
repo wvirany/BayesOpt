@@ -28,7 +28,7 @@ def ei(X, gp, gp_params, epsilon=0.01):
     incumbent = np.max(train_mean)
 
     # Compute improvement
-    improvement = mean - incumbent - epsilon
+    improvement = mean - incumbent # - epsilon # currently not using epsilon parameter
 
     # Compute Z-score
     z = improvement / std

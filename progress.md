@@ -25,7 +25,9 @@
   - [x] Regression benchmark to see initial performance (PARP1, F2)
   - [x] Dockstring BO experiment (initialize on ~~1000~~ 100 molecules, run BO w/ budget of ~~1000~~ 100)
     - [x] Evaluate radiuses 2 and 4 on targets PARP1 and F2
-    - [ ] Compare each to corresponding compressed fingerprints
+    - [x] Compare each to corresponding compressed fingerprints
+    - [ ] After good results, scale up to 1k / 1k
+    - [ ] Try running on bottom 80% of dataset
 
 #### Other: 
 

@@ -85,9 +85,9 @@ def optimize_params(gp, gp_params, tol=1e-3, max_iters=10000):
 TO DO: 
 Make this configurable with fp_params dict
 """
-def init_gp(smiles_train, y_train, amp=1.0, noise=1e-2, sparse=True, radius=2):
+def init_gp(smiles_train, y_train, amp=1.0, noise=1e-2, sparse=True, radius=2, count=True, fpSize=1024):
 
-    fp_func = config_fp_func(sparse=sparse, radius=radius)
+    fp_func = config_fp_func(sparse=sparse, radius=radius, count=count, fpSize=fpSize)
 
     gp = tanimoto_gp.TanimotoGP(fp_func, smiles_train, y_train)
 
@@ -101,16 +101,16 @@ def init_gp(smiles_train, y_train, amp=1.0, noise=1e-2, sparse=True, radius=2):
 TO DO: 
 Make this configurable with fp_params dict
 """
-def config_fp_func(fp_type='ecfp', sparse=True, count=True, fpSize=1024, radius=2):
+def config_fp_func(fp_type='ecfp', sparse=True, radius=2, count=True, fpSize=1024):
 
-    fp_func = partial(smiles_to_fp, fp_type=fp_type, sparse=sparse, count=count, fpSize=fpSize, radius=radius)
+    fp_func = partial(smiles_to_fp, fp_type=fp_type, sparse=sparse, radius=radius, count=count, fpSize=fpSize)
 
     return fp_func
 
 
 
 @lru_cache(maxsize=100_000)
-def smiles_to_fp(smiles: str, fp_type: str = 'ecfp', sparse=True, count=True, fpSize=2048, radius=2):
+def smiles_to_fp(smiles: str, fp_type: str = 'ecfp', sparse=True, radius=2, count=True, fpSize=2048):
     """
     Convert smiles to sparse count fingerprint of given type
 

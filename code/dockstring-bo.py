@@ -1,8 +1,12 @@
 import numpy as np
+import jax
+import jax.numpy as jnp
 
+import tanimoto_gp
 from utils import bo, acq_funcs
 from utils.get_data import get_dockstring_dataset
-from utils.misc import init_gp
+from utils.misc import init_gp, config_fp_func
+from utils import GPCheckpoint
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -35,11 +39,17 @@ def get_data(target="PARP1", n_init=1000):
 
     y_train, y_test = -y_train, -y_test
 
-    sampled_indices = np.random.choice(np.arange(n), size=n_init)
-    complement_indices = np.setdiff1d(np.arange(n), sampled_indices)
+    # Sample n_init molecules from bottom 80% of dataset
+    cutoff = np.percentile(y_train, 80)
+    bottom_80_indices = np.where(y_train <= cutoff)[0]
+    sampled_indices = np.random.choice(bottom_80_indices, size=1000, replace=False)
+    top_20_indices = np.where(y_train > cutoff)[0]
+    bottom_80_complement = np.setdiff1d(bottom_80_indices, sampled_indices)
+    full_complement = np.concatenate([bottom_80_complement, top_20_indices])
 
     X_init, y_init = smiles_train[sampled_indices], y_train[sampled_indices]
-    X, y = np.concatenate([smiles_train[complement_indices], smiles_test]), np.concatenate([y_train[complement_indices], y_test])
+    X, y = np.concatenate([smiles_train[full_complement], smiles_test]), np.concatenate([y_train[full_complement], y_test])
+
 
     return X, X_init, y, y_init
 
@@ -52,11 +62,24 @@ def main(n_init, budget, target, sparse, radius):
 
     data = {}
 
+    # Load GP params from regression experiment
+    if sparse:
+        MODEL_PATH = f"models/gp-regression-{target}-10k-sparse-r{radius}.pkl"
+    else:
+        MODEL_PATH = f"models/gp-regression-{target}-10k-compressed-r{radius}.pkl"
+    _, gp_params = GPCheckpoint.load_gp_checkpoint(MODEL_PATH)
+
     for i in range(3):
             
+        # Get dataset
         X, X_init, y, y_init = get_data(target, n_init)
-        
-        gp, gp_params = init_gp(X_init, y_init, sparse=sparse, radius=radius)
+
+        # Initialize GP - currently using same GP params as regression model
+        fp_func = config_fp_func(sparse=sparse, radius=radius)
+        gp = tanimoto_gp.TanimotoGP(fp_func, X_init, y_init)
+
+        # Optimize parameters instead
+        # gp, gp_params = init_gp(X_init, y_init, sparse=sparse, radius=radius)
         
         best, top10, _, _, _ = bo.optimization_loop(X, y, X_init, y_init, gp, gp_params, acq_funcs.ei, epsilon=.01, num_iters=budget)
 

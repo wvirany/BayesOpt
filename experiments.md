@@ -28,11 +28,11 @@ Dataset is training dataset from Dockstring (10k molecules). Initial observation
 
 **Experiment setup:**
 
-1. Initialize GP on 100 molecules taken from bottom 80% of dataset
-2. Perform BO with budget of 100
+1. Initialize GP on `n_init` molecules taken from bottom 80% of dataset, use GP params from 10k regression exp
+2. Perform BO for `budget` iterations
 3. Measure best molecule, and average of top 10 molecules at each iteration
-4. Perform for `PARP1` and `F2` targets
-5. Repeat for 3 different splits of dataset, plot median, min, and max for best molecule and top 10 at each iteration
+4. Repeat for 3 different splits of dataset, plot median, min, and max for best molecule and top 10 at each iteration
+5. Compare performance with compressed and uncompressed fingerprints
 
 **Results:**
 
@@ -62,18 +62,26 @@ Dataset is training dataset from Dockstring (10k molecules). Initial observation
 
 **Experiment setup:**
 
-Model uses sparse count ECFP with radius 2, baseline uses bit ECFP with size 1024 and radius 1.
+Here we are evaluating GP models on the Dockstring regression benchmark, varying the fingerprint parameters as follows:
+
+* Dense binary `ecfp` fingerprint w/ radius 2
+* Dense count `ecfp` fingerprint w/ radius 2
+* Sparse binary `ecfp` fingerprint w/ radius 2
+* Sparse count `ecfp` fingerprint w/ radius 2
+
+The evaluation pipeline:
 
 1. Download dockstring dataset
-2. Train GP model on subset of 10k molecules, evaluate on entire test set (~38k molecules)
-3. Evaluate R2 score on `PARP1` and `F2` targets
+2. Train GP model on training set of 10k molecules
+3. Evaluate R2 score on ~38k test set
+4. Repeat for `PARP1` and `F2` targets
 
 **Results:**
 
-| Target | Baseline | Sparse FP |
-| ----- | ----- | ----- |
-| PARP1 | .717 | **.866** |
-| F2 | .699 | **.833** | 
+| Target | Dense binary | Dense count | Sparse binary | Sparse count
+| ----- | ----- | ----- | ----- | ----- |
+| PARP1 | .717 | .855 | .787 | **.866** |
+| F2 | .699 |  |  | **.833** | 
 
 
 **Benchmark:**

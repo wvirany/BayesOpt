@@ -16,12 +16,9 @@ def optimization_loop(X, y, X_observed, y_observed, gp, gp_params, acq_func, eps
 
         idx = acq_func(X, gp, gp_params, epsilon)
 
-        X, y = list(X), list(y)
-
-        X_new = X.pop(idx)
-        y_new = y.pop(idx)
-
-        X, y = np.array(X), np.array(y)
+        X_new = X[idx]
+        y_new = y[idx]
+        X, y = np.delete(X, idx, axis=0), np.delete(y, idx, axis=0)
 
         percentile = stats.percentileofscore(y_init, y_new)
 
