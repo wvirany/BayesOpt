@@ -56,39 +56,52 @@ def get_data(target="PARP1", n_init=1000):
 
 
 
-def main(n_init, budget, target, sparse, radius):
+def main(from_checkpoint, n_init, budget, target, sparse, radius):
 
     print(f"Experiment Params: n_init: {n_init} | budget: {budget} | target: {target} | sparse: {sparse} | radius: {radius}")
 
-    data = {}
-
-    # Load GP params from regression experiment
+    # Load GP params from corresponding regression experiment
     if sparse:
         MODEL_PATH = f"models/gp-regression-{target}-10k-sparse-r{radius}.pkl"
     else:
         MODEL_PATH = f"models/gp-regression-{target}-10k-compressed-r{radius}.pkl"
     _, gp_params = GPCheckpoint.load_gp_checkpoint(MODEL_PATH)
 
-    for i in range(3):
-            
-        # Get dataset
-        X, X_init, y, y_init = get_data(target, n_init)
-
-        # Initialize GP - currently using same GP params as regression model
-        fp_func = config_fp_func(sparse=sparse, radius=radius)
-        gp = tanimoto_gp.TanimotoGP(fp_func, X_init, y_init)
-
-        # Optimize parameters instead
-        # gp, gp_params = init_gp(X_init, y_init, sparse=sparse, radius=radius)
-        
-        best, top10, _, _, _ = bo.optimization_loop(X, y, X_init, y_init, gp, gp_params, acq_funcs.ei, epsilon=.01, num_iters=budget)
-
-        data[i] = (best, top10)
-
     if sparse:
         DATAPATH = f'results/dockstring-bo/{n_init}/results-{target}-sparse-r{radius}.pkl'
     else:
         DATAPATH = f'results/dockstring-bo/{n_init}/results-{target}-compressed-r{radius}.pkl'
+
+    data = {}
+    if from_checkpoint and os.path.exists(DATAPATH):
+        with open(DATAPATH, 'rb') as f:
+            data = pickle.load(f)
+        print(f"Loaded {len(data)} completed runs from checkpoint")
+    
+    remaining_runs = 3 - len(data)
+
+    for i in range(len(data), 3):
+        print(f"\nStarting BO run {i}")
+            
+        # Get dataset
+        X, X_init, y, y_init = get_data(target, n_init)
+
+        # Initialize GP
+        fp_func = config_fp_func(sparse=sparse, radius=radius)
+        gp = tanimoto_gp.TanimotoGP(fp_func, X_init, y_init)
+
+        best, top10, X_observed, y_observed, _ = bo.optimization_loop(
+            X, y, X_init, y_init, gp, gp_params,
+            acq_funcs.ei, epsilon=.01, num_iters=budget
+        )
+
+        data[i] = (best, top10)
+
+        os.makedirs(os.path.dirname(DATAPATH), exist_ok=True)
+        with open(DATAPATH, 'wb') as f:
+            pickle.dump(data, f)
+        
+        print(f"\nSaved results after run {i}")
 
     # If directory doesn't exist, make it
     os.makedirs(os.path.dirname(DATAPATH), exist_ok=True)
@@ -101,6 +114,8 @@ def main(n_init, budget, target, sparse, radius):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
+    parser.add_argument("--from_checkpoint", action="store_true",
+                        help="Resume from existing checkpoint")
     parser.add_argument("--n_init", type=int, default=1000)
     parser.add_argument("--budget", type=int, default=1000)
     parser.add_argument("--target", type=str, default='PARP1')
@@ -109,4 +124,4 @@ if __name__ == "__main__":
  
     args = parser.parse_args()
 
-    main(n_init=args.n_init, budget=args.budget, target=args.target, sparse=args.sparse, radius=args.radius)
+    main(from_checkpoint=args.from_checkpoint, n_init=args.n_init, budget=args.budget, target=args.target, sparse=args.sparse, radius=args.radius)

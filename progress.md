@@ -8,14 +8,41 @@
 * Compare preliminary BO experiments to compressed fingerprints
 * ~~Try BO experiments with larger tolerance~~
 * ~~Should we try predicting different endpoints besides logS?~~
-* Is `gp.set_training_data()` the right method to update GP posterior?
+* Is `gp.set_training_data()` the right method to update GP posterior? --> No
 * Can check internal diversity of a dataset for regression / BO tasks to understand how likely hash collisions are
 
+<br>
 
-## Feb. 9
+- run bo jobs in parallel
+- run more trials, try running w/ larger budgets
+- currently ressetting kernel matrix -> fix this
+- profiling -> address which parts of code are bottlenecking
+- fix same states using random seed
+- **caching test_train kernel matrix**
+- SLURM resources (1 trial, smaller jobs, slurm array to run the same job with different seed / params --> runs in parallel)
+  - should enable running more trials as well
+- record SMILES strings at each iter, analyze different "choices" between GPs w/ different fps
+- how much will GPU speed things up? (maybe helps with matrix multiplication)
+- 
 
 
-## TO DO:
+
+# March
+
+### To Do:
+
+- [ ] Run all regression experiments (`PARP1`, `F2`, `ESR2`), (compressed, uncompressed), (r2, r4), (binary, count)
+  - [ ] Run baselines for `ESR2` and `F2`
+- [ ] Run all BO experiments for 100 initial molecules and budget w/ GP regression params on bottom 80%
+  - [ ] `PARP1`
+  - [ ] `F2`
+  - [ ] `ESR2`
+- [ ] Consider demonstrating performance differences on Polaris comp
+
+
+# Feb
+
+### To Do:
 
 #### Experiments:
 
@@ -23,18 +50,16 @@
 - [x] BO plots: show median, min, max (or 25th / 75th percentile) instead of mean, std
 - [ ] Dockstring:
   - [x] Regression benchmark to see initial performance (PARP1, F2)
-  - [x] Dockstring BO experiment (initialize on ~~1000~~ 100 molecules, run BO w/ budget of ~~1000~~ 100)
+  - [x] Dockstring BO experiment (initialize on 100/1000 molecules, run BO w/ budget of 100/1000)
     - [x] Evaluate radiuses 2 and 4 on targets PARP1 and F2
     - [x] Compare each to corresponding compressed fingerprints
-    - [ ] After good results, scale up to 1k / 1k
+    - [x] Use regression GP parameters for corresponding BO experiment
     - [ ] Try running on bottom 80% of dataset
 
 #### Other: 
 
-- [ ] Configurable fingerprint and BO parameters from command line
-- [ ] Script for making Dockstring BO plots
-
-## February
+- ~~[ ] Configurable fingerprint and BO parameters from command line~~
+- [x] Script for making Dockstring BO plots
 
 ### Updates:
 
@@ -68,7 +93,7 @@
 - ~~[ ] Make parameters configurable from command line (fptype, sizes, ~~radius~~, ~~tol~~, etc.)~~
 
 
-## January
+# January
 
 ### Updates:
 

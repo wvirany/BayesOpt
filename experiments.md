@@ -47,13 +47,13 @@ Dataset is training dataset from Dockstring (10k molecules). Initial observation
 </p>
 
 <p align="center">
-<img src="figures/dockstring/bo-100/F2-r2-top1.png" alt="bo-100/F2-r2-top1" width="40%"/>
-<img src="figures/dockstring/bo-100/F2-r2-top10.png" alt="bo-100/F2-r2-top10" width="40%"/>
+<img src="figures/dockstring/bo-100/ESR2-r2-top1.png" alt="bo-100/ESR2-r2-top1" width="40%"/>
+<img src="figures/dockstring/bo-100/ESR2-r2-top10.png" alt="bo-100/ESR2-r2-top10" width="40%"/>
 </p>
 
 <p align="center">
-<img src="figures/dockstring/bo-100/F2-r4-top1.png" alt="bo-100/F2-r4-top1" width="40%"/>
-<img src="figures/dockstring/bo-100/F2-r4-top10.png" alt="bo-100/F2-r4-top10" width="40%"/>
+<img src="figures/dockstring/bo-100/ESR2-r4-top1.png" alt="bo-100/ESR2-r4-top1" width="40%"/>
+<img src="figures/dockstring/bo-100/ESR2-r4-top10.png" alt="bo-100/ESR2-r4-top10" width="40%"/>
 </p>
 
 
@@ -64,8 +64,8 @@ Dataset is training dataset from Dockstring (10k molecules). Initial observation
 
 Here we are evaluating GP models on the Dockstring regression benchmark, varying the fingerprint parameters as follows:
 
-* Dense binary `ecfp` fingerprint w/ radius 2
-* Dense count `ecfp` fingerprint w/ radius 2
+* Compressed binary `ecfp` fingerprint w/ radius 2
+* Compressed count `ecfp` fingerprint w/ radius 2
 * Sparse binary `ecfp` fingerprint w/ radius 2
 * Sparse count `ecfp` fingerprint w/ radius 2
 
@@ -78,10 +78,11 @@ The evaluation pipeline:
 
 **Results:**
 
-| Target | Dense binary | Dense count | Sparse binary | Sparse count
+| Target | Compressed binary | Compressed count | Sparse binary | Sparse count
 | ----- | ----- | ----- | ----- | ----- |
-| PARP1 | .717 | .855 | .787 | **.866** |
-| F2 | .699 |  |  | **.833** | 
+| PARP1 | .735 | .855 | .787 | **.866** |
+| F2 | .756 | .820 | -- | **.833** | 
+| ESR2 | -- | .512 | -- | **.542** |
 
 
 **Benchmark:**

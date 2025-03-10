@@ -26,7 +26,7 @@ sns.set_palette('muted')
 n_init=100
 
 
-for target in ["PARP1"]:
+for target in ["ESR2"]:
 
     smiles_train, smiles_test, y_train, y_test = get_data.get_dockstring_dataset(target=target)
 

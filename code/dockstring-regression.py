@@ -25,7 +25,7 @@ def main(from_checkpoint=False, n_train=10000, target='PARP1', sparse=True, radi
     print(f"Train size: {len(smiles_train)}\nTest size: {len(smiles_test)}")
     print(f"Experiment Params: n_train: {n_train} | target: {target} | sparse: {sparse} | radius: {radius}")
 
-    Specify model path
+    # Specify model path
     if sparse:
         MODEL_PATH = f"models/gp-regression-{target}-10k-sparse-r{radius}.pkl"
     else:
