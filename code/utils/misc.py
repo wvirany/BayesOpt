@@ -81,10 +81,7 @@ def optimize_params(gp, gp_params, tol=1e-3, max_iters=10000):
     return gp_params
 
 
-"""
-TO DO: 
-Make this configurable with fp_params dict
-"""
+
 def init_gp(smiles_train, y_train, amp=1.0, noise=1e-2, sparse=True, radius=2, count=True, fpSize=1024):
 
     fp_func = config_fp_func(sparse=sparse, radius=radius, count=count, fpSize=fpSize)
@@ -97,10 +94,7 @@ def init_gp(smiles_train, y_train, amp=1.0, noise=1e-2, sparse=True, radius=2, c
     return gp, gp_params
 
 
-"""
-TO DO: 
-Make this configurable with fp_params dict
-"""
+
 def config_fp_func(fp_type='ecfp', sparse=True, radius=2, count=True, fpSize=1024):
 
     fp_func = partial(smiles_to_fp, fp_type=fp_type, sparse=sparse, radius=radius, count=count, fpSize=fpSize)

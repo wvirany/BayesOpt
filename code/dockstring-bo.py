@@ -51,7 +51,7 @@ def get_data(target="PARP1", n_init=1000):
     X, y = np.concatenate([smiles_train[full_complement], smiles_test]), np.concatenate([y_train[full_complement], y_test])
 
 
-    return X, X_init, y, y_init
+    return X_init, X, y_init, y
 
 
 
@@ -84,7 +84,7 @@ def main(from_checkpoint, n_init, budget, target, sparse, radius):
         print(f"\nStarting BO run {i}")
             
         # Get dataset
-        X, X_init, y, y_init = get_data(target, n_init)
+        X_init, X,y_init, y = get_data(target, n_init)
 
         # Initialize GP
         fp_func = config_fp_func(sparse=sparse, radius=radius)

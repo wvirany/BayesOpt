@@ -23,10 +23,11 @@ sns.set_style("darkgrid",
 sns.set_palette('muted')
 
 
-n_init=100
+n_init = 1000
+make_hist = False
 
 
-for target in ["ESR2"]:
+for target in ["PARP1"]:
 
     smiles_train, smiles_test, y_train, y_test = get_data.get_dockstring_dataset(target=target)
 
@@ -47,13 +48,14 @@ for target in ["ESR2"]:
     best_top10 = -bo.find_top10_avg(np.concatenate([y, y_init]))
 
     # Save histogram of dataset
-    plt.figure()
-    plt.hist(-y, bins=50, alpha=0.5)
-    plt.axvline(percentile99, color='red', ls='dashed', lw=.75, alpha=.5, label="$99^\\text{th}$ percentile")
-    plt.axvline(percentile999, color='red', ls='dashed', lw=.75, label="$99.9^\\text{th}$ percentile")
-    plt.xlabel(f"Docking score ({target})")
-    plt.legend()
-    plt.savefig(f"../figures/dockstring/{target}-dataset")
+    if make_hist:
+        plt.figure()
+        plt.hist(-y, bins=50, alpha=0.5)
+        plt.axvline(percentile99, color='red', ls='dashed', lw=.75, alpha=.5, label="$99^\\text{th}$ percentile")
+        plt.axvline(percentile999, color='red', ls='dashed', lw=.75, label="$99.9^\\text{th}$ percentile")
+        plt.xlabel(f"Docking score ({target})")
+        plt.legend()
+        plt.savefig(f"../figures/dockstring/{target}-dataset")
 
 
     for radius in [2, 4]:

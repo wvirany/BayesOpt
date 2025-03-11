@@ -1,4 +1,4 @@
-import numpy as np
+import jax.numpy as jnp
 from scipy.stats import norm
 
 
@@ -19,13 +19,13 @@ def ei(X, gp, gp_params, epsilon=0.01):
 
     # Get mean and standard deviation predictions
     mean, var = gp.predict_y(gp_params, X, full_covar=False)
-    std = np.sqrt(var)
+    std = jnp.sqrt(var)
 
     # Train mean used to predict incumbent for noisy observations
     train_mean, _ = gp.predict_y(gp_params, gp._smiles_train, full_covar=False)
 
     # Find incumbent value (current best observation)
-    incumbent = np.max(train_mean)
+    incumbent = jnp.max(train_mean)
 
     # Compute improvement
     improvement = mean - incumbent # - epsilon # currently not using epsilon parameter
@@ -40,7 +40,7 @@ def ei(X, gp, gp_params, epsilon=0.01):
     ei = ei.at[std < 1e-10].set(0)
 
     # Maximizer for acquisition function
-    return np.argmax(ei)
+    return jnp.argmax(ei)
 
 
 
