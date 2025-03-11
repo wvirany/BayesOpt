@@ -80,7 +80,7 @@ def main():
     stats.print_stats('predict_f', 'smiles_to_fp', 'predict_y', 'ei')
     
     # Write the stats to a file
-    with open('profile_results_large.txt', 'w') as f:
+    with open('profiles/profile_results_after_caching.txt', 'w') as f:
         f.write(s.getvalue())
     
     print("\nDetailed profiling results have been written to profile_results_large.txt")

@@ -5,10 +5,10 @@
 * UMAP / t-SNE projections of chemical space: have unobserved in gray, observed in another color
 * ~~Try BO exp for many iters? (e.g., 100+)~~
 * ~~Try EI acquisition function~~
-* Compare preliminary BO experiments to compressed fingerprints
+* ~~Compare preliminary BO experiments to compressed fingerprints~~
 * ~~Try BO experiments with larger tolerance~~
 * ~~Should we try predicting different endpoints besides logS?~~
-* Is `gp.set_training_data()` the right method to update GP posterior? --> No
+* ~~Is `gp.set_training_data()` the right method to update GP posterior? --> No~~
 * Can check internal diversity of a dataset for regression / BO tasks to understand how likely hash collisions are
 
 <br>
@@ -31,13 +31,20 @@
 
 ### To Do:
 
+#### Cleaning up code:
+- [ ] Profiling code
+- [ ] Cache Cholesky factorization of kernel matrix, implement efficient update functio
+- [ ] Optimize SLURM resource usage (smaller jobs, SLURM arrays w/ different seeds dictating different params / data inits)
+- [ ] Record SMILES strings at each BO iter, analyze where BO trials diverge
+
+#### BO experiments
 - [ ] Run all regression experiments (`PARP1`, `F2`, `ESR2`), (compressed, uncompressed), (r2, r4), (binary, count)
   - [ ] Run baselines for `ESR2` and `F2`
 - [ ] Run all BO experiments for 100 initial molecules and budget w/ GP regression params on bottom 80%
   - [ ] `PARP1`
   - [ ] `F2`
   - [ ] `ESR2`
-- [ ] Consider demonstrating performance differences on Polaris comp
+- [ ] After making code faster and fixing SLURM resource usage, run more trials w/ larger initalizations / budgets
 
 
 # Feb
