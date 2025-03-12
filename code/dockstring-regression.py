@@ -40,8 +40,11 @@ def main(from_checkpoint=False, n_train=10000, target='PARP1', sparse=True, radi
     mean, _ = gp.predict_y(gp_params, smiles_test, full_covar=False)
 
     r2 = sklearn.metrics.r2_score(y_test, mean)
+    mse = sklearn.metrics.mean_squared_error(y_test, mean)
+    mae = sklearn.metrics.mean_absolute_error(y_test, mean)
 
-    print(f"R2 Score: {r2}")
+
+    print(f"R2 Score: {r2}\nMSE: {mse}\nMAE: {mae}")
 
 
 

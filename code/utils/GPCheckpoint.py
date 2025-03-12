@@ -1,7 +1,7 @@
 import jax.numpy as jnp
 
 import tanimoto_gp
-from tanimoto_gp import TanimotoGP, TanimotoGP_Params
+from tanimoto_gp import ZeroMeanTanimotoGP, TanimotoGP_Params
 from utils.misc import smiles_to_fp
 
 import pickle
@@ -15,7 +15,7 @@ class GPCheckpoint:
     K_train_train: jnp.ndarray
     gp_params: TanimotoGP_Params
 
-def save_gp_checkpoint(gp: TanimotoGP, gp_params: TanimotoGP_Params, path: str):
+def save_gp_checkpoint(gp: ZeroMeanTanimotoGP, gp_params: TanimotoGP_Params, path: str):
     checkpoint = GPCheckpoint(
         smiles_train=gp._smiles_train,
         y_train=gp._y_train.tolist(),
@@ -27,11 +27,11 @@ def save_gp_checkpoint(gp: TanimotoGP, gp_params: TanimotoGP_Params, path: str):
     with open(path, 'wb') as f:
         pickle.dump(checkpoint, f)
 
-def load_gp_checkpoint(path: str) -> tuple[TanimotoGP, TanimotoGP_Params]:
+def load_gp_checkpoint(path: str) -> tuple[ZeroMeanTanimotoGP, TanimotoGP_Params]:
     with open(path, 'rb') as f:
         checkpoint = pickle.load(f)
     
-    gp = TanimotoGP(smiles_to_fp, [], [])
+    gp = ZeroMeanTanimotoGP(smiles_to_fp, [], [])
 
     gp._smiles_train = checkpoint.smiles_train
     gp._y_train = jnp.asarray(checkpoint.y_train)

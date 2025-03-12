@@ -51,7 +51,7 @@ def get_data(target="PARP1", n_init=1000):
     X, y = np.concatenate([smiles_train[full_complement], smiles_test]), np.concatenate([y_train[full_complement], y_test])
 
 
-    return X_init, X, y_init, y
+    return X_init.tolist(), X.tolist(), y_init, y
 
 
 
@@ -63,21 +63,18 @@ def main(from_checkpoint, n_init, budget, target, sparse, radius):
     # Load GP params from corresponding regression experiment
     if sparse:
         MODEL_PATH = f"models/gp-regression-{target}-10k-sparse-r{radius}.pkl"
-    else:
-        MODEL_PATH = f"models/gp-regression-{target}-10k-compressed-r{radius}.pkl"
-    _, gp_params = GPCheckpoint.load_gp_checkpoint(MODEL_PATH)
-
-    if sparse:
         DATAPATH = f'results/dockstring-bo/{n_init}/results-{target}-sparse-r{radius}.pkl'
     else:
+        MODEL_PATH = f"models/gp-regression-{target}-10k-compressed-r{radius}.pkl"
         DATAPATH = f'results/dockstring-bo/{n_init}/results-{target}-compressed-r{radius}.pkl'
+    _, gp_params = GPCheckpoint.load_gp_checkpoint(MODEL_PATH)
 
     data = {}
     if from_checkpoint and os.path.exists(DATAPATH):
         with open(DATAPATH, 'rb') as f:
             data = pickle.load(f)
         print(f"Loaded {len(data)} completed runs from checkpoint")
-    
+
     remaining_runs = 3 - len(data)
 
     for i in range(len(data), 3):
@@ -88,7 +85,7 @@ def main(from_checkpoint, n_init, budget, target, sparse, radius):
 
         # Initialize GP
         fp_func = config_fp_func(sparse=sparse, radius=radius)
-        gp = tanimoto_gp.TanimotoGP(fp_func, X_init, y_init)
+        gp = tanimoto_gp.ZeroMeanTanimotoGP(fp_func, X_init, y_init)
 
         best, top10, X_observed, y_observed, _ = bo.optimization_loop(
             X, y, X_init, y_init, gp, gp_params,

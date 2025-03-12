@@ -30,7 +30,7 @@ def optimization_loop(X, y, X_observed, y_observed, gp, gp_params, acq_func, eps
         best.append(np.max(y_observed))
         top10.append(find_top10_avg(y_observed))
 
-        gp.add_observation(gp_params, X_new, y_new)
+        gp.set_training_data(X_observed, y_observed)
 
     print(f"Best observed molecule: {np.max(best):0.3f} | Top 10: {top10[-1]}")
 

@@ -1,40 +1,40 @@
 Statistics sorted by cumulative time:
-         1268451250 function calls (1268387623 primitive calls) in 475.146 seconds
+         699612753 function calls (699576640 primitive calls) in 250.361 seconds
 
    Ordered by: cumulative time
-   List reduced from 2318 to 30 due to restriction <30>
+   List reduced from 2314 to 30 due to restriction <30>
 
    ncalls  tottime  percall  cumtime  percall filename:lineno(function)
-        1    0.002    0.002  475.193  475.193 /projects/wavi0116/code/BayesOpt/code/profiler.py:36(run_bo_experiment)
-        1    0.007    0.007  470.723  470.723 /projects/wavi0116/code/BayesOpt/code/utils/bo.py:4(optimization_loop)
-       50    0.004    0.000  460.944    9.219 /projects/wavi0116/code/BayesOpt/code/utils/acq_funcs.py:5(ei)
-      100    0.008    0.000  452.041    4.520 /projects/wavi0116/code/tanimoto-gp/tanimoto_gp/__init__.py:111(predict_y)
-      100  111.044    1.110  450.523    4.505 /projects/wavi0116/code/tanimoto-gp/tanimoto_gp/__init__.py:48(predict_f)
-      705    0.265    0.000  315.024    0.447 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py:5653(asarray)
-      705    1.025    0.001  314.751    0.446 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py:5387(array)
-     2060   21.523    0.010  196.929    0.096 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:838(_lattice_result_type)
- 63072999   16.335    0.000  171.239    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:839(<genexpr>)
- 63070939   49.593    0.000  154.904    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:602(_dtype_and_weaktype)
- 63109121   37.373    0.000   70.372    0.000 {built-in method builtins.any}
-48525/48122    5.669    0.000   48.558    0.001 {built-in method builtins.all}
- 63068979   11.226    0.000   42.826    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py:5546(<genexpr>)
-2071/1967    0.011    0.000   42.137    0.021 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/traceback_util.py:176(reraise_with_filtered_traceback)
-2070/1967    0.012    0.000   42.126    0.021 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/pjit.py:334(cache_miss)
-2070/1967    0.021    0.000   42.060    0.021 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/pjit.py:179(_python_pjit_helper)
-      708    6.293    0.009   41.070    0.058 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/tree_util.py:350(tree_map)
-     1967    0.020    0.000   39.705    0.020 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/pjit.py:1624(_pjit_call_impl_python)
-10343/8172    0.051    0.000   39.397    0.005 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/profiler.py:331(wrapper)
-126928108/126927801   21.007    0.000   38.648    0.000 {built-in method builtins.isinstance}
- 63084328   26.230    0.000   33.135    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:814(dtype)
-     1967    0.011    0.000   32.057    0.016 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/interpreters/pxla.py:2441(compile)
-     1967    0.135    0.000   32.045    0.016 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/interpreters/pxla.py:2899(from_hlo)
- 63069187   17.285    0.000   31.759    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/tree_util.py:358(<genexpr>)
-     1967    0.028    0.000   31.539    0.016 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/interpreters/pxla.py:2739(_cached_compilation)
-     1967    0.056    0.000   31.016    0.016 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/compiler.py:354(compile_or_get_cached)
-     1967    0.009    0.000   30.326    0.015 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/compiler.py:681(_compile_and_write_cache)
-     1967   30.162    0.015   30.286    0.015 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/compiler.py:297(backend_compile)
-252283756   28.535    0.000   28.613    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:604(<genexpr>)
-      100    0.007    0.000   25.937    0.259 /projects/wavi0116/code/kernel-only-GP/kern_gp/__init__.py:29(noiseless_predict)
+        1    0.002    0.002  250.388  250.388 /projects/wavi0116/code/BayesOpt/code/profiler.py:37(run_bo_experiment)
+        1    0.004    0.004  246.446  246.446 /projects/wavi0116/code/BayesOpt/code/utils/bo.py:4(optimization_loop)
+       30    0.002    0.000  243.540    8.118 /projects/wavi0116/code/BayesOpt/code/utils/acq_funcs.py:5(ei)
+       60    0.005    0.000  238.214    3.970 /projects/wavi0116/code/tanimoto-gp/tanimoto_gp/__init__.py:60(predict_y)
+       60   54.978    0.916  237.233    3.954 /projects/wavi0116/code/tanimoto-gp/tanimoto_gp/__init__.py:40(predict_f)
+      425    0.141    0.000  166.881    0.393 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py:5653(asarray)
+      425    0.508    0.001  166.736    0.392 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py:5387(array)
+     1206   11.494    0.010  104.989    0.087 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:838(_lattice_result_type)
+ 34775439    8.547    0.000   91.309    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:839(<genexpr>)
+ 34774233   25.747    0.000   82.762    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:602(_dtype_and_weaktype)
+ 34796405   19.178    0.000   36.582    0.000 {built-in method builtins.any}
+28515/28272    2.938    0.000   25.681    0.001 {built-in method builtins.all}
+ 34773089    5.831    0.000   22.706    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py:5546(<genexpr>)
+1185/1153    0.006    0.000   22.383    0.019 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/traceback_util.py:176(reraise_with_filtered_traceback)
+1184/1153    0.007    0.000   22.377    0.019 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/pjit.py:334(cache_miss)
+1184/1153    0.012    0.000   22.339    0.019 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/pjit.py:179(_python_pjit_helper)
+      428    3.193    0.007   21.315    0.050 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/tree_util.py:350(tree_map)
+     1153    0.011    0.000   20.967    0.018 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/pjit.py:1624(_pjit_call_impl_python)
+6041/4796    0.030    0.000   20.844    0.004 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/profiler.py:331(wrapper)
+70010202/70010015   11.212    0.000   20.580    0.000 {built-in method builtins.isinstance}
+ 34781806   15.014    0.000   18.626    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:814(dtype)
+     1153    0.006    0.000   16.875    0.015 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/interpreters/pxla.py:2441(compile)
+     1153    0.079    0.000   16.869    0.015 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/interpreters/pxla.py:2899(from_hlo)
+ 34773217    8.978    0.000   16.567    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/tree_util.py:358(<genexpr>)
+     1153    0.016    0.000   16.563    0.014 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/interpreters/pxla.py:2739(_cached_compilation)
+     1153    0.031    0.000   16.277    0.014 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/compiler.py:354(compile_or_get_cached)
+     1153    0.005    0.000   15.909    0.014 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/compiler.py:681(_compile_and_write_cache)
+     1153   15.814    0.014   15.886    0.014 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/compiler.py:297(backend_compile)
+139096932   15.077    0.000   15.118    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:604(<genexpr>)
+       60    0.003    0.000   14.819    0.247 /projects/wavi0116/code/kernel-only-GP/kern_gp/__init__.py:29(noiseless_predict)
 
 
 
@@ -42,42 +42,42 @@ Statistics sorted by cumulative time:
 ================================================================================
 
 Statistics sorted by total time:
-         1268451250 function calls (1268387623 primitive calls) in 475.146 seconds
+         699612753 function calls (699576640 primitive calls) in 250.361 seconds
 
    Ordered by: internal time
-   List reduced from 2318 to 30 due to restriction <30>
+   List reduced from 2314 to 30 due to restriction <30>
 
    ncalls  tottime  percall  cumtime  percall filename:lineno(function)
-      100  111.044    1.110  450.523    4.505 /projects/wavi0116/code/tanimoto-gp/tanimoto_gp/__init__.py:48(predict_f)
- 63070939   49.593    0.000  154.904    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:602(_dtype_and_weaktype)
- 63109121   37.373    0.000   70.372    0.000 {built-in method builtins.any}
-     1967   30.162    0.015   30.286    0.015 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/compiler.py:297(backend_compile)
-252283756   28.535    0.000   28.613    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:604(<genexpr>)
- 63084328   26.230    0.000   33.135    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:814(dtype)
-     2060   21.523    0.010  196.929    0.096 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:838(_lattice_result_type)
-126928108/126927801   21.007    0.000   38.648    0.000 {built-in method builtins.isinstance}
- 63069187   17.285    0.000   31.759    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/tree_util.py:358(<genexpr>)
- 63072999   16.335    0.000  171.239    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:839(<genexpr>)
- 63068979   11.226    0.000   42.826    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py:5546(<genexpr>)
- 63076477   11.167    0.000   11.167    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:795(is_weakly_typed)
-      604   10.504    0.017   14.689    0.024 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/tree_util.py:87(tree_leaves)
- 63068375    9.661    0.000   14.472    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py:5518(<lambda>)
- 63083593    9.304    0.000   17.640    0.000 <frozen abc>:117(__instancecheck__)
- 63083593    8.331    0.000    8.336    0.000 {built-in method _abc._abc_instancecheck}
-      708    6.293    0.009   41.070    0.058 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/tree_util.py:350(tree_map)
-48525/48122    5.669    0.000   48.558    0.001 {built-in method builtins.all}
- 63158716    4.846    0.000    4.893    0.000 {built-in method builtins.hasattr}
- 63068979    4.306    0.000    4.306    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py:5521(<genexpr>)
-    20000    4.249    0.000    4.249    0.000 /projects/wavi0116/code/BayesOpt/code/utils/misc.py:106(smiles_to_fp)
- 63574904    4.185    0.000    4.185    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py:5520(<lambda>)
- 63068027    3.788    0.000    3.788    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:592(_jax_type)
-     6540    3.027    0.000    3.027    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/tree_util.py:73(tree_flatten)
-     1967    2.819    0.001    3.397    0.002 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/interpreters/mlir.py:608(make_ir_context)
-3129/3127    2.702    0.001    2.702    0.001 {built-in method numpy.asarray}
-       52    1.665    0.032    6.397    0.123 /projects/wavi0116/code/tanimoto-gp/tanimoto_gp/__init__.py:23(_setup_kernel)
-        2    1.537    0.769    1.580    0.790 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/pandas/io/parsers/c_parser_wrapper.py:222(read)
-      705    1.025    0.001  314.751    0.446 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py:5387(array)
-     1967    0.540    0.000    0.540    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/interpreters/mlir.py:601(__init__)
+       60   54.978    0.916  237.233    3.954 /projects/wavi0116/code/tanimoto-gp/tanimoto_gp/__init__.py:40(predict_f)
+ 34774233   25.747    0.000   82.762    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:602(_dtype_and_weaktype)
+ 34796405   19.178    0.000   36.582    0.000 {built-in method builtins.any}
+     1153   15.814    0.014   15.886    0.014 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/compiler.py:297(backend_compile)
+139096932   15.077    0.000   15.118    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:604(<genexpr>)
+ 34781806   15.014    0.000   18.626    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:814(dtype)
+     1206   11.494    0.010  104.989    0.087 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:838(_lattice_result_type)
+70010202/70010015   11.212    0.000   20.580    0.000 {built-in method builtins.isinstance}
+ 34773217    8.978    0.000   16.567    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/tree_util.py:358(<genexpr>)
+ 34775439    8.547    0.000   91.309    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:839(<genexpr>)
+ 34777311    6.644    0.000    6.644    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:795(is_weakly_typed)
+ 34773089    5.831    0.000   22.706    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py:5546(<genexpr>)
+      364    5.700    0.016    7.771    0.021 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/tree_util.py:87(tree_leaves)
+ 34772725    5.049    0.000    7.587    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py:5518(<lambda>)
+ 34781261    4.927    0.000    9.368    0.000 <frozen abc>:117(__instancecheck__)
+ 34781261    4.438    0.000    4.441    0.000 {built-in method _abc._abc_instancecheck}
+    20000    4.101    0.000    4.101    0.000 /projects/wavi0116/code/BayesOpt/code/utils/misc.py:106(smiles_to_fp)
+      428    3.193    0.007   21.315    0.050 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/tree_util.py:350(tree_map)
+28515/28272    2.938    0.000   25.681    0.001 {built-in method builtins.all}
+ 34825457    2.559    0.000    2.584    0.000 {built-in method builtins.hasattr}
+ 34773089    2.237    0.000    2.237    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py:5521(<genexpr>)
+ 35076384    2.070    0.000    2.070    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py:5520(<lambda>)
+ 34772517    1.979    0.000    1.979    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/dtypes.py:592(_jax_type)
+     1153    1.571    0.001    1.795    0.002 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/interpreters/mlir.py:608(make_ir_context)
+     3764    1.560    0.000    1.560    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/tree_util.py:73(tree_flatten)
+1875/1873    1.442    0.001    1.442    0.001 {built-in method numpy.asarray}
+        2    1.304    0.652    1.344    0.672 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/pandas/io/parsers/c_parser_wrapper.py:222(read)
+       32    0.664    0.021    3.010    0.094 /projects/wavi0116/code/tanimoto-gp/tanimoto_gp/__init__.py:23(set_training_data)
+      425    0.508    0.001  166.736    0.392 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py:5387(array)
+     1153    0.281    0.000    0.394    0.000 /projects/wavi0116/software/anaconda/envs/tanimoto-gp/lib/python3.12/site-packages/jax/_src/interpreters/pxla.py:1277(__call__)
 
 
 
@@ -85,5 +85,5 @@ Statistics sorted by total time:
 ================================================================================
 
 Key function statistics:
-         1268451250 function calls (1268387623 primitive calls) in 475.146 seconds
+         699612753 function calls (699576640 primitive calls) in 250.361 seconds
 

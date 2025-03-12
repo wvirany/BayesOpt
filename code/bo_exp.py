@@ -44,7 +44,7 @@ quantile_999 = np.quantile(y, .999)
 
 def init_gp(X_observed, y_observed, optimize=True, amp=1.0, noise=1e-2):
 
-    gp = tanimoto_gp.TanimotoGP(smiles_to_fp, X_observed, y_observed)
+    gp = tanimoto_gp.ZeroMeanTanimotoGP(smiles_to_fp, X_observed, y_observed)
     gp_params = tanimoto_gp.TanimotoGP_Params(raw_amplitude=jnp.asarray(amp), raw_noise=jnp.asarray(noise))
 
     if optimize:

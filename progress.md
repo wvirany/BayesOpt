@@ -23,7 +23,14 @@
   - should enable running more trials as well
 - record SMILES strings at each iter, analyze different "choices" between GPs w/ different fps
 - how much will GPU speed things up? (maybe helps with matrix multiplication)
-- 
+
+
+
+#### Questions:
+
+* Not seeing a huge speedup with cached L. What do you think?
+* Is there a faster way to make observations from noisy data? Note that I call `predict_y()` twice in `ei()` method.
+* Should I be caching the test_train kernel matrix instead of the Cholesky factorization? What about when `full_covar` = `False`?
 
 
 
@@ -32,8 +39,10 @@
 ### To Do:
 
 #### Cleaning up code:
-- [ ] Profiling code
-- [ ] Cache Cholesky factorization of kernel matrix, implement efficient update functio
+- [x] Profiling code
+- [x] Cache Cholesky factorization of kernel matrix, implement efficient update function
+- [ ] Cache K_test_test
+- [ ] Correctly and efficiently compute incumbent
 - [ ] Optimize SLURM resource usage (smaller jobs, SLURM arrays w/ different seeds dictating different params / data inits)
 - [ ] Record SMILES strings at each BO iter, analyze where BO trials diverge
 

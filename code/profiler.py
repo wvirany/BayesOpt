@@ -44,7 +44,7 @@ def run_bo_experiment():
     
     # Initialize GP
     fp_func = config_fp_func(sparse=True, radius=2)
-    gp = tanimoto_gp.TanimotoGP(fp_func, X_init, y_init)
+    gp = tanimoto_gp.ZeroMeanTanimotoGP(fp_func, X_init, y_init)
     
     # Run optimization loop with more iterations
     best, top10, X_observed, y_observed, _ = bo.optimization_loop(
@@ -80,7 +80,7 @@ def main():
     stats.print_stats('predict_f', 'smiles_to_fp', 'predict_y', 'ei')
     
     # Write the stats to a file
-    with open('profiles/profile_results_after_caching.txt', 'w') as f:
+    with open('profiles/profile_results_large.txt', 'w') as f:
         f.write(s.getvalue())
     
     print("\nDetailed profiling results have been written to profile_results_large.txt")

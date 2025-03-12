@@ -28,14 +28,16 @@ def get_test_data(n_init=100, target="PARP1"):
     print(f"Initial training set: {len(X_init)}")
     print(f"Remaining molecules: {len(X)}")
     
-    return X, X_init, y, y_init
+    return X_init.tolist(), X.tolist(), y_init, y
 
 
 def run_bo_benchmark(target="PARP1", n_iters=30):
     """Run BO experiment and measure average time per iteration"""
 
+    n_init = 100
+
     # Get test data
-    X, X_init, y, y_init = get_test_data(n_init=100)  # Start with 100 molecules
+    X_init, X, y_init, y = get_test_data(n_init=n_init)  # Start with 100 molecules
     print(f"n_iters: {n_iters}")
 
     # Initialize GP
@@ -43,7 +45,7 @@ def run_bo_benchmark(target="PARP1", n_iters=30):
 
     # Initialize GP
     fp_func = config_fp_func(sparse=True, radius=2)
-    gp = tanimoto_gp.TanimotoGP(fp_func, X_init, y_init)
+    gp = tanimoto_gp.ZeroMeanTanimotoGP(fp_func, X_init, y_init)
     
     # Run and time BO loop
     start = time.time()

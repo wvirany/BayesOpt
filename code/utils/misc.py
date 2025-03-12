@@ -86,7 +86,7 @@ def init_gp(smiles_train, y_train, amp=1.0, noise=1e-2, sparse=True, radius=2, c
 
     fp_func = config_fp_func(sparse=sparse, radius=radius, count=count, fpSize=fpSize)
 
-    gp = tanimoto_gp.TanimotoGP(fp_func, smiles_train, y_train)
+    gp = tanimoto_gp.ZeroMeanTanimotoGP(fp_func, smiles_train, y_train)
 
     gp_params = tanimoto_gp.TanimotoGP_Params(raw_amplitude=jnp.asarray(amp), raw_noise=jnp.asarray(noise))
     gp_params = optimize_params(gp, gp_params, tol=1e-3, max_iters=10000)
@@ -209,7 +209,7 @@ def evaluate_gp(smiles_train,
 
     fp_func = partial(smiles_to_fp, fp_type=fp_type, sparse=sparse, fpSize=fpSize, radius=radius)
 
-    gp = tanimoto_gp.TanimotoGP(fp_func, smiles_train, y_train)
+    gp = tanimoto_gp.ZeroMeanTanimotoGP(fp_func, smiles_train, y_train)
     gp_params = tanimoto_gp.TanimotoGP_Params(raw_amplitude=jnp.asarray(-1.0), raw_noise=jnp.asarray(1e-2))
     gp_params = optimize_params(gp, gp_params, tol=tol, max_iters=max_iters)
 
