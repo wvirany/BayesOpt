@@ -31,6 +31,23 @@
 * Not seeing a huge speedup with cached L. What do you think?
 * Is there a faster way to make observations from noisy data? Note that I call `predict_y()` twice in `ei()` method.
 * Should I be caching the test_train kernel matrix instead of the Cholesky factorization? What about when `full_covar` = `False`?
+* To compute incumbent, I am now taking the posterior mean at the best observed point, rather than calling `predict_y()` on the whole training set and taking the max of that. Is this reasonable?
+
+To compute incumbent before:
+```py
+# Train mean used to predict incumbent for noisy observations
+train_mean, _ = gp.predict_y(gp_params, gp._smiles_train, full_covar=False)
+
+# Find incumbent value (current best observation)
+incumbent = jnp.max(train_mean)
+```
+
+Now:
+```py
+best_idx = jnp.argmax(gp._y_train)
+best_x = [gp._smiles_train[best_idx]]
+incumbent, _ = gp.predict_y(gp_params, best_x, full_covar=False)[0]
+```
 
 
 
@@ -41,10 +58,12 @@
 #### Cleaning up code:
 - [x] Profiling code
 - [x] Cache Cholesky factorization of kernel matrix, implement efficient update function
-- [ ] Cache K_test_test
-- [ ] Correctly and efficiently compute incumbent
-- [ ] Optimize SLURM resource usage (smaller jobs, SLURM arrays w/ different seeds dictating different params / data inits)
-- [ ] Record SMILES strings at each BO iter, analyze where BO trials diverge
+- [x] Cache K_test_train
+- [x] Correctly and efficiently compute incumbent
+- [ ] Re-run regression experiments with `ZeroMeanTanimotoGP` --> record results and params
+- [x] Optimize SLURM resource usage (smaller jobs, SLURM arrays w/ different seeds dictating different params / data inits)
+- [x] Record SMILES strings at each BO iter
+- [ ] Test `update_choleky()` method in `test_kern_gp.py`
 
 #### BO experiments
 - [ ] Run all regression experiments (`PARP1`, `F2`, `ESR2`), (compressed, uncompressed), (r2, r4), (binary, count)

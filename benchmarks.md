@@ -1,39 +1,44 @@
-#### Original benchmark (no caching):
+## Original benchmark (no caching):
 
-Dataset sizes:
-Initial training set: 100
-Remaining molecules: 9900
-n_iters: 30
+Initial train / test:
 
-Results:
+```
+100 / 9900
 Total time: 130.56s
 Average time per iteration: 4.35s
+```
 
----
-
-Results:
+```
+1000 / 9000
 Total time: 1045.98s
 Average time per iteration: 34.87s
+```
+
+## After caching Cholesky factorization:
+
+```
+100 / 9900
+Total time: 127.07s
+Average time per iteration: 4.24s
+```
+
+```
+1000 / 9000
+Total time: 858.84s
+Average time per iteration: 28.63s
+```
 
 
-#### After caching Cholesky factorization
+## After caching `K_test_train`:
 
-Dataset sizes:
-Initial training set: 100
-Remaining molecules: 9900
-n_iters: 30
+```
+100 / 9900
+Total time: 32.86s
+Average time per iteration: 1.10s
+```
 
-Results:
-Total time: 130.83s
-Average time per iteration: 4.36s
-
----
-
-Dataset sizes:
-Initial training set: 1000
-Remaining molecules: 9000
-n_iters: 30
-
-Results:
-Total time: 944.45s
-Average time per iteration: 31.48s
+```
+1000 / 9000
+Total time: 62.90s
+Average time per iteration: 2.10s
+```

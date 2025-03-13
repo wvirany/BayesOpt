@@ -184,12 +184,8 @@ def test_log_likelihood(mean, covar, y_test):
 
 
 
-def natural_params(gp_params):
-    """Returns the natural parameters (after softplus transform, positive values)"""
-    return [
-        float(tanimoto_gp.TRANSFORM(gp_params.raw_amplitude)),
-        float(tanimoto_gp.TRANSFORM(gp_params.raw_noise))
-        ]
+def inverse_softplus(x):
+    return jnp.log(jnp.exp(x) - 1)
 
 
 

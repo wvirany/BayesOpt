@@ -31,13 +31,13 @@ def get_test_data(n_init=100, target="PARP1"):
     print(f"Initial training set: {len(X_init)}")
     print(f"Remaining molecules: {len(X)}")
     
-    return X, X_init, y, y_init
+    return X_init.tolist(), X.tolist(), y_init, y
 
 
 def run_bo_experiment():
     """Run a larger BO experiment for profiling"""
     # Get test data
-    X, X_init, y, y_init = get_test_data(n_init=100)  # Start with 100 molecules
+    X_init, X, y_init, y = get_test_data(n_init=100)  # Start with 100 molecules
     
     # Load GP params from saved model
     _, gp_params = GPCheckpoint.load_gp_checkpoint("models/gp-regression-PARP1-10k-sparse-r2.pkl")
@@ -80,7 +80,7 @@ def main():
     stats.print_stats('predict_f', 'smiles_to_fp', 'predict_y', 'ei')
     
     # Write the stats to a file
-    with open('profiles/profile_results_large.txt', 'w') as f:
+    with open('profiles/profile_results_k_test_train.txt', 'w') as f:
         f.write(s.getvalue())
     
     print("\nDetailed profiling results have been written to profile_results_large.txt")

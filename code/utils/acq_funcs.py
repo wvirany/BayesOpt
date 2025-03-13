@@ -21,11 +21,11 @@ def ei(X, gp, gp_params, epsilon=0.01):
     mean, var = gp.predict_y(gp_params, X, full_covar=False)
     std = jnp.sqrt(var)
 
-    # Train mean used to predict incumbent for noisy observations
-    train_mean, _ = gp.predict_y(gp_params, gp._smiles_train, full_covar=False)
-
-    # Find incumbent value (current best observation)
-    incumbent = jnp.max(train_mean)
+    # Find incumbent by taking posterior mean at best observed point
+    best_idx = jnp.argmax(gp._y_train)
+    best_x = [gp._smiles_train[best_idx]]
+    incumbent_mean, _ = gp.predict_y(gp_params, best_x, full_covar=False, from_train=True)
+    incumbent = incumbent_mean[0]
 
     # Compute improvement
     improvement = mean - incumbent - epsilon

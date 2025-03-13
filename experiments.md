@@ -22,8 +22,8 @@ Here we are comparing BO procedures when using four different fingerprint types:
 Dataset is training dataset from Dockstring (10k molecules). Initial observations are randomly sampled from bottom 80% of dataset. Distributions are shown:
 
 <p align="center">
-<img src="figures/dockstring/PARP1-dataset.png" alt="parp1-dataset.png" width="40%"/>
-<img src="figures/dockstring/F2-dataset.png" alt="f2-dataset.png" width="40%"/>
+<img src="figures/dockstring-bo/PARP1-dataset.png" alt="parp1-dataset.png" width="40%"/>
+<img src="figures/dockstring-bo/ESR2-dataset.png" alt="parp1-dataset.png" width="40%"/>
 </p>
 
 **Experiment setup:**
@@ -37,24 +37,15 @@ Dataset is training dataset from Dockstring (10k molecules). Initial observation
 **Results:**
 
 <p align="center">
-<img src="figures/dockstring/bo-100/PARP1-r2-top1.png" alt="bo-100/PARP1-r2-top1" width="40%"/>
-<img src="figures/dockstring/bo-100/PARP1-r2-top10.png" alt="bo-100/PARP1-r2-top10" width="40%"/>
+<img src="figures/dockstring-bo/PARP1/1000-1000/r2-best.png" alt="" width="40%"/>
+<img src="figures/dockstring-bo/PARP1/1000-1000/r2-top10.png" alt="" width="40%"/>
 </p>
 
 <p align="center">
-<img src="figures/dockstring/bo-100/PARP1-r4-top1.png" alt="bo-100/PARP1-r4-top1" width="40%"/>
-<img src="figures/dockstring/bo-100/PARP1-r4-top10.png" alt="bo-100/PARP1-r4-top10" width="40%"/>
+<img src="figures/dockstring-bo/ESR2/1000-1000/r2-best.png" alt="" width="40%"/>
+<img src="figures/dockstring-bo/ESR2/1000-1000/r2-top10.png" alt="" width="40%"/>
 </p>
 
-<p align="center">
-<img src="figures/dockstring/bo-100/ESR2-r2-top1.png" alt="bo-100/ESR2-r2-top1" width="40%"/>
-<img src="figures/dockstring/bo-100/ESR2-r2-top10.png" alt="bo-100/ESR2-r2-top10" width="40%"/>
-</p>
-
-<p align="center">
-<img src="figures/dockstring/bo-100/ESR2-r4-top1.png" alt="bo-100/ESR2-r4-top1" width="40%"/>
-<img src="figures/dockstring/bo-100/ESR2-r4-top10.png" alt="bo-100/ESR2-r4-top10" width="40%"/>
-</p>
 
 
 
@@ -88,7 +79,7 @@ The evaluation pipeline:
 **Benchmark:**
 
 <p align="center">
-<img src="figures/dockstring/benchmark.png" alt="benchmark.png" width="60%"/>
+<img src="figures/dockstring-regression/benchmark.png" alt="benchmark.png" width="60%"/>
 </p>
 
 To run:

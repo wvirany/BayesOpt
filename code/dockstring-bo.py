@@ -1,15 +1,11 @@
-import numpy as np
 import jax
 import jax.numpy as jnp
+import numpy as np
 
 import tanimoto_gp
 from utils import bo, acq_funcs
 from utils.get_data import get_dockstring_dataset
-from utils.misc import init_gp, config_fp_func
-from utils import GPCheckpoint
-
-import matplotlib.pyplot as plt
-import seaborn as sns
+from utils.misc import init_gp, config_fp_func, inverse_softplus
 
 import os
 import pickle
@@ -17,32 +13,26 @@ import argparse
 import warnings
 warnings.filterwarnings("ignore")
 
-# Set up Seaborn plotting style
-sns.set_style("darkgrid",
-              {"axes.facecolor": ".95",
-               "axes.edgecolor": "#000000",
-               "grid.color": "#EBEBE7",
-               "font.family": "serif",
-               "axes.labelcolor": "#000000",
-               "xtick.color": "#000000",
-               "ytick.color": "#000000",
-               "grid.alpha": 0.4 })
-sns.set_palette('muted')
+
+# Use SLURM array ID for random seed
+SLURM_ARRAY_ID = os.getenv("SLURM_ARRAY_TASK_ID")
+if SLURM_ARRAY_ID is None:
+    print("Warning: No SLURM_ARRAY_TASK_ID found, using random seed")
+    trial_seed = np.random.randint(0, 10000)
+else:
+    trial_seed = int(SLURM_ARRAY_ID)
+rng = np.random.RandomState(trial_seed)
 
 
 
 def get_data(target="PARP1", n_init=1000):
-
     smiles_train, smiles_test, y_train, y_test = get_dockstring_dataset(target=target)
-
-    n = len(smiles_train)
-
     y_train, y_test = -y_train, -y_test
 
     # Sample n_init molecules from bottom 80% of dataset
     cutoff = np.percentile(y_train, 80)
     bottom_80_indices = np.where(y_train <= cutoff)[0]
-    sampled_indices = np.random.choice(bottom_80_indices, size=1000, replace=False)
+    sampled_indices = rng.choice(bottom_80_indices, size=1000, replace=False)
     top_20_indices = np.where(y_train > cutoff)[0]
     bottom_80_complement = np.setdiff1d(bottom_80_indices, sampled_indices)
     full_complement = np.concatenate([bottom_80_complement, top_20_indices])
@@ -55,57 +45,55 @@ def get_data(target="PARP1", n_init=1000):
 
 
 
-
 def main(from_checkpoint, n_init, budget, target, sparse, radius):
-
+    print(f"Running trial with seed {trial_seed}")
     print(f"Experiment Params: n_init: {n_init} | budget: {budget} | target: {target} | sparse: {sparse} | radius: {radius}")
+    
+    X_init, X, y_init, y = get_data(target, n_init)
 
-    # Load GP params from corresponding regression experiment
+    # Initialize GP parameters
+    amp = jnp.var(y_init)
+    noise = 1e-2 * amp
+    gp_params = tanimoto_gp.TanimotoGP_Params(raw_amplitude=inverse_softplus(amp), raw_noise=inverse_softplus(noise))
+
+    # Initialize GP
+    fp_func = config_fp_func(sparse=sparse, radius=radius)
+    gp = tanimoto_gp.ZeroMeanTanimotoGP(fp_func, X_init, y_init)
+
+    # Run BO procedure
+    best, top10, X_observed, y_observed, _ = bo.optimization_loop(
+        X, y, X_init, y_init, gp, gp_params,
+        acq_funcs.ei, epsilon=.01, num_iters=budget
+    )
+
+    # Save results
+    results = {
+        'best': best,
+        'top10': top10,
+        'X_observed': X_observed,
+        'y_observed': y_observed
+        'gp_params': gp_params
+    }
+    
+    # Path to store results
     if sparse:
-        MODEL_PATH = f"models/gp-regression-{target}-10k-sparse-r{radius}.pkl"
-        DATAPATH = f'results/dockstring-bo/{n_init}/results-{target}-sparse-r{radius}.pkl'
+        results_path = f'results/dockstring-bo/{target}/{n_init}-{budget}/sparse-r{radius}.pkl'
     else:
-        MODEL_PATH = f"models/gp-regression-{target}-10k-compressed-r{radius}.pkl"
-        DATAPATH = f'results/dockstring-bo/{n_init}/results-{target}-compressed-r{radius}.pkl'
-    _, gp_params = GPCheckpoint.load_gp_checkpoint(MODEL_PATH)
+        results_path = f'results/dockstring-bo/{target}/{n_init}-{budget}/compressed-r{radius}.pkl'
 
     data = {}
-    if from_checkpoint and os.path.exists(DATAPATH):
-        with open(DATAPATH, 'rb') as f:
+    if os.path.exists(results_path):
+        with open(results_path, 'rb') as f:
             data = pickle.load(f)
-        print(f"Loaded {len(data)} completed runs from checkpoint")
 
-    remaining_runs = 3 - len(data)
+    data[trial_seed] = results
 
-    for i in range(len(data), 3):
-        print(f"\nStarting BO run {i}")
-            
-        # Get dataset
-        X_init, X,y_init, y = get_data(target, n_init)
-
-        # Initialize GP
-        fp_func = config_fp_func(sparse=sparse, radius=radius)
-        gp = tanimoto_gp.ZeroMeanTanimotoGP(fp_func, X_init, y_init)
-
-        best, top10, X_observed, y_observed, _ = bo.optimization_loop(
-            X, y, X_init, y_init, gp, gp_params,
-            acq_funcs.ei, epsilon=.01, num_iters=budget
-        )
-
-        data[i] = (best, top10)
-
-        os.makedirs(os.path.dirname(DATAPATH), exist_ok=True)
-        with open(DATAPATH, 'wb') as f:
-            pickle.dump(data, f)
-        
-        print(f"\nSaved results after run {i}")
-
-    # If directory doesn't exist, make it
-    os.makedirs(os.path.dirname(DATAPATH), exist_ok=True)
-
-    with open(DATAPATH, 'wb') as f:
+    # Create directory if needed and save
+    os.makedirs(os.path.dirname(results_path), exist_ok=True)
+    with open(results_path, 'wb') as f:
         pickle.dump(data, f)
 
+    print(f"Save results to {results_path}")
 
 
 if __name__ == "__main__":
