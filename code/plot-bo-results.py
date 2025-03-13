@@ -76,7 +76,7 @@ def main(target, n_init, budget, sparse, radius, make_hist):
     n = len(data_sparse)
     for i in range(n):
         best_sparse = data_sparse[i]['best']
-        best_compressed = data_sparse[i]['best']
+        best_compressed = data_compressed[i]['best']
 
         top10_sparse = data_sparse[i]['top10']
         top10_compressed = data_compressed[i]['top10']
