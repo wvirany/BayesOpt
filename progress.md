@@ -1,28 +1,4 @@
-#### Questions:
-
-* What are the best ways to contribute to the git repositories?
-* What should I do for GP hyperparameters? I'm currently setting `amp` to dataset variance and `noise = 1e-2 * amp`
-* To compute incumbent, I am now taking the posterior mean at the best observed point, rather than calling `predict_y()` on the whole training set and taking the max of that. Is this reasonable?
-* Where do you see this project going from here?
-* I changed back to using `ZeroMeanTanimotoGP` for simplicity at the moment, what do you think? (I'll probably use `ConstantMeanGP` once I implement it)
-
-To compute incumbent before:
-```py
-# Train mean used to predict incumbent for noisy observations
-train_mean, _ = gp.predict_y(gp_params, gp._smiles_train, full_covar=False)
-
-# Find incumbent value (current best observation)
-incumbent = jnp.max(train_mean)
-```
-
-Now:
-```py
-best_idx = jnp.argmax(gp._y_train)
-best_x = [gp._smiles_train[best_idx]]
-incumbent, _ = gp.predict_y(gp_params, best_x, full_covar=False)[0]
-```
-
-
+Meeting notes (3/13):
 
 * in `predict_f()` are the parameters used for prediction the same that are used to compute the Cholesky factor?
   --> Same for `predict_y()`
@@ -41,13 +17,13 @@ incumbent, _ = gp.predict_y(gp_params, best_x, full_covar=False)[0]
 - [x] Cache Cholesky factorization of kernel matrix, implement efficient update function
 - [x] Cache K_test_train
 - [x] Correctly and efficiently compute incumbent
-- [ ] Re-run regression experiments with `ZeroMeanTanimotoGP` --> record results and params
+- [ ] Re-run regression experiments with `ConstantMeanTanimotoGP` [params: (`PARP1`, `F2`, `ESR2`), (compressed, uncompressed), (r2, r4), (binary, count)] --> record results and params
 - [x] Optimize SLURM resource usage (smaller jobs, SLURM arrays w/ different seeds dictating different params / data inits)
 - [x] Record SMILES strings at each BO iter
 - [ ] Test `update_choleky()` method in `test_kern_gp.py`
   - Can test this by re-computing Cholesky factor, as well as using update method, and comparing
-- [ ] Run all regression experiments (`PARP1`, `F2`, `ESR2`), (compressed, uncompressed), (r2, r4), (binary, count)
-- [ ] Implement `ConstantMeanTanimotoGP`
+- [x] Implement `ConstantMeanTanimotoGP`
+- [ ] `FixedTanimotoGP` class? Reconcile `ConstantMeanTanimotoGP` and K_test_train caching
 - [ ] Generalize `add_observation()` to $n$ observations
 
 #### BO experiments
@@ -57,6 +33,7 @@ incumbent, _ = gp.predict_y(gp_params, best_x, full_covar=False)[0]
   - [x] `ESR2`
 - [x] After making code faster and fixing SLURM resource usage, run more trials w/ larger initalizations / budgets
 
+- [ ] Re-run BO experiments with `ConstantMeanTanimotoGP` class
 
 # Feb
 
