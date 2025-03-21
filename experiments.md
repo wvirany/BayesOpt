@@ -42,8 +42,18 @@ Dataset is training dataset from Dockstring (10k molecules). Initial observation
 </p>
 
 <p align="center">
+<img src="figures/dockstring-bo/F2/1000-1000/r2-best.png" alt="" width="40%"/>
+<img src="figures/dockstring-bo/F2/1000-1000/r2-top10.png" alt="" width="40%"/>
+</p>
+
+<p align="center">
 <img src="figures/dockstring-bo/ESR2/1000-1000/r2-best.png" alt="" width="40%"/>
 <img src="figures/dockstring-bo/ESR2/1000-1000/r2-top10.png" alt="" width="40%"/>
+</p>
+
+<p align="center">
+<img src="figures/dockstring-bo/PGR/1000-1000/r2-best.png" alt="" width="40%"/>
+<img src="figures/dockstring-bo/PGR/1000-1000/r2-top10.png" alt="" width="40%"/>
 </p>
 
 

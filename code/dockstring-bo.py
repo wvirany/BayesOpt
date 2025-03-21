@@ -96,7 +96,7 @@ def main(n_init, budget, target, sparse, radius):
     with open(results_path, 'wb') as f:
         pickle.dump(data, f)
 
-    print(f"Save results to {results_path}")
+    print(f"Saved results to {results_path}")
 
 
 if __name__ == "__main__":

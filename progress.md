@@ -1,14 +1,4 @@
-Meeting notes (3/13):
-
-* in `predict_f()` are the parameters used for prediction the same that are used to compute the Cholesky factor?
-  --> Same for `predict_y()`
-* predictive GP class with fixed parameters
-* Subtract off dataset means for `ZeroMeanTanimotoGP`
-* Constant mean
-* Refactor for BO project, caching
-* Re-run BO experiments with subtracted mean
-
-* **Q:** Do we want to continuously update the mean function for `ConstantMeanTanimotoGP` as we observe new data in BO?
+* Do we want to continuously update the mean function for `ConstantMeanTanimotoGP` as we observe new data in BO?
 
 # March
 
@@ -31,11 +21,11 @@ Meeting notes (3/13):
 #### BO experiments
 - [x] Run all BO experiments for 1000 initial molecules and budget w/ GP regression params on bottom 80%
   - [x] `PARP1`
-  - [ ] `F2`
+  - [x] `F2`
   - [x] `ESR2`
 - [x] After making code faster and fixing SLURM resource usage, run more trials w/ larger initalizations / budgets
 
-- [ ] Re-run BO experiments with `ConstantMeanTanimotoGP` class
+- [ ] Re-run BO experiments with `FixedTanimotoGP` class
 
 # Feb
 

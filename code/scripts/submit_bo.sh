@@ -17,15 +17,7 @@ module load anaconda
 conda activate tanimoto-gp
 
 python3 dockstring-bo.py \
-    --target PGR \
+    --target PARP1 \
     --n_init 1000 \
     --budget 1000 \
-    --radius 2 \
-    --sparse
-
-python3 plot-bo-results.py \
-    --target PGR \
-    --n_init 1000 \
-    --budet 1000 \
-    --radius 2 \
-    --sparse
+    --radius 4

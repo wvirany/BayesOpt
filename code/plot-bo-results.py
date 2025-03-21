@@ -37,7 +37,7 @@ def plot_hist(y, p99, p999, target):
 
 
 
-def main(target, n_init, budget, sparse, radius, make_hist):
+def main(target, n_init, budget, radius, make_hist):
 
     # Load dataset
     smiles_train, smiles_test, y_train, y_test = get_data.get_dockstring_dataset(target=target)
@@ -168,7 +168,6 @@ if __name__ == "__main__":
     parser.add_argument("--target", type=str, default='PARP1')
     parser.add_argument("--n_init", type=int, default=1000)
     parser.add_argument("--budget", type=int, default=1000)
-    parser.add_argument("--sparse", action="store_true")
     parser.add_argument("--radius", type=int, default=2)
     parser.add_argument("--make_hist", action="store_true")
  
@@ -177,6 +176,5 @@ if __name__ == "__main__":
     main(n_init=args.n_init,
          budget=args.budget,
          target=args.target,
-         sparse=args.sparse,
          radius=args.radius,
          make_hist=args.make_hist)
