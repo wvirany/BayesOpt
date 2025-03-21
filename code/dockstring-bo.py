@@ -45,7 +45,7 @@ def get_data(target="PARP1", n_init=1000):
 
 
 
-def main(from_checkpoint, n_init, budget, target, sparse, radius):
+def main(n_init, budget, target, sparse, radius):
     print(f"Running trial with seed {trial_seed}")
     print(f"Experiment Params: n_init: {n_init} | budget: {budget} | target: {target} | sparse: {sparse} | radius: {radius}")
     
@@ -54,11 +54,14 @@ def main(from_checkpoint, n_init, budget, target, sparse, radius):
     # Initialize GP parameters
     amp = jnp.var(y_init)
     noise = 1e-2 * amp
-    gp_params = tanimoto_gp.TanimotoGP_Params(raw_amplitude=inverse_softplus(amp), raw_noise=inverse_softplus(noise))
+    train_mean = jnp.mean(y_init)
+    gp_params = tanimoto_gp.TanimotoGP_Params(
+        raw_amplitude=inverse_softplus(amp), raw_noise=inverse_softplus(noise), mean=train_mean
+    )
 
     # Initialize GP
     fp_func = config_fp_func(sparse=sparse, radius=radius)
-    gp = tanimoto_gp.ZeroMeanTanimotoGP(fp_func, X_init, y_init)
+    gp = tanimoto_gp.FixedTanimotoGP(gp_params, fp_func, X_init, y_init)
 
     # Run BO procedure
     best, top10, X_observed, y_observed, _ = bo.optimization_loop(
@@ -71,7 +74,7 @@ def main(from_checkpoint, n_init, budget, target, sparse, radius):
         'best': best,
         'top10': top10,
         'X_observed': X_observed,
-        'y_observed': y_observed
+        'y_observed': y_observed,
         'gp_params': gp_params
     }
     
@@ -99,8 +102,6 @@ def main(from_checkpoint, n_init, budget, target, sparse, radius):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--from_checkpoint", action="store_true",
-                        help="Resume from existing checkpoint")
     parser.add_argument("--n_init", type=int, default=1000)
     parser.add_argument("--budget", type=int, default=1000)
     parser.add_argument("--target", type=str, default='PARP1')
@@ -109,4 +110,4 @@ if __name__ == "__main__":
  
     args = parser.parse_args()
 
-    main(from_checkpoint=args.from_checkpoint, n_init=args.n_init, budget=args.budget, target=args.target, sparse=args.sparse, radius=args.radius)
+    main(n_init=args.n_init, budget=args.budget, target=args.target, sparse=args.sparse, radius=args.radius)

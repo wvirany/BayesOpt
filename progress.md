@@ -8,6 +8,8 @@ Meeting notes (3/13):
 * Refactor for BO project, caching
 * Re-run BO experiments with subtracted mean
 
+* **Q:** Do we want to continuously update the mean function for `ConstantMeanTanimotoGP` as we observe new data in BO?
+
 # March
 
 ### To Do:
@@ -23,7 +25,7 @@ Meeting notes (3/13):
 - [ ] Test `update_choleky()` method in `test_kern_gp.py`
   - Can test this by re-computing Cholesky factor, as well as using update method, and comparing
 - [x] Implement `ConstantMeanTanimotoGP`
-- [ ] `FixedTanimotoGP` class? Reconcile `ConstantMeanTanimotoGP` and K_test_train caching
+- [x] `FixedTanimotoGP` class? Reconcile `ConstantMeanTanimotoGP` and K_test_train caching
 - [ ] Generalize `add_observation()` to $n$ observations
 
 #### BO experiments

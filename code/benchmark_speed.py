@@ -1,9 +1,10 @@
 import time
+import jax.numpy as jnp
 import numpy as np
 
-from utils import bo, acq_funcs, GPCheckpoint
+from utils import bo, acq_funcs
 from utils.get_data import get_dockstring_dataset
-from utils.misc import config_fp_func
+from utils.misc import config_fp_func, inverse_softplus
 import tanimoto_gp
 
 def get_test_data(n_init=100, target="PARP1"):
@@ -40,12 +41,17 @@ def run_bo_benchmark(target="PARP1", n_iters=30):
     X_init, X, y_init, y = get_test_data(n_init=n_init)  # Start with 100 molecules
     print(f"n_iters: {n_iters}")
 
-    # Initialize GP
-    _, gp_params = GPCheckpoint.load_gp_checkpoint(f"models/gp-regression-{target}-10k-sparse-r2.pkl")
+    # Initialize GP parameters
+    amp = jnp.var(y_init)
+    noise = 1e-2 * amp
+    train_mean = jnp.mean(y_init)
+    gp_params = tanimoto_gp.TanimotoGP_Params(
+        raw_amplitude=inverse_softplus(amp), raw_noise=inverse_softplus(noise), mean=train_mean
+    )
 
     # Initialize GP
     fp_func = config_fp_func(sparse=True, radius=2)
-    gp = tanimoto_gp.ZeroMeanTanimotoGP(fp_func, X_init, y_init)
+    gp = tanimoto_gp.FixedTanimotoGP(gp_params, fp_func, X_init, y_init)
     
     # Run and time BO loop
     start = time.time()
