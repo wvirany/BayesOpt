@@ -17,6 +17,8 @@
 - [x] Implement `ConstantMeanTanimotoGP`
 - [x] `FixedTanimotoGP` class? Reconcile `ConstantMeanTanimotoGP` and K_test_train caching
 - [ ] Generalize `add_observation()` to $n$ observations
+- [ ] Regression experiments
+- [ ] Test and fix caching functionality
 
 #### BO experiments
 - [x] Run all BO experiments for 1000 initial molecules and budget w/ GP regression params on bottom 80%
@@ -24,8 +26,9 @@
   - [x] `F2`
   - [x] `ESR2`
 - [x] After making code faster and fixing SLURM resource usage, run more trials w/ larger initalizations / budgets
-
-- [ ] Re-run BO experiments with `FixedTanimotoGP` class
+- [x] Re-run BO experiments with `FixedTanimotoGP` class
+- [ ] BO experiments w/ `n_init` 100 and `budget` 1000
+- [ ] BO experiments w/ `radius` 4
 
 # Feb
 

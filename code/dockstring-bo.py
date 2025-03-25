@@ -32,7 +32,7 @@ def get_data(target="PARP1", n_init=1000):
     # Sample n_init molecules from bottom 80% of dataset
     cutoff = np.percentile(y_train, 80)
     bottom_80_indices = np.where(y_train <= cutoff)[0]
-    sampled_indices = rng.choice(bottom_80_indices, size=1000, replace=False)
+    sampled_indices = rng.choice(bottom_80_indices, size=n_init, replace=False)
     top_20_indices = np.where(y_train > cutoff)[0]
     bottom_80_complement = np.setdiff1d(bottom_80_indices, sampled_indices)
     full_complement = np.concatenate([bottom_80_complement, top_20_indices])

@@ -17,21 +17,25 @@ Here we are comparing BO procedures when using four different fingerprint types:
 * Uncompressed count ECFP, radius 4
 * Compressed count ECFP, size 1024, radius 4
 
+across several different targets (PARP1, F2, ESR2,)
+
 **Dataset:**
 
 Dataset is training dataset from Dockstring (10k molecules). Initial observations are randomly sampled from bottom 80% of dataset. Distributions are shown:
 
 <p align="center">
 <img src="figures/dockstring-bo/PARP1-dataset.png" alt="parp1-dataset.png" width="40%"/>
+<img src="figures/dockstring-bo/F2-dataset.png" alt="parp1-dataset.png" width="40%"/>
 <img src="figures/dockstring-bo/ESR2-dataset.png" alt="parp1-dataset.png" width="40%"/>
+<img src="figures/dockstring-bo/PGR-dataset.png" alt="parp1-dataset.png" width="40%"/>
 </p>
 
 **Experiment setup:**
 
-1. Initialize GP on `n_init` molecules taken from bottom 80% of dataset, use GP params from 10k regression exp
+1. Initialize GP on `n_init` molecules taken from bottom 80% of dataset
 2. Perform BO for `budget` iterations
 3. Measure best molecule, and average of top 10 molecules at each iteration
-4. Repeat for 3 different splits of dataset, plot median, min, and max for best molecule and top 10 at each iteration
+4. Repeat for 10 different splits of dataset, plot median, 25 quantile, and 75th quantile for best molecule and top 10 average at each iteration
 5. Compare performance with compressed and uncompressed fingerprints
 
 **Results:**
