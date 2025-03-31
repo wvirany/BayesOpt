@@ -58,28 +58,24 @@ def run_bo_with_config(cached: bool, seed: int = 42) -> tuple[list, list, jnp.nd
     K_test_trains = []
     L_matrices = []
 
-    # Run BO loop w/ caching
-    if cached:
-        for i in range(5):
-            idx = acq_funcs.ei(X, gp, gp_params, epsilon=0.01)
-            X_new, y_new = X[idx], y[idx]
-            X, y = np.delete(X, idx, axis=0), np.delete(y, idx, axis=0)
-            X_observed = np.append(X_observed, X_new)
-            y_observed = np.append(y_observed, y_new)
-            gp.add_observation(gp_params, idx, y_new)
+    # Run BO loop
+    for i in range(5):
+        idx = acq_funcs.ei(X, gp, gp_params, epsilon=0.01)
+        X_new, y_new = X[idx], y[idx]
+        X, y = np.delete(X, idx, axis=0), np.delete(y, idx, axis=0)
+        X_observed = np.append(X_observed, X_new)
+        y_observed = np.append(y_observed, y_new)
 
+        if cached:
+            # Update training data
+            gp.add_observation(gp_params, idx, y_new)
+            # Store matrices
             K_test_trains.append(gp._K_test_train)
             L_matrices.append(gp._cached_L)
-    # Run BO loop w/o caching
-    else:
-        for i in range(5):
-            idx = acq_funcs.ei(X, gp, gp_params, epsilon=0.01)
-            X_new, y_new = X[idx], y[idx]
-            X, y = np.delete(X, idx, axis=0), np.delete(y, idx, axis=0)
-            X_observed = np.append(X_observed, X_new)
-            y_observed = np.append(y_observed, y_new)
+        else:
+            # Update training data
             gp.set_training_data(X_observed, y_observed)
-
+            # Store matrices
             K_test_train = compute_K_test_train(gp, X)
             L = compute_cholesky(gp, gp_params)
             K_test_trains.append(K_test_train)

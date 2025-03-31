@@ -17,7 +17,7 @@ module load anaconda
 conda activate tanimoto-gp
 
 python3 dockstring-bo.py \
-    --target ESR2 \
+    --target PARP1 \
     --n_init 100 \
     --budget 1000 \
     --radius 2
