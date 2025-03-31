@@ -129,7 +129,7 @@ def main(target, n_init, budget, radius, make_hist):
 
     plt.xlabel("Observation")
     plt.ylabel("Objective")
-    plt.title(f"Top 1 Molecule (Target: {target}, radius: {radius})")
+    plt.title(f"Top 1 Molecule (Target: {target}, radius: {radius}, n_init: {n_init})")
     plt.legend()
 
     filename = f"r{radius}-best.png"
@@ -153,7 +153,7 @@ def main(target, n_init, budget, radius, make_hist):
 
     plt.xlabel("Observation")
     plt.ylabel("Top 10 Observed")
-    plt.title(f"Top 10 Average (Target: {target}, radius: {radius})")
+    plt.title(f"Top 10 Average (Target: {target}, radius: {radius}, n_init: {n_init})")
     plt.legend()
 
 
