@@ -1,4 +1,4 @@
-# A Gaussian Process Library for Exact Molecular Fingerprints
+# "Molecular fingerprints matter for Bayesian optimization"
 
 ## Experiments
 
