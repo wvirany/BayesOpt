@@ -25,8 +25,8 @@ rng = np.random.RandomState(trial_seed)
 
 
 
-def get_data(target="PARP1", n_init=1000):
-    smiles_train, smiles_test, y_train, y_test = get_dockstring_dataset(target=target)
+def get_data(pool=10000, n_init=1000, target="PARP1", include_test=True):
+    smiles_train, smiles_test, y_train, y_test = get_dockstring_dataset(n_train=pool, target=target, seed=trial_seed)
     y_train, y_test = -y_train, -y_test
 
     # Sample n_init molecules from bottom 80% of dataset
@@ -38,18 +38,28 @@ def get_data(target="PARP1", n_init=1000):
     full_complement = np.concatenate([bottom_80_complement, top_20_indices])
 
     X_init, y_init = smiles_train[sampled_indices], y_train[sampled_indices]
-    X, y = np.concatenate([smiles_train[full_complement], smiles_test]), np.concatenate([y_train[full_complement], y_test])
 
+    if include_test:
+        # Use returned training set and test set for candidate pool:
+        X, y = np.concatenate([smiles_train[full_complement], smiles_test]), np.concatenate([y_train[full_complement], y_test])
+    else:
+        # Only use training set for candidate pool
+        X, y = smiles_train[full_complement], y_train[full_complement]
 
     return X_init.tolist(), X.tolist(), y_init, y
 
 
 
-def main(n_init, budget, target, sparse, radius):
+def main(pool, n_init, budget, target, sparse, radius):
+
+    assert n_init < pool, "Pool size should be larger than initial set of molecules"
+    assert n_init + budget < pool, "Pool size should be larger than initial set plus budget"
+
     print(f"Running trial with seed {trial_seed}")
-    print(f"Experiment Params: n_init: {n_init} | budget: {budget} | target: {target} | sparse: {sparse} | radius: {radius}")
     
-    X_init, X, y_init, y = get_data(target, n_init)
+    X_init, X, y_init, y = get_data(pool, n_init, target)
+
+    print(f"Experiment Params \n\t Pool size: {len(X)}\n\t Initial molecules: {n_init}\n\t Budget: {budget}\n\t Target: {target}\n\t sparse: {sparse} | radius {radius}")
 
     # Initialize GP parameters
     amp = jnp.var(y_init)
@@ -80,9 +90,9 @@ def main(n_init, budget, target, sparse, radius):
     
     # Path to store results
     if sparse:
-        results_path = f'results/dockstring-bo/{target}/{n_init}-{budget}/sparse-r{radius}.pkl'
+        results_path = f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/sparse-r{radius}.pkl'
     else:
-        results_path = f'results/dockstring-bo/{target}/{n_init}-{budget}/compressed-r{radius}.pkl'
+        results_path = f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/compressed-r{radius}.pkl'
 
     data = {}
     if os.path.exists(results_path):
@@ -102,6 +112,7 @@ def main(n_init, budget, target, sparse, radius):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
+    parser.add_argument("--pool", type=int, default=10000)
     parser.add_argument("--n_init", type=int, default=1000)
     parser.add_argument("--budget", type=int, default=1000)
     parser.add_argument("--target", type=str, default='PARP1')
@@ -110,4 +121,4 @@ if __name__ == "__main__":
  
     args = parser.parse_args()
 
-    main(n_init=args.n_init, budget=args.budget, target=args.target, sparse=args.sparse, radius=args.radius)
+    main(pool=args.pool, n_init=args.n_init, budget=args.budget, target=args.target, sparse=args.sparse, radius=args.radius)

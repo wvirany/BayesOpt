@@ -37,7 +37,7 @@ def plot_hist(y, p99, p999, target):
 
 
 
-def main(target, n_init, budget, radius, make_hist):
+def main(pool, target, n_init, budget, radius, make_hist):
 
     # Load dataset
     smiles_train, smiles_test, y_train, y_test = get_data.get_dockstring_dataset(target=target)
@@ -61,10 +61,10 @@ def main(target, n_init, budget, radius, make_hist):
 
 
     # Load BO results
-    with open(f'results/dockstring-bo/{target}/{n_init}-{budget}/sparse-r{radius}.pkl', 'rb') as f:
+    with open(f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/sparse-r{radius}.pkl', 'rb') as f:
         data_sparse = pickle.load(f)
 
-    with open(f'results/dockstring-bo/{target}/{n_init}-{budget}/compressed-r{radius}.pkl', 'rb') as f:
+    with open(f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/compressed-r{radius}.pkl', 'rb') as f:
         data_compressed = pickle.load(f)
 
     best_all_iters_sparse = np.zeros(budget + 1)
@@ -108,7 +108,7 @@ def main(target, n_init, budget, radius, make_hist):
     top10_25_compressed = - np.quantile(top10_all_iters_compressed, .25, axis=0)
 
 
-    FIGPATH = f"../figures/dockstring-bo/{target}/{n_init}-{budget}/"
+    FIGPATH = f"../figures/dockstring-bo/{target}/{pool}-{n_init}-{budget}/"
     os.makedirs(os.path.dirname(FIGPATH), exist_ok=True)
 
     # FIGURE 1: Best molecule
@@ -129,7 +129,7 @@ def main(target, n_init, budget, radius, make_hist):
 
     plt.xlabel("Observation")
     plt.ylabel("Objective")
-    plt.title(f"Top 1 Molecule (Target: {target}, radius: {radius}, n_init: {n_init})")
+    plt.title(f"Top 1 Molecule (Target: {target}, radius: {radius}, pool: {pool},  n_init: {n_init})")
     plt.legend()
 
     filename = f"r{radius}-best.png"
@@ -153,7 +153,7 @@ def main(target, n_init, budget, radius, make_hist):
 
     plt.xlabel("Observation")
     plt.ylabel("Top 10 Observed")
-    plt.title(f"Top 10 Average (Target: {target}, radius: {radius}, n_init: {n_init})")
+    plt.title(f"Top 10 Average (Target: {target}, radius: {radius}, pool: {pool}, n_init: {n_init})")
     plt.legend()
 
 
@@ -165,6 +165,7 @@ def main(target, n_init, budget, radius, make_hist):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
+    parser.add_argument("--pool", type=int, default=10000)
     parser.add_argument("--target", type=str, default='PARP1')
     parser.add_argument("--n_init", type=int, default=1000)
     parser.add_argument("--budget", type=int, default=1000)
@@ -173,7 +174,8 @@ if __name__ == "__main__":
  
     args = parser.parse_args()
 
-    main(n_init=args.n_init,
+    main(pool=args.pool,
+         n_init=args.n_init,
          budget=args.budget,
          target=args.target,
          radius=args.radius,

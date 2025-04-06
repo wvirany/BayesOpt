@@ -70,7 +70,7 @@ def get_data(dataset='biogen/adme-fang-v1', endpoint='LOG_SOLUBILITY', split=Fal
         
 
 
-def get_dockstring_dataset(n_train=10000, target='PARP1'):
+def get_dockstring_dataset(n_train=10000, target='PARP1', seed=42):
     dataset_path = Path('/projects/wavi0116/code/BayesOpt/data/dockstring-dataset.tsv')
     assert dataset_path.exists()
 
@@ -88,12 +88,13 @@ def get_dockstring_dataset(n_train=10000, target='PARP1'):
     df_train = df[splits["split"] == "train"]
     df_test = df[splits["split"] == "test"]
 
-    df_train_10k = df_train.sample(n=n_train, random_state=42)
+    if n_train < len(df_train):
+        df_train = df_train.sample(n=n_train, random_state=seed)
 
-    smiles_train = df_train_10k["smiles"].values
+    smiles_train = df_train["smiles"].values
     smiles_test = df_test["smiles"].values
 
-    y_train = np.minimum(df_train_10k[target].values, 5.0)
+    y_train = np.minimum(df_train[target].values, 5.0)
     y_test = np.minimum(df_test[target].values, 5.0)
 
     smiles_train = smiles_train[~np.isnan(y_train)]
