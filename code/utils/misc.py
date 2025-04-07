@@ -104,7 +104,7 @@ def config_fp_func(fp_type='ecfp', sparse=True, radius=2, count=True, fpSize=204
 
 
 
-@lru_cache(maxsize=100_000)
+@lru_cache(maxsize=300_000)
 def smiles_to_fp(smiles: str, fp_type: str = 'ecfp', sparse=True, radius=2, count=True, fpSize=2048):
     """
     Convert smiles to sparse count fingerprint of given type

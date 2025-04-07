@@ -18,7 +18,7 @@ conda activate tanimoto-gp
 
 python3 dockstring-bo.py \
     --target F2 \
-    --pool 100000 \
+    --pool 1000000 \
     --n_init 100 \
     --budget 1000 \
     --radius 2

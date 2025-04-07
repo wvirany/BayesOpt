@@ -2,8 +2,8 @@
 ## Increased pool size:
 
 <p align="center">
-<img src="../figures/dockstring-bo/F2/100000-100-1000/r2-best.png" alt="" width="40%"/>
-<img src="../figures/dockstring-bo/F2/100000-100-1000/r2-top10.png" alt="" width="40%"/>
+<img src="../figures/dockstring-bo/F2/1000000-100-1000/r2-best.png" alt="" width="40%"/>
+<img src="../figures/dockstring-bo/F2/1000000-100-1000/r2-top10.png" alt="" width="40%"/>
 </p>
 
 

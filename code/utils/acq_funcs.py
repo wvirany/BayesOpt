@@ -1,3 +1,4 @@
+import numpy as np
 import jax.numpy as jnp
 from scipy.stats import norm
 
@@ -70,8 +71,7 @@ def ucb(X, gp, gp_params, beta=0.1):
     return np.argmax(ucb)
 
 
-def uniform(X, gp, gp_params, beta=None):
+def uniform(X, gp, gp_params, epsilon=None):
 
-    # Function arguments (gp, gp_params, beta) are placeholders
-
+    # Function arguments (gp, gp_params, epsilon) are placeholders
     return np.random.randint(len(X))

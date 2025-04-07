@@ -7,39 +7,43 @@ from utils.get_data import get_dockstring_dataset
 from utils.misc import config_fp_func, inverse_softplus
 import tanimoto_gp
 
-def get_test_data(n_init=100, target="PARP1"):
-    """Get a larger subset of data for profiling"""
-    smiles_train, smiles_test, y_train, y_test = get_dockstring_dataset(target=target)
-    
-    # Use full training dataset for more realistic profiling
+pool = 250000
+n_init = 100
+target = 'F2'
+seed = 42
+rng = np.random.RandomState(seed)
+
+def get_data(pool=10000, n_init=1000, target="PARP1", include_test=True):
+    smiles_train, smiles_test, y_train, y_test = get_dockstring_dataset(n_train=pool, target=target, seed=seed)
     y_train, y_test = -y_train, -y_test
-    
-    # Sample initial points from bottom 80%
+
+    # Sample n_init molecules from bottom 80% of dataset
     cutoff = np.percentile(y_train, 80)
     bottom_80_indices = np.where(y_train <= cutoff)[0]
-    sampled_indices = np.random.choice(bottom_80_indices, size=n_init, replace=False)
+    sampled_indices = rng.choice(bottom_80_indices, size=n_init, replace=False)
     top_20_indices = np.where(y_train > cutoff)[0]
     bottom_80_complement = np.setdiff1d(bottom_80_indices, sampled_indices)
     full_complement = np.concatenate([bottom_80_complement, top_20_indices])
-    
+
     X_init, y_init = smiles_train[sampled_indices], y_train[sampled_indices]
-    X, y = smiles_train[full_complement], y_train[full_complement]
-    
-    print(f"Dataset sizes:")
-    print(f"Initial training set: {len(X_init)}")
-    print(f"Remaining molecules: {len(X)}")
-    
+
+    if include_test:
+        # Use returned training set and test set for candidate pool:
+        X, y = np.concatenate([smiles_train[full_complement], smiles_test]), np.concatenate([y_train[full_complement], y_test])
+    else:
+        # Only use training set for candidate pool
+        X, y = smiles_train[full_complement], y_train[full_complement]
+
     return X_init.tolist(), X.tolist(), y_init, y
 
 
 def run_bo_benchmark(target="PARP1", n_iters=30):
     """Run BO experiment and measure average time per iteration"""
 
-    n_init = 100
-
     # Get test data
-    X_init, X, y_init, y = get_test_data(n_init=n_init)  # Start with 100 molecules
+    X_init, X, y_init, y = get_data(pool=pool, n_init=n_init, target=target)  # Start with 100 molecules
     print(f"n_iters: {n_iters}")
+    print(f"Pool size: {len(X)}")
 
     # Initialize GP parameters
     amp = jnp.var(y_init)

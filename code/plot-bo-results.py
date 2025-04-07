@@ -1,7 +1,8 @@
 import numpy as np
 
 import tanimoto_gp
-from utils import bo, acq_funcs, get_data
+from utils import bo, acq_funcs
+from utils.get_data import get_dockstring_dataset
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -37,23 +38,24 @@ def plot_hist(y, p99, p999, target):
 
 
 
+def get_data(pool=10000, target="PARP1", include_test=True):
+    smiles_train, smiles_test, y_train, y_test = get_dockstring_dataset(n_train=pool, target=target)
+    X, y = np.concatenate([smiles_train, smiles_test]), np.concatenate([y_train, y_test])
+    return X, y
+
+
+
 def main(pool, target, n_init, budget, radius, make_hist):
 
     # Load dataset
-    smiles_train, smiles_test, y_train, y_test = get_data.get_dockstring_dataset(target=target)
-    y_train, y_test = -y_train, -y_test
-
-    sampled_indices = np.random.choice(np.arange(10000), size=n_init)
-    complement_indices = np.setdiff1d(np.arange(10000), sampled_indices)
-
-    X_init, y_init = smiles_train[sampled_indices], y_train[sampled_indices]
-    X, y = np.concatenate([smiles_train[complement_indices], smiles_test]), np.concatenate([y_train[complement_indices], y_test])
+    X, y = get_data(pool=pool, target=target)
+    y = -y
 
     # Compute percentiles, best scores for top 1 and top 10 molecules
-    percentile999 = - np.quantile(np.concatenate([y, y_init]), .999)
-    percentile99 = - np.quantile(np.concatenate([y, y_init]), .99)
-    best_score = - np.max(np.concatenate([y, y_init]))
-    best_top10 = -bo.find_top10_avg(np.concatenate([y, y_init]))
+    percentile999 = - np.quantile(y, .999)
+    percentile99 = - np.quantile(y, .99)
+    best_score = - np.max(y)
+    best_top10 = -bo.find_top10_avg(y)
 
 
     if make_hist:
@@ -67,29 +69,42 @@ def main(pool, target, n_init, budget, radius, make_hist):
     with open(f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/compressed-r{radius}.pkl', 'rb') as f:
         data_compressed = pickle.load(f)
 
+    with open(f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/random.pkl', 'rb') as f:
+        data_random = pickle.load(f)
+
     best_all_iters_sparse = np.zeros(budget + 1)
     best_all_iters_compressed = np.zeros(budget + 1)
+    best_all_iters_random = np.zeros(budget + 1)
 
     top10_all_iters_sparse = np.zeros(budget + 1)
     top10_all_iters_compressed = np.zeros(budget + 1)
+    top10_all_iters_random = np.zeros(budget + 1)
 
     n = len(data_sparse)
     for i in range(n):
         best_sparse = data_sparse[i]['best']
         best_compressed = data_compressed[i]['best']
+        best_random = data_random[i]['best']
 
         top10_sparse = data_sparse[i]['top10']
         top10_compressed = data_compressed[i]['top10']
+        top10_random = data_random[i]['top10']
 
         best_all_iters_sparse = np.vstack([best_all_iters_sparse, best_sparse])
         best_all_iters_compressed = np.vstack([best_all_iters_compressed, best_compressed])
+        best_all_iters_random = np.vstack([best_all_iters_random, best_random])
+
         top10_all_iters_sparse = np.vstack([top10_all_iters_sparse, top10_sparse])
         top10_all_iters_compressed = np.vstack([top10_all_iters_compressed, top10_compressed])
+        top10_all_iters_random = np.vstack([best_all_iters_random, best_random])
 
     best_all_iters_sparse = np.delete(best_all_iters_sparse, 0, axis=0)
     best_all_iters_compressed = np.delete(best_all_iters_compressed, 0, axis=0)
+    best_all_iters_random = np.delete(best_all_iters_random, 0, axis=0)
+
     top10_all_iters_sparse = np.delete(top10_all_iters_sparse, 0, axis=0)
     top10_all_iters_compressed = np.delete(top10_all_iters_compressed, 0, axis=0)
+    top10_all_iters_random = np.delete(top10_all_iters_random, 0, axis=0)
     
     best_median_sparse = - np.median(best_all_iters_sparse, axis=0)
     best_75_sparse = - np.quantile(best_all_iters_sparse, .75, axis=0)
@@ -99,6 +114,10 @@ def main(pool, target, n_init, budget, radius, make_hist):
     best_75_compressed = - np.quantile(best_all_iters_compressed, .75, axis=0)
     best_25_compressed = - np.quantile(best_all_iters_compressed, .25, axis=0)
 
+    best_median_random = - np.median(best_all_iters_random, axis=0)
+    best_75_random = - np.quantile(best_all_iters_random, .75, axis=0)
+    best_25_random = - np.quantile(best_all_iters_random, .25, axis=0)
+
     top10_median_sparse = - np.median(top10_all_iters_sparse, axis=0)
     top10_75_sparse = - np.quantile(top10_all_iters_sparse, .75, axis=0)
     top10_25_sparse = - np.quantile(top10_all_iters_sparse, .25, axis=0)
@@ -107,13 +126,16 @@ def main(pool, target, n_init, budget, radius, make_hist):
     top10_75_compressed = - np.quantile(top10_all_iters_compressed, .75, axis=0)
     top10_25_compressed = - np.quantile(top10_all_iters_compressed, .25, axis=0)
 
+    top10_median_random = - np.median(best_all_iters_random, axis=0)
+    top10_75_random = - np.quantile(best_all_iters_random, .75, axis=0)
+    top10_25_random = - np.quantile(best_all_iters_random, .25, axis=0)
+
 
     FIGPATH = f"../figures/dockstring-bo/{target}/{pool}-{n_init}-{budget}/"
     os.makedirs(os.path.dirname(FIGPATH), exist_ok=True)
 
     # FIGURE 1: Best molecule
     plt.figure()
-
     xs = np.arange(len(best_median_sparse))
 
     plt.plot(xs, best_median_sparse, color='green', label='Uncompressed FP')
@@ -122,6 +144,9 @@ def main(pool, target, n_init, budget, radius, make_hist):
     plt.plot(xs, best_median_compressed, color='darkorange', label='Compressed FP')
     plt.fill_between(xs, best_25_compressed, best_75_compressed, color='orange', alpha=.25)
 
+    plt.plot(xs, best_median_random, color='gray', label='Random Selection')
+    plt.fill_between(xs, best_25_random, best_75_random, color='lightgray', alpha=.25)
+
     plt.axhline(percentile999, color='red', ls='dashed', lw=.75, label="$99.9^\\text{th}$ percentile")
     plt.axhline(best_score, color='purple', ls='dashed', lw=.75, label='Best Molecule')
 
@@ -129,7 +154,7 @@ def main(pool, target, n_init, budget, radius, make_hist):
 
     plt.xlabel("Observation")
     plt.ylabel("Objective")
-    plt.title(f"Top 1 Molecule (Target: {target}, radius: {radius}, pool: {pool},  n_init: {n_init})")
+    plt.title(f"Top 1 Molecule (Target: {target}, radius: {radius}, pool: {len(X)-n_init},  n_init: {n_init})")
     plt.legend()
 
     filename = f"r{radius}-best.png"
@@ -149,11 +174,15 @@ def main(pool, target, n_init, budget, radius, make_hist):
     plt.plot(xs, top10_median_compressed, color='darkorange', label='Compressed FP')
     plt.fill_between(xs, top10_25_compressed, top10_75_compressed, color='orange', alpha=.25)
 
+    plt.plot(xs, top10_median_random, color='gray', label='Random Selection')
+    plt.fill_between(xs, top10_25_random, best_75_random, color='lightgray', alpha=.25)
+
     plt.axhline(best_top10, color='purple', ls='dashed', lw=.75, label='Best Top 10')
+    plt.ylim(bottom=best_top10 - .1)
 
     plt.xlabel("Observation")
     plt.ylabel("Top 10 Observed")
-    plt.title(f"Top 10 Average (Target: {target}, radius: {radius}, pool: {pool}, n_init: {n_init})")
+    plt.title(f"Top 10 Average (Target: {target}, radius: {radius}, pool: {len(X) - n_init}, n_init: {n_init})")
     plt.legend()
 
 

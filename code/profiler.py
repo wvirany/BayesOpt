@@ -9,8 +9,27 @@ from utils import bo, acq_funcs
 from utils.get_data import get_dockstring_dataset
 from utils.misc import config_fp_func, inverse_softplus
 
+import os
+import psutil
+import time
+
 
 rng = np.random.RandomState(42)
+pool = 50000
+
+
+def get_memory_usage():
+    """Get current memory usage of the process in GB"""
+    process = psutil.Process(os.getpid())
+    mem_gb = process.memory_info().rss / (1024 * 1024 * 1024)  # Convert bytes to GB
+    return mem_gb
+
+
+def log_memory(label=""):
+    """Log current memory usage with an optional label"""
+    mem_gb = get_memory_usage()
+    print(f"Memory usage {label}: {mem_gb:.2f} GB")
+    return mem_gb
 
 
 def get_data(pool=10000, n_init=1000, target="PARP1", include_test=False):
@@ -40,7 +59,12 @@ def get_data(pool=10000, n_init=1000, target="PARP1", include_test=False):
 def run_bo_experiment():
     """Run a larger BO experiment for profiling"""
 
-    pool=100000
+    # Initial memory
+    log_memory("at start")
+    
+    # Get test data
+    X_init, X, y_init, y = get_data(pool=pool_size, n_init=100)
+    log_memory(f"after loading {len(X)} molecules")
 
     # Get test data
     X_init, X, y_init, y = get_data(pool=pool, n_init=100)  # Start with 100 molecules

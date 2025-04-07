@@ -13,6 +13,8 @@ import argparse
 import warnings
 warnings.filterwarnings("ignore")
 
+# Set to True to run random baseline
+random = True
 
 # Use SLURM array ID for random seed
 SLURM_ARRAY_ID = os.getenv("SLURM_ARRAY_TASK_ID")
@@ -74,10 +76,17 @@ def main(pool, n_init, budget, target, sparse, radius):
     gp = tanimoto_gp.FixedTanimotoGP(gp_params, fp_func, X_init, y_init)
 
     # Run BO procedure
-    best, top10, X_observed, y_observed, _ = bo.optimization_loop(
-        X, y, X_init, y_init, gp, gp_params,
-        acq_funcs.ei, epsilon=.01, num_iters=budget
-    )
+    if random:
+        _, _ = gp.predict_y(gp_params, X, full_covar=False)
+        best, top10, X_observed, y_observed, _ = bo.optimization_loop(
+            X, y, X_init, y_init, gp, gp_params,
+            acq_funcs.uniform, epsilon=.01, num_iters=budget
+        )
+    else:
+        best, top10, X_observed, y_observed, _ = bo.optimization_loop(
+            X, y, X_init, y_init, gp, gp_params,
+            acq_funcs.ei, epsilon=.01, num_iters=budget
+        )
 
     # Save results
     results = {
@@ -91,6 +100,8 @@ def main(pool, n_init, budget, target, sparse, radius):
     # Path to store results
     if sparse:
         results_path = f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/sparse-r{radius}.pkl'
+    elif random:
+        results_path = f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/random.pkl'
     else:
         results_path = f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/compressed-r{radius}.pkl'
 

@@ -1,5 +1,15 @@
 * Do we want to continuously update the mean function for `ConstantMeanTanimotoGP` as we observe new data in BO?
 
+
+# April
+
+### To Do:
+
+- [x] Pre-compute all fingerprints for the pool at initialization
+- [ ] Run all regression experiments -> For which targets are the performance differences largest?
+
+
+
 # March
 
 ### To Do:
@@ -12,13 +22,12 @@
 - [ ] Re-run regression experiments with `ConstantMeanTanimotoGP` [params: (`PARP1`, `F2`, `ESR2`), (compressed, uncompressed), (r2, r4), (binary, count)] --> record results and params
 - [x] Optimize SLURM resource usage (smaller jobs, SLURM arrays w/ different seeds dictating different params / data inits)
 - [x] Record SMILES strings at each BO iter
-- [ ] Test `update_choleky()` method in `test_kern_gp.py`
-  - Can test this by re-computing Cholesky factor, as well as using update method, and comparing
+- [x] Test `update_choleky()` method in `test_kern_gp.py`
 - [x] Implement `ConstantMeanTanimotoGP`
 - [x] `FixedTanimotoGP` class? Reconcile `ConstantMeanTanimotoGP` and K_test_train caching
 - [ ] Generalize `add_observation()` to $n$ observations
 - [ ] Regression experiments
-- [ ] Test and fix caching functionality
+- [x] Test and fix caching functionality
 
 #### BO experiments
 - [x] Run all BO experiments for 1000 initial molecules and budget w/ GP regression params on bottom 80%
@@ -27,8 +36,9 @@
   - [x] `ESR2`
 - [x] After making code faster and fixing SLURM resource usage, run more trials w/ larger initalizations / budgets
 - [x] Re-run BO experiments with `FixedTanimotoGP` class
-- [ ] BO experiments w/ `n_init` 100 and `budget` 1000
-- [ ] BO experiments w/ `radius` 4
+- [x] BO experiments w/ `n_init` 100 and `budget` 1000
+- [x] BO experiments w/ `radius` 4
+- [x] Scale up pool size
 
 # Feb
 
