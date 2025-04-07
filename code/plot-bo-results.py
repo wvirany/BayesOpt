@@ -144,7 +144,7 @@ def main(pool, target, n_init, budget, radius, make_hist):
     plt.plot(xs, best_median_compressed, color='darkorange', label='Compressed FP')
     plt.fill_between(xs, best_25_compressed, best_75_compressed, color='orange', alpha=.25)
 
-    plt.plot(xs, best_median_random, color='gray', label='Random Selection')
+    plt.plot(xs, best_median_random, color='gray', label='Random Baseline')
     plt.fill_between(xs, best_25_random, best_75_random, color='lightgray', alpha=.25)
 
     plt.axhline(percentile999, color='red', ls='dashed', lw=.75, label="$99.9^\\text{th}$ percentile")
@@ -174,7 +174,7 @@ def main(pool, target, n_init, budget, radius, make_hist):
     plt.plot(xs, top10_median_compressed, color='darkorange', label='Compressed FP')
     plt.fill_between(xs, top10_25_compressed, top10_75_compressed, color='orange', alpha=.25)
 
-    plt.plot(xs, top10_median_random, color='gray', label='Random Selection')
+    plt.plot(xs, top10_median_random, color='gray', label='Random Baseline')
     plt.fill_between(xs, top10_25_random, best_75_random, color='lightgray', alpha=.25)
 
     plt.axhline(best_top10, color='purple', ls='dashed', lw=.75, label='Best Top 10')
