@@ -96,7 +96,7 @@ def main(pool, target, n_init, budget, radius, make_hist):
 
         top10_all_iters_sparse = np.vstack([top10_all_iters_sparse, top10_sparse])
         top10_all_iters_compressed = np.vstack([top10_all_iters_compressed, top10_compressed])
-        top10_all_iters_random = np.vstack([best_all_iters_random, best_random])
+        top10_all_iters_random = np.vstack([top10_all_iters_random, top10_random])
 
     best_all_iters_sparse = np.delete(best_all_iters_sparse, 0, axis=0)
     best_all_iters_compressed = np.delete(best_all_iters_compressed, 0, axis=0)
@@ -126,9 +126,9 @@ def main(pool, target, n_init, budget, radius, make_hist):
     top10_75_compressed = - np.quantile(top10_all_iters_compressed, .75, axis=0)
     top10_25_compressed = - np.quantile(top10_all_iters_compressed, .25, axis=0)
 
-    top10_median_random = - np.median(best_all_iters_random, axis=0)
-    top10_75_random = - np.quantile(best_all_iters_random, .75, axis=0)
-    top10_25_random = - np.quantile(best_all_iters_random, .25, axis=0)
+    top10_median_random = - np.median(top10_all_iters_random, axis=0)
+    top10_75_random = - np.quantile(top10_all_iters_random, .75, axis=0)
+    top10_25_random = - np.quantile(top10_all_iters_random, .25, axis=0)
 
 
     FIGPATH = f"../figures/dockstring-bo/{target}/{pool}-{n_init}-{budget}/"
@@ -175,7 +175,7 @@ def main(pool, target, n_init, budget, radius, make_hist):
     plt.fill_between(xs, top10_25_compressed, top10_75_compressed, color='orange', alpha=.25)
 
     plt.plot(xs, top10_median_random, color='gray', label='Random Baseline')
-    plt.fill_between(xs, top10_25_random, best_75_random, color='lightgray', alpha=.25)
+    plt.fill_between(xs, top10_25_random, top10_75_random, color='lightgray', alpha=.25)
 
     plt.axhline(best_top10, color='purple', ls='dashed', lw=.75, label='Best Top 10')
     plt.ylim(bottom=best_top10 - .1)

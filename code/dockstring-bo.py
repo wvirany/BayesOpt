@@ -14,7 +14,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # Set to True to run random baseline
-random = True
+random = False
 
 # Use SLURM array ID for random seed
 SLURM_ARRAY_ID = os.getenv("SLURM_ARRAY_TASK_ID")
@@ -98,10 +98,10 @@ def main(pool, n_init, budget, target, sparse, radius):
     }
     
     # Path to store results
-    if sparse:
-        results_path = f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/sparse-r{radius}.pkl'
-    elif random:
+    if random:
         results_path = f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/random.pkl'
+    elif sparse:
+        results_path = f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/sparse-r{radius}.pkl'
     else:
         results_path = f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/compressed-r{radius}.pkl'
 
