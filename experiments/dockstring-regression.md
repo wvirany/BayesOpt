@@ -1,5 +1,7 @@
 # Fingerprint Performance Comparison
 
+**Experiment details:** For a given fingeprint configuration, I ran 10 trials on different random splits of the training dataset, and predicted the target values of the test dataset (~38k molecules). I am reporting the average across 10 trials, plus/minus 1 standard deviation.
+
 ## R² Results by Target and Configuration
 *Higher values are better*
 
