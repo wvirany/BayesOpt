@@ -46,7 +46,7 @@ for TARGET in "${TARGETS[@]}"; do
             sleep 1
 
 
-            # Submit jobs for compressed fingerprints (varying fpSize)
+            # Submit jobs for compressed fingerprints (varying fp_size)
             for FP_SIZE in "${FP_SIZES[@]}"; do
 
                 JOB_NAME="bo-${TARGET}-p${POOL}-n${N_INIT}-compressed-r${RADIUS}-s${FP_SIZE}"
@@ -75,7 +75,7 @@ for TARGET in "${TARGETS[@]}"; do
                             --n_init ${N_INIT} \
                             --budget ${BUDGET} \
                             --radius ${RADIUS} \
-                            --fpSize ${FP_SIZE}"
+                            --fp_size ${FP_SIZE}"
                     
                 sleep 1
             done

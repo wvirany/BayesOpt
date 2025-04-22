@@ -8,11 +8,14 @@
 - [x] Pre-compute all fingerprints for the pool at initialization
 - [x] Run all regression experiments -> For which targets are the performance differences largest?
 
-- [ ] Run regression experiments with more trials (maybe 30) for `n_train` $\in$ `{100, 1000}`
-- [ ] Re-run BO experiments (w more trials, varying fingerprint lengths)
-  - [ ] Examine different molecule choices (find first time step where algorithms make a different choice, or plot common SMILES over time)
+- [x] Run regression experiments with more trials (maybe 30) for `n_train` $\in$ `{100, 1000}`
+- [x] Re-run BO experiments (w more trials, varying fingerprint lengths)
+  - [x] Examine different molecule choices (find first time step where algorithms make a different choice, or plot common SMILES over time)
 
-- [ ] Run regression / BO experiments with different fingerprint sizes for compressed FP
+- [x] Run regression / BO experiments with different fingerprint sizes for compressed FP
+- [ ] Extend this to all parameter configurations
+
+- [ ] Run random baselines for BO
 
 
 # March

@@ -30,14 +30,14 @@ else:
 rng = np.random.RandomState(trial_seed)
 
 
-def main(target='PARP1', n_train=10000, sparse=True, radius=2, fpSize=2048):
+def main(target='PARP1', n_train=10000, sparse=True, radius=2, fp_size=2048):
 
     # Get Dockstring data
     smiles_train, smiles_test, y_train, y_test = get_dockstring_dataset(n_train=n_train, target=target, seed=trial_seed)
 
     print(f"Running trial {trial_seed} | Train size: {len(smiles_train)} | Test size: {len(smiles_test)}")
     print(f"Experiment Params: n_train: {n_train} | target: {target}\n"
-          f"sparse: {sparse} | radius: {radius} | fpSize: {fpSize})")
+          f"sparse: {sparse} | radius: {radius} | fp_size: {fp_size})")
 
     # Initialize GP parameters
     amp = jnp.var(y_train)
@@ -49,7 +49,7 @@ def main(target='PARP1', n_train=10000, sparse=True, radius=2, fpSize=2048):
 
     print(f"=== GP Params ===\nAmplitude: {amp}, Noise: {noise}")
 
-    fp_func = config_fp_func(sparse=sparse, radius=radius, fpSize=fpSize)
+    fp_func = config_fp_func(sparse=sparse, radius=radius, fp_size=fp_size)
     gp = tanimoto_gp.ConstantMeanTanimotoGP(fp_func, smiles_train, y_train)
 
     mean, _ = gp.predict_y(gp_params, smiles_test, full_covar=False)
@@ -69,7 +69,7 @@ def main(target='PARP1', n_train=10000, sparse=True, radius=2, fpSize=2048):
     if sparse:
         results_path = f'results/dockstring-regression/{target}/{n_train}/sparse-r{radius}.pkl'
     else:
-        results_path = f'results/dockstring-regression/{target}/{n_train}/compressed-r{radius}-s{fpSize}.pkl'
+        results_path = f'results/dockstring-regression/{target}/{n_train}/compressed-r{radius}-{fp_size}.pkl'
 
     data = {}
     if os.path.exists(results_path):
@@ -93,8 +93,8 @@ if __name__ == "__main__":
     parser.add_argument("--n_train", type=int, default=10000)
     parser.add_argument("--sparse", action="store_true")
     parser.add_argument("--radius", type=int, default=2)
-    parser.add_argument("--fpSize", type=int, default=2048)
+    parser.add_argument("--fp_size", type=int, default=2048)
 
     args = parser.parse_args()
 
-    main(n_train=args.n_train, target=args.target, sparse=args.sparse, radius=args.radius, fpSize=args.fpSize)
+    main(n_train=args.n_train, target=args.target, sparse=args.sparse, radius=args.radius, fp_size=args.fp_size)

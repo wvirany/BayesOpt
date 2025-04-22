@@ -2,10 +2,9 @@
 
 # Run from "code/" directory with ./submit_all_regression.sh
 
-TARGETS=("F2")
-N_TRAINS=(100 1000)
+TARGETS=("PARP1")
+N_TRAINS=(10000)
 RADII=(2 4)
-SPARSE_OPTIONS=("false")
 FP_SIZES=(2048 1024 512 256)
 
 
@@ -43,10 +42,10 @@ for TARGET in "${TARGETS[@]}"; do
             sleep 1
 
             
-            # Submit jobs for compressed fingerprints (varying fpSize)
+            # Submit jobs for compressed fingerprints (varying fp_size)
             for FP_SIZE in "${FP_SIZES[@]}"; do
 
-                JOB_NAME="regression-${TARGET}-n${N_TRAIN}-compressed-r${RADIUS}-s${FP_SIZE}"
+                JOB_NAME="regression-${TARGET}-n${N_TRAIN}-compressed-r${RADIUS}-${FP_SIZE}"
                 LOG_DIR="logs/dockstring-regression/${JOB_NAME}"
 
                 # Create log directory if it doesn't exist
@@ -70,7 +69,7 @@ for TARGET in "${TARGETS[@]}"; do
                             --target ${TARGET} \
                             --n_train ${N_TRAIN} \
                             --radius ${RADIUS} \
-                            --fpSize ${FP_SIZE}"
+                            --fp_size ${FP_SIZE}"
                     
                 sleep 1
             
