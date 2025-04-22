@@ -52,7 +52,7 @@ def get_data(pool=10000, n_init=1000, target="PARP1", include_test=True):
 
 
 
-def main(pool, n_init, budget, target, sparse, radius):
+def main(pool, n_init, budget, target, sparse, radius, fpSize):
 
     assert n_init < pool, "Pool size should be larger than initial set of molecules"
     assert n_init + budget < pool, "Pool size should be larger than initial set plus budget"
@@ -61,7 +61,8 @@ def main(pool, n_init, budget, target, sparse, radius):
     
     X_init, X, y_init, y = get_data(pool, n_init, target)
 
-    print(f"Experiment Params \n\t Pool size: {len(X)}\n\t Initial molecules: {n_init}\n\t Budget: {budget}\n\t Target: {target}\n\t sparse: {sparse} | radius {radius}")
+    print(f"Experiment Params \n\t Pool size: {len(X)}\n\t Initial molecules: {n_init}\n\t"
+          f"Budget: {budget}\n\t Target: {target}\n\t sparse: {sparse} | radius: {radius} | fpSize: {fpSize}")
 
     # Initialize GP parameters
     amp = jnp.var(y_init)
@@ -72,7 +73,7 @@ def main(pool, n_init, budget, target, sparse, radius):
     )
 
     # Initialize GP
-    fp_func = config_fp_func(sparse=sparse, radius=radius)
+    fp_func = config_fp_func(sparse=sparse, radius=radius, fpSize=fpSize)
     gp = tanimoto_gp.FixedTanimotoGP(gp_params, fp_func, X_init, y_init)
 
     # Run BO procedure
@@ -103,7 +104,7 @@ def main(pool, n_init, budget, target, sparse, radius):
     elif sparse:
         results_path = f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/sparse-r{radius}.pkl'
     else:
-        results_path = f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/compressed-r{radius}.pkl'
+        results_path = f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/compressed-r{radius}-{fpSize}.pkl'
 
     data = {}
     if os.path.exists(results_path):
@@ -129,7 +130,14 @@ if __name__ == "__main__":
     parser.add_argument("--target", type=str, default='PARP1')
     parser.add_argument("--sparse", action="store_true")
     parser.add_argument("--radius", type=int, default=2)
+    parser.add_argument("--fpSize", type=int, default=2048)
  
     args = parser.parse_args()
 
-    main(pool=args.pool, n_init=args.n_init, budget=args.budget, target=args.target, sparse=args.sparse, radius=args.radius)
+    main(pool=args.pool,
+         n_init=args.n_init,
+         budget=args.budget,
+         target=args.target,
+         sparse=args.sparse,
+         radius=args.radius,
+         fpSize=args.fpSize)

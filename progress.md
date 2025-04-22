@@ -6,8 +6,13 @@
 ### To Do:
 
 - [x] Pre-compute all fingerprints for the pool at initialization
-- [ ] Run all regression experiments -> For which targets are the performance differences largest?
+- [x] Run all regression experiments -> For which targets are the performance differences largest?
 
+- [ ] Run regression experiments with more trials (maybe 30) for `n_train` $\in$ `{100, 1000}`
+- [ ] Re-run BO experiments (w more trials, varying fingerprint lengths)
+  - [ ] Examine different molecule choices (find first time step where algorithms make a different choice, or plot common SMILES over time)
+
+- [ ] Run regression / BO experiments with different fingerprint sizes for compressed FP
 
 
 # March
@@ -19,14 +24,14 @@
 - [x] Cache Cholesky factorization of kernel matrix, implement efficient update function
 - [x] Cache K_test_train
 - [x] Correctly and efficiently compute incumbent
-- [ ] Re-run regression experiments with `ConstantMeanTanimotoGP` [params: (`PARP1`, `F2`, `ESR2`), (compressed, uncompressed), (r2, r4), (binary, count)] --> record results and params
+- [x] Re-run regression experiments with `ConstantMeanTanimotoGP` [params: (`PARP1`, `F2`, `ESR2`), (compressed, uncompressed), (r2, r4), (binary, count)] --> record results and params
 - [x] Optimize SLURM resource usage (smaller jobs, SLURM arrays w/ different seeds dictating different params / data inits)
 - [x] Record SMILES strings at each BO iter
 - [x] Test `update_choleky()` method in `test_kern_gp.py`
 - [x] Implement `ConstantMeanTanimotoGP`
 - [x] `FixedTanimotoGP` class? Reconcile `ConstantMeanTanimotoGP` and K_test_train caching
 - [ ] Generalize `add_observation()` to $n$ observations
-- [ ] Regression experiments
+- [x] Regression experiments
 - [x] Test and fix caching functionality
 
 #### BO experiments

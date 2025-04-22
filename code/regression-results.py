@@ -6,11 +6,12 @@ import pickle
 from pathlib import Path
 import argparse
 
-def main(save_csv=False):
+def main(save_csv=False, save_xlsx=False):
     # Define parameter ranges to iterate over
-    TARGETS = ['PARP1', 'F2', 'ESR2', 'PGR']
+    TARGETS = ['PARP1']
     RADII = [2, 4]
-    N_TRAINS = [100, 1000, 10000]
+    N_TRAINS = [100, 1000]
+    FP_SIZES = [2048, 1024, 512, 256]
 
     # Initialize dictionaries to store results
     r2_results = {
@@ -37,9 +38,8 @@ def main(save_csv=False):
                 
                 config = (target, radius, n_train)
                 
-                # Define paths for sparse and compressed results
-                sparse_results_path = f'results/dockstring-regression/{target}/{n_train}/sparse-r{radius}-count.pkl'
-                compressed_results_path = f'results/dockstring-regression/{target}/{n_train}/compressed-r{radius}-count.pkl'
+                # SPARSE RESULTS
+                sparse_results_path = f'results/dockstring-regression/{target}/{n_train}/sparse-r{radius}.pkl'
                 
                 # Initialize arrays to store metrics
                 sparse_r2, sparse_mse, sparse_mae = [], [], []
@@ -60,18 +60,22 @@ def main(save_csv=False):
                     continue
                 
                 # Load compressed results if they exist
-                if os.path.exists(compressed_results_path):
-                    with open(compressed_results_path, 'rb') as f:
-                        compressed_data = pickle.load(f)
-                        
-                    # Extract metrics from each trial
-                    for _, result in compressed_data.items():
-                        compressed_r2.append(result['R2'])
-                        compressed_mse.append(result['MSE'])
-                        compressed_mae.append(result['MAE'])
-                else:
-                    print(f"Warning: {compressed_results_path} not found")
-                    continue
+                for fpSize in FP_SIZES:
+                    
+                    compressed_results_path = f'results/dockstring-regression/{target}/{n_train}/compressed-r{radius}-{fpSize}.pkl'
+
+                    if os.path.exists(compressed_results_path):
+                        with open(compressed_results_path, 'rb') as f:
+                            compressed_data = pickle.load(f)
+                            
+                        # Extract metrics from each trial
+                        for _, result in compressed_data.items():
+                            compressed_r2.append(result['R2'])
+                            compressed_mse.append(result['MSE'])
+                            compressed_mae.append(result['MAE'])
+                    else:
+                        print(f"Warning: {compressed_results_path} not found")
+                        continue
                 
                 # Store mean and std in the dictionaries
                 r2_results['Sparse'][config] = (np.mean(sparse_r2), np.std(sparse_r2))
@@ -121,16 +125,18 @@ def main(save_csv=False):
         mae_df.to_csv("results/dockstring-regression/summary/mae_summary.csv")
 
     # Also save a nicely formatted Excel file with all metrics
-    with pd.ExcelWriter("results/dockstring-regression/summary/all_metrics.xlsx") as writer:
-        r2_df.to_excel(writer, sheet_name='R²')
-        mse_df.to_excel(writer, sheet_name='MSE')
-        mae_df.to_excel(writer, sheet_name='MAE')
+    if save_xlsx:
+        with pd.ExcelWriter("results/dockstring-regression/summary/all_metrics.xlsx") as writer:
+            r2_df.to_excel(writer, sheet_name='R²')
+            mse_df.to_excel(writer, sheet_name='MSE')
+            mae_df.to_excel(writer, sheet_name='MAE')
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--save_csv", action="store_true")
+    parser.add_argument("--save_xlsx", action="store_true")
 
     args = parser.parse_args()
 
-    main(save_csv=args.save_csv)
+    main(save_csv=args.save_csv, save_xlsx=args.save_xlsx)

@@ -2,44 +2,60 @@
 
 # Run from "code/" directory with ./submit_all_regression.sh
 
-TARGETS=("PARP1" "F2" "ESR2" "PGR")
-N_TRAINS=(100 1000 10000)
+TARGETS=("F2")
+N_TRAINS=(100 1000)
 RADII=(2 4)
-SPARSE_OPTIONS=("true" "false")
-COUNT="true"
+SPARSE_OPTIONS=("false")
+FP_SIZES=(2048 1024 512 256)
+
 
 for TARGET in "${TARGETS[@]}"; do
     for N_TRAIN in "${N_TRAINS[@]}"; do
         for RADIUS in "${RADII[@]}"; do
-            for SPARSE in "${SPARSE_OPTIONS[@]}"; do
 
-            # Derived parameters
-            if [ "$SPARSE" = "true" ]; then
-                SPARSE_NAME="sparse"
-                SPARSE_FLAG="--sparse"
-            else
-                SPARSE_NAME="compressed"
-                SPARSE_FLAG=""
-            fi
-
-            if [ "$COUNT" = "true" ]; then
-                COUNT_FLAG="--count"
-                COUNT_LABEL="count"
-            else
-                COUNT_FLAG=""
-                COUNT_LABEL="binary"
-            fi
-
-            # Create job name w/ all params
-            JOB_NAME="regression-${TARGET}-n${N_TRAIN}-r${RADIUS}-${SPARSE_NAME}-${COUNT_LABEL}"
+            # Submit job for sparse fingerprint
+            JOB_NAME="regression-${TARGET}-n${N_TRAIN}-sparse-r${RADIUS}"
             LOG_DIR="logs/dockstring-regression/${JOB_NAME}"
 
+            # Create log directory if it doesn't exist
             mkdir -p "${LOG_DIR}"
 
             echo "Submitting job array: ${JOB_NAME}"
 
             sbatch --job-name=${JOB_NAME} \
-                    --array=0-9 \
+                --array=0-29 \
+                --partition=amilan \
+                --qos=normal \
+                --time=8:00:00 \
+                --nodes=1 \
+                --mem=128G \
+                --output=logs/dockstring-regression/${JOB_NAME}/%a.out \
+                --mail-type=ALL \
+                --mail-user=waltervirany@gmail.com \
+                --wrap="module purge && module load python && module load anaconda && \
+                        conda activate tanimoto-gp && \
+                        python3 dockstring-regression.py \
+                        --target ${TARGET} \
+                        --n_train ${N_TRAIN} \
+                        --radius ${RADIUS} \
+                        --sparse"
+
+            sleep 1
+
+            
+            # Submit jobs for compressed fingerprints (varying fpSize)
+            for FP_SIZE in "${FP_SIZES[@]}"; do
+
+                JOB_NAME="regression-${TARGET}-n${N_TRAIN}-compressed-r${RADIUS}-s${FP_SIZE}"
+                LOG_DIR="logs/dockstring-regression/${JOB_NAME}"
+
+                # Create log directory if it doesn't exist
+                mkdir -p "${LOG_DIR}"
+
+                echo "Submitting job array: ${JOB_NAME}"
+
+                sbatch --job-name=${JOB_NAME} \
+                    --array=0-29 \
                     --partition=amilan \
                     --qos=normal \
                     --time=8:00:00 \
@@ -54,10 +70,10 @@ for TARGET in "${TARGETS[@]}"; do
                             --target ${TARGET} \
                             --n_train ${N_TRAIN} \
                             --radius ${RADIUS} \
-                            ${SPARSE_FLAG} \
-                            ${COUNT_FLAG}"
-                
+                            --fpSize ${FP_SIZE}"
+                    
                 sleep 1
+            
             done
         done
     done

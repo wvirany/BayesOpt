@@ -2,30 +2,54 @@
 
 # Run from "code/" directory with ./submit_all_bo.sh
 
-TARGETS=("PARP1" "F2" "ESR2" "PGR")
+TARGETS=("PARP1")
 N_INITS=(100 1000)
 RADII=(2 4)
 SPARSE_OPTIONS=("true" "false")
 POOL=1000000
 BUDGET=1000
-NUM_JOBS=10
+FP_SIZES=(2048 1024 512 256)
 
 for TARGET in "${TARGETS[@]}"; do
     for N_INIT in "${N_INITS[@]}"; do
         for RADIUS in "${RADII[@]}"; do
-            for SPARSE in "${SPARSE_OPTIONS[@]}"; do
 
-                # Derived parameters
-                if [ "$SPARSE" = "true" ]; then
-                    SPARSE_NAME="sparse"
-                    SPARSE_FLAG="--sparse"
-                else
-                    SPARSE_NAME="compressed"
-                    SPARSE_FLAG=""
-                fi
+            # Submit job for sparse fingerprint
+            JOB_NAME="bo-${TARGET}-p${POOL}-n${N_INIT}-sparse-r${RADIUS}"
+            LOG_DIR="logs/dockstring-bo/${JOB_NAME}"
 
-                # Create job name w/ all params
-                JOB_NAME="bo-${TARGET}-p${POOL}-n${N_INIT}-r${RADIUS}-${SPARSE_NAME}"
+            # Create log directory if it doesn't exist
+            mkdir -p "${LOG_DIR}"
+
+            echo "Submitting job array: ${JOB_NAME}"
+
+            sbatch --job-name=${JOB_NAME} \
+                --array=0-29 \
+                --partition=amilan \
+                --qos=normal \
+                --time=8:00:00 \
+                --nodes=1 \
+                --mem=64G \
+                --output=logs/dockstring-bo/${JOB_NAME}/%a.out \
+                --mail-type=ALL \
+                --mail-user=waltervirany@gmail.com \
+                --wrap="module purge && module load python && module load anaconda && \
+                        conda activate tanimoto-gp && \
+                        python3 dockstring-bo.py \
+                        --target ${TARGET} \
+                        --pool ${POOL} \
+                        --n_init ${N_INIT} \
+                        --budget ${BUDGET} \
+                        --radius ${RADIUS} \
+                        --sparse"
+
+            sleep 1
+
+
+            # Submit jobs for compressed fingerprints (varying fpSize)
+            for FP_SIZE in "${FP_SIZES[@]}"; do
+
+                JOB_NAME="bo-${TARGET}-p${POOL}-n${N_INIT}-compressed-r${RADIUS}-s${FP_SIZE}"
                 LOG_DIR="logs/dockstring-bo/${JOB_NAME}"
 
                 # Create log directory if it doesn't exist
@@ -34,7 +58,7 @@ for TARGET in "${TARGETS[@]}"; do
                 echo "Submitting job array: ${JOB_NAME}"
 
                 sbatch --job-name=${JOB_NAME} \
-                    --array=0-9 \
+                    --array=0-29 \
                     --partition=amilan \
                     --qos=normal \
                     --time=8:00:00 \
@@ -51,12 +75,13 @@ for TARGET in "${TARGETS[@]}"; do
                             --n_init ${N_INIT} \
                             --budget ${BUDGET} \
                             --radius ${RADIUS} \
-                            ${SPARSE_FLAG}"
-                
+                            --fpSize ${FP_SIZE}"
+                    
                 sleep 1
             done
         done
     done
 done
+
 
 echo "All jobs submitted"

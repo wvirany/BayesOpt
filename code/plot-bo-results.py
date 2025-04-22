@@ -45,6 +45,38 @@ def get_data(pool=10000, target="PARP1", include_test=True):
 
 
 
+def parse_results(data, budget):
+
+    # Initialize results lists
+    best_all_iters = np.zeros(budget + 1)
+    top10_all_iters = np.zeros(budget + 1)
+
+    keys = data.keys()
+    for i in keys:
+        # Best and top10 scores for each trial
+        best = data[i]['best']
+        top10 = data[i]['top10']
+
+        best_all_iters = np.vstack([best_all_iters, best])
+        top10_all_iters = np.vstack([top10_all_iters, top10])
+
+    # Get rid of 0 in first row
+    best_all_iters = np.delete(best_all_iters, 0, axis=0)
+    top10_all_iters = np.delete(top10_all_iters, 0, axis=0)
+
+    # Store statistics in results dict
+    results = {}
+
+    results['best_median'] = - np.median(best_all_iters, axis=0)
+    results['best_75'] = - np.quantile(best_all_iters, .75, axis=0)
+    results['best_25'] = - np.quantile(best_all_iters, .25, axis=0)
+
+    results['top10_median'] = - np.median(top10_all_iters, axis=0)
+    results['top10_75'] = - np.quantile(top10_all_iters, .75, axis=0)
+    results['top10_25'] = - np.quantile(top10_all_iters, .25, axis=0)
+
+    return results
+
 def main(pool, target, n_init, budget, radius, make_hist):
 
     # Load dataset
@@ -65,87 +97,61 @@ def main(pool, target, n_init, budget, radius, make_hist):
     # Load BO results
     with open(f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/sparse-r{radius}.pkl', 'rb') as f:
         data_sparse = pickle.load(f)
+    with open(f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/compressed-r{radius}-2048.pkl', 'rb') as f:
+        data_compressed_2048 = pickle.load(f)
+    with open(f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/compressed-r{radius}-1024.pkl', 'rb') as f:
+        data_compressed_1024 = pickle.load(f)
+    with open(f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/compressed-r{radius}-512.pkl', 'rb') as f:
+        data_compressed_512 = pickle.load(f)
+    with open(f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/compressed-r{radius}-256.pkl', 'rb') as f:
+        data_compressed_256 = pickle.load(f)
+    # with open(f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/random.pkl', 'rb') as f:
+    #     data_random = pickle.load(f)
 
-    with open(f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/compressed-r{radius}.pkl', 'rb') as f:
-        data_compressed = pickle.load(f)
+    results_sparse = parse_results(data=data_sparse, budget=budget)
+    results_compressed_2048 = parse_results(data=data_compressed_2048, budget=budget)
+    results_compressed_1024 = parse_results(data=data_compressed_1024, budget=budget)
+    results_compressed_512 = parse_results(data=data_compressed_512, budget=budget)
+    results_compressed_256 = parse_results(data=data_compressed_256, budget=budget)
+    # results_random = parse_results(data=data_random, budget=budget)
 
-    with open(f'results/dockstring-bo/{target}/{pool}-{n_init}-{budget}/random.pkl', 'rb') as f:
-        data_random = pickle.load(f)
+    results = [results_sparse,
+               results_compressed_2048,
+               results_compressed_1024,
+               results_compressed_512,
+               results_compressed_256,]
+            #    results_random]
 
-    best_all_iters_sparse = np.zeros(budget + 1)
-    best_all_iters_compressed = np.zeros(budget + 1)
-    best_all_iters_random = np.zeros(budget + 1)
 
-    top10_all_iters_sparse = np.zeros(budget + 1)
-    top10_all_iters_compressed = np.zeros(budget + 1)
-    top10_all_iters_random = np.zeros(budget + 1)
-
-    n = len(data_sparse)
-    for i in range(n):
-        best_sparse = data_sparse[i]['best']
-        best_compressed = data_compressed[i]['best']
-        best_random = data_random[i]['best']
-
-        top10_sparse = data_sparse[i]['top10']
-        top10_compressed = data_compressed[i]['top10']
-        top10_random = data_random[i]['top10']
-
-        best_all_iters_sparse = np.vstack([best_all_iters_sparse, best_sparse])
-        best_all_iters_compressed = np.vstack([best_all_iters_compressed, best_compressed])
-        best_all_iters_random = np.vstack([best_all_iters_random, best_random])
-
-        top10_all_iters_sparse = np.vstack([top10_all_iters_sparse, top10_sparse])
-        top10_all_iters_compressed = np.vstack([top10_all_iters_compressed, top10_compressed])
-        top10_all_iters_random = np.vstack([top10_all_iters_random, top10_random])
-
-    best_all_iters_sparse = np.delete(best_all_iters_sparse, 0, axis=0)
-    best_all_iters_compressed = np.delete(best_all_iters_compressed, 0, axis=0)
-    best_all_iters_random = np.delete(best_all_iters_random, 0, axis=0)
-
-    top10_all_iters_sparse = np.delete(top10_all_iters_sparse, 0, axis=0)
-    top10_all_iters_compressed = np.delete(top10_all_iters_compressed, 0, axis=0)
-    top10_all_iters_random = np.delete(top10_all_iters_random, 0, axis=0)
-    
-    best_median_sparse = - np.median(best_all_iters_sparse, axis=0)
-    best_75_sparse = - np.quantile(best_all_iters_sparse, .75, axis=0)
-    best_25_sparse = - np.quantile(best_all_iters_sparse, .25, axis=0)
-    
-    best_median_compressed = - np.median(best_all_iters_compressed, axis=0)
-    best_75_compressed = - np.quantile(best_all_iters_compressed, .75, axis=0)
-    best_25_compressed = - np.quantile(best_all_iters_compressed, .25, axis=0)
-
-    best_median_random = - np.median(best_all_iters_random, axis=0)
-    best_75_random = - np.quantile(best_all_iters_random, .75, axis=0)
-    best_25_random = - np.quantile(best_all_iters_random, .25, axis=0)
-
-    top10_median_sparse = - np.median(top10_all_iters_sparse, axis=0)
-    top10_75_sparse = - np.quantile(top10_all_iters_sparse, .75, axis=0)
-    top10_25_sparse = - np.quantile(top10_all_iters_sparse, .25, axis=0)
-
-    top10_median_compressed = - np.median(top10_all_iters_compressed, axis=0)
-    top10_75_compressed = - np.quantile(top10_all_iters_compressed, .75, axis=0)
-    top10_25_compressed = - np.quantile(top10_all_iters_compressed, .25, axis=0)
-
-    top10_median_random = - np.median(top10_all_iters_random, axis=0)
-    top10_75_random = - np.quantile(top10_all_iters_random, .75, axis=0)
-    top10_25_random = - np.quantile(top10_all_iters_random, .25, axis=0)
-
+    # === TEMP ===
+    # results_compressed = parse_results(data=data_compressed, budget=budget)
+    # results = [results_sparse, results_compressed, results_random]
+    # ============
 
     FIGPATH = f"../figures/dockstring-bo/{target}/{pool}-{n_init}-{budget}/"
     os.makedirs(os.path.dirname(FIGPATH), exist_ok=True)
 
     # FIGURE 1: Best molecule
     plt.figure()
-    xs = np.arange(len(best_median_sparse))
+    xs = np.arange(budget + 1)
 
-    plt.plot(xs, best_median_sparse, color='green', label='Uncompressed FP')
-    plt.fill_between(xs, best_25_sparse, best_75_sparse, color='lightgreen', alpha=.5)
+    plt.plot()
 
-    plt.plot(xs, best_median_compressed, color='darkorange', label='Compressed FP')
-    plt.fill_between(xs, best_25_compressed, best_75_compressed, color='orange', alpha=.25)
-
-    plt.plot(xs, best_median_random, color='gray', label='Random Baseline')
-    plt.fill_between(xs, best_25_random, best_75_random, color='lightgray', alpha=.25)
+    # Sparse
+    plt.plot(xs, results_sparse['best_median'], color='green', label='Uncompressed FP')
+    plt.fill_between(xs, results_sparse['best_25'], results_sparse['best_75'], color='lightgreen', alpha=.25)
+    # Compressed
+    plt.plot(xs, results_compressed_2048['best_median'], color='darkorange', label='Compressed (2048)')
+    plt.fill_between(xs, results_compressed_2048['best_25'], results_compressed_2048['best_75'], color='orange', alpha=.25)
+    plt.plot(xs, results_compressed_1024['best_median'], color='darkorange', alpha=.5, label='Compressed (1024)')
+    plt.fill_between(xs, results_compressed_1024['best_25'], results_compressed_1024['best_75'], color='orange', alpha=.2)
+    plt.plot(xs, results_compressed_512['best_median'], color='darkorange', alpha=.3, label='Compressed (512)')
+    plt.fill_between(xs, results_compressed_512['best_25'], results_compressed_512['best_75'], color='orange', alpha=.15)
+    plt.plot(xs, results_compressed_256['best_median'], color='darkorange', alpha=.15, label='Compressed (256)')
+    plt.fill_between(xs, results_compressed_256['best_25'], results_compressed_256['best_75'], color='orange', alpha=.1)
+    # Random
+    # plt.plot(xs, results_random['best_median'], color='gray', label='Random')
+    # plt.fill_between(xs, results_random['best_25'], results_random['best_75'], color='lightgray', alpha=.5)
 
     plt.axhline(percentile999, color='red', ls='dashed', lw=.75, label="$99.9^\\text{th}$ percentile")
     plt.axhline(best_score, color='purple', ls='dashed', lw=.75, label='Best Molecule')
@@ -166,16 +172,21 @@ def main(pool, target, n_init, budget, radius, make_hist):
     # FIGURE 2: Top 10
     plt.figure()
 
-    xs = np.arange(len(top10_median_sparse))
-
-    plt.plot(xs, top10_median_sparse, color='green', label='Uncompressed FP')
-    plt.fill_between(xs, top10_25_sparse, top10_75_sparse, color='lightgreen', alpha=.5)
-
-    plt.plot(xs, top10_median_compressed, color='darkorange', label='Compressed FP')
-    plt.fill_between(xs, top10_25_compressed, top10_75_compressed, color='orange', alpha=.25)
-
-    plt.plot(xs, top10_median_random, color='gray', label='Random Baseline')
-    plt.fill_between(xs, top10_25_random, top10_75_random, color='lightgray', alpha=.25)
+    # Sparse
+    plt.plot(xs, results_sparse['top10_median'], color='green', label='Uncompressed FP')
+    plt.fill_between(xs, results_sparse['top10_25'], results_sparse['top10_75'], color='lightgreen', alpha=.25)
+    # Compressed
+    plt.plot(xs, results_compressed_2048['top10_median'], color='darkorange', label='Compressed (2048)')
+    plt.fill_between(xs, results_compressed_2048['top10_25'], results_compressed_2048['top10_75'], color='orange', alpha=.25)
+    plt.plot(xs, results_compressed_1024['top10_median'], color='darkorange', alpha=.5, label='Compressed (1024)')
+    plt.fill_between(xs, results_compressed_1024['top10_25'], results_compressed_1024['top10_75'], color='orange', alpha=.2)
+    plt.plot(xs, results_compressed_512['top10_median'], color='darkorange', alpha=.3, label='Compressed (512)')
+    plt.fill_between(xs, results_compressed_512['top10_25'], results_compressed_512['top10_75'], color='orange', alpha=.15)
+    plt.plot(xs, results_compressed_256['top10_median'], color='darkorange', alpha=.15, label='Compressed (256)')
+    plt.fill_between(xs, results_compressed_256['top10_25'], results_compressed_256['top10_75'], color='orange', alpha=.1)
+    # Random
+    # plt.plot(xs, results_random['top10_median'], color='gray', label='Random')
+    # plt.fill_between(xs, results_random['top10_25'], results_random['top10_75'], color='lightgray', alpha=.5)
 
     plt.axhline(best_top10, color='purple', ls='dashed', lw=.75, label='Best Top 10')
     plt.ylim(bottom=best_top10 - .1)
@@ -185,7 +196,6 @@ def main(pool, target, n_init, budget, radius, make_hist):
     plt.title(f"Top 10 Average (Target: {target}, radius: {radius}, pool: {len(X) - n_init}, n_init: {n_init})")
     plt.legend()
 
-
     filename = f"r{radius}-top10.png"
     filepath = os.path.join(FIGPATH, filename)
     plt.savefig(filepath)
@@ -194,7 +204,7 @@ def main(pool, target, n_init, budget, radius, make_hist):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--pool", type=int, default=10000)
+    parser.add_argument("--pool", type=int, default=1000000)
     parser.add_argument("--target", type=str, default='PARP1')
     parser.add_argument("--n_init", type=int, default=1000)
     parser.add_argument("--budget", type=int, default=1000)
