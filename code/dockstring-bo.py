@@ -5,16 +5,13 @@ import numpy as np
 import tanimoto_gp
 from utils import bo, acq_funcs
 from utils.get_data import get_dockstring_dataset
-from utils.misc import init_gp, config_fp_func, inverse_softplus
+from utils.misc import config_fp_func, inverse_softplus
 
 import os
 import pickle
 import argparse
 import warnings
 warnings.filterwarnings("ignore")
-
-# Set to True to run random baseline
-random = False
 
 # Use SLURM array ID for random seed
 SLURM_ARRAY_ID = os.getenv("SLURM_ARRAY_TASK_ID")
@@ -52,7 +49,7 @@ def get_data(pool=10000, n_init=1000, target="PARP1", include_test=True):
 
 
 
-def main(pool, n_init, budget, target, sparse, radius, fp_size):
+def main(pool, n_init, budget, target, sparse, radius, fp_size, random=False):
 
     assert n_init < pool, "Pool size should be larger than initial set of molecules"
     assert n_init + budget < pool, "Pool size should be larger than initial set plus budget"
@@ -131,6 +128,7 @@ if __name__ == "__main__":
     parser.add_argument("--sparse", action="store_true")
     parser.add_argument("--radius", type=int, default=2)
     parser.add_argument("--fp_size", type=int, default=2048)
+    parser.add_argument("--random", action="store_true")
  
     args = parser.parse_args()
 
@@ -140,4 +138,5 @@ if __name__ == "__main__":
          target=args.target,
          sparse=args.sparse,
          radius=args.radius,
-         fp_size=args.fp_size)
+         fp_size=args.fp_size,
+         random=args.random)

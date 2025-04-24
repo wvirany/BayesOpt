@@ -14,7 +14,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 from utils.misc import evaluate_gp
-from utils.get_data import get_data
+from utils.get_data import get_polaris_data
 
 
 """
@@ -38,7 +38,7 @@ sns.set_palette('muted')
 
 DATASET = "biogen/adme-fang-v1"
 
-smiles_train, smiles_test, y_train, y_test = get_data(DATASET)
+smiles_train, smiles_test, y_train, y_test = get_polaris_data(DATASET)
 
 
 def write_data(fps, sizes, radius, tol, exp):
@@ -57,7 +57,7 @@ def write_data(fps, sizes, radius, tol, exp):
                                                                y_test,
                                                                fp_type=fp,
                                                                sparse=False,
-                                                               fpSize=size,
+                                                               fp_size=size,
                                                                radius=radius,
                                                                tol=tol,
                                                                max_iters=10000)

@@ -82,30 +82,16 @@ def optimize_params(gp, gp_params, tol=1e-3, max_iters=10000):
 
 
 
-def init_gp(smiles_train, y_train, amp=1.0, noise=1e-2, sparse=True, radius=2, count=True, fpSize=1024):
+def config_fp_func(fp_type='ecfp', sparse=True, radius=2, count=True, fp_size=2048):
 
-    fp_func = config_fp_func(sparse=sparse, radius=radius, count=count, fpSize=fpSize)
-
-    gp = tanimoto_gp.ConstantMeanTanimotoGP(fp_func, smiles_train, y_train)
-
-    train_mean = jnp.mean(y_train)
-    gp_params = tanimoto_gp.TanimotoGP_Params(raw_amplitude=jnp.asarray(amp), raw_noise=jnp.asarray(noise), mean=train_mean)
-    gp_params = optimize_params(gp, gp_params, tol=1e-3, max_iters=10000)
-
-    return gp, gp_params
-
-
-
-def config_fp_func(fp_type='ecfp', sparse=True, radius=2, count=True, fpSize=2048):
-
-    fp_func = partial(smiles_to_fp, fp_type=fp_type, sparse=sparse, radius=radius, count=count, fpSize=fpSize)
+    fp_func = partial(smiles_to_fp, fp_type=fp_type, sparse=sparse, radius=radius, count=count, fp_size=fp_size)
 
     return fp_func
 
 
 
 @lru_cache(maxsize=300_000)
-def smiles_to_fp(smiles: str, fp_type: str = 'ecfp', sparse=True, radius=2, count=True, fpSize=2048):
+def smiles_to_fp(smiles: str, fp_type: str = 'ecfp', sparse=True, radius=2, count=True, fp_size=2048):
     """
     Convert smiles to sparse count fingerprint of given type
 
@@ -113,7 +99,7 @@ def smiles_to_fp(smiles: str, fp_type: str = 'ecfp', sparse=True, radius=2, coun
         - smiles: SMILES string representing molecule
         - fp_type: Type of molecular fingerprint
         - sparse: True for sparse fingerprint, false otherwise
-        - fpSize: Size of fingerprint vector, if not using sparse fingerprints
+        - fp_size: Size of fingerprint vector, if not using sparse fingerprints
         - radius: Radius of fingerprint generator for ecfp and fcfp fingerprints
 
     Accepted fingerprint types:
@@ -125,13 +111,13 @@ def smiles_to_fp(smiles: str, fp_type: str = 'ecfp', sparse=True, radius=2, coun
     mol = Chem.MolFromSmiles(smiles)
 
     if fp_type == 'ecfp':
-        fpgen = rdFingerprintGenerator.GetMorganGenerator(radius=radius, fpSize=fpSize)
+        fpgen = rdFingerprintGenerator.GetMorganGenerator(radius=radius, fpSize=fp_size)
     elif fp_type == 'fcfp':
         feature_inv_gen = rdFingerprintGenerator.GetMorganFeatureAtomInvGen()
         fpgen = rdFingerprintGenerator.GetMorganGenerator(
             radius=radius,
             atomInvariantsGenerator=feature_inv_gen,
-            fpSize=fpSize
+            fpSize=fp_size
         )
     elif fp_type == 'topological':
         fpgen = rdFingerprintGenerator.GetRDKitFPGenerator(
@@ -139,7 +125,7 @@ def smiles_to_fp(smiles: str, fp_type: str = 'ecfp', sparse=True, radius=2, coun
             maxPath=5,
             useBondOrder=True,  # this replaces bondBits
             branchedPaths=True,  # this adds branched subgraphs, not just linear paths
-            fpSize=fpSize
+            fpSize=fp_size
         )
     elif fp_type == 'atompair':
         fpgen = rdFingerprintGenerator.GetAtomPairGenerator(
@@ -147,7 +133,7 @@ def smiles_to_fp(smiles: str, fp_type: str = 'ecfp', sparse=True, radius=2, coun
             maxDistance=5,  # maximum number of bonds between atoms
             includeChirality=False,  # whether to include chirality in atom invariants
             use2D=True,  # use 2D (topological) distances rather than 3D
-            fpSize=fpSize
+            fpSize=fp_size
         )
 
     if count:
@@ -196,7 +182,7 @@ def evaluate_gp(smiles_train,
                 y_test,
                 fp_type='ecfp',
                 sparse=True,
-                fpSize=2048,
+                fp_size=2048,
                 radius=2,
                 tol=1e-3,
                 max_iters=1000):
@@ -204,7 +190,7 @@ def evaluate_gp(smiles_train,
     Evaluate GP performance with given dataset and fingerprint configurations
     """
 
-    fp_func = partial(smiles_to_fp, fp_type=fp_type, sparse=sparse, fpSize=fpSize, radius=radius)
+    fp_func = partial(smiles_to_fp, fp_type=fp_type, sparse=sparse, fp_size=fp_size, radius=radius)
 
     gp = tanimoto_gp.ZeroMeanTanimotoGP(fp_func, smiles_train, y_train)
     gp_params = tanimoto_gp.TanimotoGP_Params(raw_amplitude=jnp.asarray(-1.0), raw_noise=jnp.asarray(1e-2))

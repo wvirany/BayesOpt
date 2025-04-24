@@ -37,7 +37,7 @@ def main(target='PARP1', n_train=10000, sparse=True, radius=2, fp_size=2048):
 
     print(f"Running trial {trial_seed} | Train size: {len(smiles_train)} | Test size: {len(smiles_test)}")
     print(f"Experiment Params: n_train: {n_train} | target: {target}\n"
-          f"sparse: {sparse} | radius: {radius} | fp_size: {fp_size})")
+          f"sparse: {sparse} | radius: {radius} | fp_size: {fp_size}")
 
     # Initialize GP parameters
     amp = jnp.var(y_train)

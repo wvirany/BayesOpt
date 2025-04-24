@@ -35,7 +35,7 @@ def split_data(X, y, split_method, frac, as_list=False, random_seed=1):
         return X, X_observed, y, y_observed
 
 
-def get_data(dataset='biogen/adme-fang-v1', endpoint='LOG_SOLUBILITY', split=False, split_method='random', frac=0.1, as_list=False):
+def get_polaris_data(dataset='biogen/adme-fang-v1', endpoint='LOG_SOLUBILITY', split=False, split_method='random', frac=0.1, as_list=False):
 
     # Login to Polaris
     client = PolarisHubClient()

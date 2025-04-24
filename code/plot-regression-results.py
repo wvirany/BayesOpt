@@ -45,7 +45,9 @@ def load_results(target, n_train, radius, fp_size=None, sparse=False):
         metrics['MSE'].append(result['MSE'])
         metrics['MAE'].append(result['MAE'])
 
-    return {k: (np.mean(v), .1*np.std(v)) for k, v in metrics.items()}
+    c = 1 if n_train == 10000 else .1
+
+    return {k: (np.mean(v), 1*np.std(v)) for k, v in metrics.items()}
 
 
 
@@ -103,8 +105,8 @@ def plot_results(target, n_trains, radius, metric='R2', fp_sizes=[2048, 1024, 51
 
 def main():
     TARGETS = ['PARP1']
-    RADII = [2, 4]
-    N_TRAINS = [100, 1000]
+    RADII = [2]
+    N_TRAINS = [100, 1000, 10000]
     FP_SIZES = [2048, 1024, 512, 256]
     METRICS = ['R2', 'MSE', 'MAE']
 
